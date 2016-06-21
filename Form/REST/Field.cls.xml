@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Field">
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64090,79242.449407</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Route Url="/:form" Method="POST" Call="createFormField"/>
+<Route Url="/:form" Method="PUT" Call="updateFormField"/>
+<Route Url="/:form/:field" Method="DELETE" Call="deleteFormField"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="createFormField">
+<Description>
+Добавить поле в форме
+URL запроса: POST /form/field/:form
+Тело:
+{
+	 "name":"services",
+	 "collection":"",
+	 "displayName":"Ресурс",
+	 "type":"%Library.String",
+	 "required": "0"
+}</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	
+	set obj = %request.Content
+	 
+	set name = obj.name
+	set type = obj.type
+	set collection = obj.collection
+	set displayName = obj.displayName
+	set required = obj.required
+	
+	set sc = ##class(mvk.form.Property).addClassProperty(class, name, type, collection, displayName, required)
+
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="updateFormField">
+<Description>
+Изменить поле в форме
+URL запроса: PUT /form/field/:form
+Тело:
+{
+	 "name":"services",
+	 "collection":"",
+	 "displayName":"Ресурс",
+	 "type":"%String",
+	 "required": "0"
+}</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(mvk.form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	
+	set obj = %request.Content
+	 
+	set name = obj.name
+	set type = obj.type
+	set collection = obj.collection
+	set displayName = obj.displayName
+	set required = obj.required
+	
+	set sc = ##class(mvk.form.Property).modifyClassProperty(class, name, type, collection, displayName, required)
+
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="deleteFormField">
+<Description>
+Удалить поле в форме</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String="",property:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(mvk.form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	
+	set sc = ##class(mvk.form.Property).deleteClassProperty(class, property)
+	return sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>
