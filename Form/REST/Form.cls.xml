@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="Form.REST.Form">
+<Description>
+Класс работы с формами и их содержимым</Description>
 <Super>Form.REST.Abstract</Super>
 <TimeCreated>64090,79002.958751</TimeCreated>
 
@@ -25,7 +27,7 @@
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	set forms = ##class(mvk.form.Info).getFormsList()
+	set forms = ##class(Form.Info).getFormsList()
 	write forms.$toJSON()
 	return $$$OK
 ]]></Implementation>
@@ -38,7 +40,7 @@
 <FormalSpec>form:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	write ##class(mvk.form.Info).getFormMetadata(form)
+	write ##class(Form.Info).getFormMetadata(form)
 	return $$$OK
 ]]></Implementation>
 </Method>

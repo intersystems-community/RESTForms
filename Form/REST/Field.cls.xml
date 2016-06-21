@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="Form.REST.Field">
+<Description>
+Брокер работы с полями форм</Description>
 <Super>Form.REST.Abstract</Super>
 <TimeCreated>64090,79242.449407</TimeCreated>
 
@@ -43,7 +45,7 @@ URL запроса: POST /form/field/:form
 	set displayName = obj.displayName
 	set required = obj.required
 	
-	set sc = ##class(mvk.form.Property).addClassProperty(class, name, type, collection, displayName, required)
+	set sc = ##class(Form.Property).addClassProperty(class, name, type, collection, displayName, required)
 
 	return sc
 ]]></Implementation>
@@ -66,7 +68,7 @@ URL запроса: PUT /form/field/:form
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set sc = ##class(mvk.form.Info).formExistsStatus(class)
+	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
 	
 	set obj = %request.Content
@@ -77,7 +79,7 @@ URL запроса: PUT /form/field/:form
 	set displayName = obj.displayName
 	set required = obj.required
 	
-	set sc = ##class(mvk.form.Property).modifyClassProperty(class, name, type, collection, displayName, required)
+	set sc = ##class(Form.Property).modifyClassProperty(class, name, type, collection, displayName, required)
 
 	return sc
 ]]></Implementation>
@@ -91,10 +93,10 @@ URL запроса: PUT /form/field/:form
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set sc = ##class(mvk.form.Info).formExistsStatus(class)
+	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
 	
-	set sc = ##class(mvk.form.Property).deleteClassProperty(class, property)
+	set sc = ##class(Form.Property).deleteClassProperty(class, property)
 	return sc
 ]]></Implementation>
 </Method>
