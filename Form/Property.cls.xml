@@ -30,7 +30,7 @@
 <FormalSpec>className:%String=""</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	return:$classmethod(className, "%Extends", "Form.RefBase") "catalog"
+	return:$classmethod(className, "%Extends", "Form.Ref") "catalog"
 	return:className=$$$fileClass "file"
 	return $$$getClassType(className)
 ]]></Implementation>

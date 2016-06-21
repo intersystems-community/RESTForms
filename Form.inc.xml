@@ -20,7 +20,7 @@
 #define toJSONClassMethod "toJSON"
 #define updateClassMethod "updateIdFromObject"
 
-#define fileClass "Form.AttachmentType"
+#define fileClass "Form.File"
 #define fileDir $g($$$settingsGlobal("fileDir"), ##class(%Library.File).GetDirectory())
 ]]></Routine>
 </Export>

@@ -33,7 +33,6 @@
 	#define formGlobal  ^form.forms
 	#define formNameParam "FORMNAME"
 	#define metadata "metadata"
-	#define displayNameParam "FORMDISPLAYNAME"
 	#define propDisplayNameParam "DISPLAYNAME"
 
 	#dim sc As %Status = $$$OK
