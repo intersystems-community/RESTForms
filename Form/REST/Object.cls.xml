@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Object">
+<Description>
+Брокер работы с индивидуальными объектами</Description>
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64090,79332.572705</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Route Url="/:form/:id" Method="GET" Call="getFormObject"/>
+<Route Url="/:form/:id/history" Method="GET" Call="getFormObjectHistory"/>
+<Route Url="/:form" Method="POST" Call="createFormObject"/>
+<Route Url="/:form/:id" Method="PUT" Call="updateFormDynamicObject"/>
+<Route Url="/:form" Method="PUT" Call="updateFormClassObject"/>
+<Route Url="/:form/:id" Method="DELETE" Call="deleteFormObject"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="getFormObject">
+<Description>
+Получение JSON представления объекта id для формы form</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String="",id:%Integer=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	
+	set sc = $classMethod(class, $$$toJSONClassMethod, id)
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="createFormObject">
+<Description>
+Создание нового объекта для формы form (берём из %request.Content)
+Возвращает {"Id": "Значение Id"} при успехе</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	
+	set obj = %request.Content
+	set objClass = $className(obj)
+	return:objClass'=class $$$ERROR("Expected instance of " _ class _ " class, received instance of " _ objClass)
+	
+	set sc = obj.%Save()
+	
+	if $$$ISOK(sc) {
+		 write "{""Id"": """ _ obj.%Id() _ """}" 
+	}
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="updateFormDynamicObject">
+<Description>
+Обновление объекта id для формы form (берём из %request.Content)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String,id:%Integer=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	
+	set obj = %request.Content
+	set sc = $classMethod(class, $$$updateClassMethod ,id, obj)
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="updateFormClassObject">
+<Description>
+Обновление объекта id для формы form (берём из %request.Content)</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	
+	set obj = %request.Content
+
+	set objClass = $className(obj)
+	return:objClass'=class $$$ERROR("Expected instance of " _ class _ " class, received instance of " _ objClass)
+	
+	set sc = obj.%Save()
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="deleteFormObject">
+<Description>
+Удаление объекта id для формы form</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String="",id:%Integer=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+
+	set sc = $classMethod(class, "%DeleteId", id)
+	
+	return sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>
