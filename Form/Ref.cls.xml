@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Ref">
+<Description>
+Base catalog class</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64090,77689.333601</TimeCreated>
+
+<Parameter name="GETCHILDRENSQL">
+<Description>
+Параметр с SQL запросом, возвращающим список всех классов наследующихся от этого (Form.Ref)</Description>
+<Default>SELECT Id FROM %Dictionary.ClassDefinition Where Super [ 'Form.Refe'</Default>
+</Parameter>
+</Class>
+</Export>
