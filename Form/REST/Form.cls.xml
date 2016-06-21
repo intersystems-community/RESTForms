@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Form">
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64090,79002.958751</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Map Prefix="/field" Forward="Form.REST.Field"/>
+<Map Prefix="/file" Forward="Form.REST.File"/>
+<Map Prefix="/object" Forward="Form.REST.Object"/>
+<Map Prefix="/objects" Forward="Form.REST.Objects"/>
+
+<Route Url="/info" Method="GET" Call="getFormsList"/>
+<Route Url="/info/:form" Method="GET" Call="getFormInfo"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="getFormsList">
+<Description>
+Получение списка доступных форм в виде JSON массива </Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set forms = ##class(mvk.form.Info).getFormsList()
+	write forms.$toJSON()
+	return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getFormInfo">
+<Description>
+Получение мета-информации о форме form</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	write ##class(mvk.form.Info).getFormMetadata(form)
+	return $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>
