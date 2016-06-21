@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Field">
+<Description>
+Form field properties</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64090,75443.892382</TimeCreated>
+
+<Parameter name="DISPLAYNAME">
+<Description>
+Field display name</Description>
+<Type>%String</Type>
+</Parameter>
+</Class>
+</Export>

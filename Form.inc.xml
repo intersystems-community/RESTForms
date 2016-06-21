@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Routine name="Form" type="INC"><![CDATA[
+#define formGlobal ^form.forms
+#define catGlobal ^form.catalogs
+#define settingsGlobal ^form.settings
+#define formNameParam "FORMNAME"
+#define metadata "metadata"
+
+#define forAll(%in,%gn) s gn%in=$na(%gn) s %in="" f { s %in=$o(@gn%in@(%in)) q:%in=""
+#define forAllk(%in,%kn,%gn) s gn%in=$na(%gn) s %in="" f %kn=1:1 { s %in=$o(@gn%in@(%in)) q:%in=""
+#define endFor  }
+
+
+#define formatJSON 		"aeloqtwc"
+#define formatJSONSQL	"tw"
+#define formatDate		3
+#define formatTime		7
+
+#define toJSONClassMethod "toJSON"
+#define updateClassMethod "updateIdFromObject"
+
+#define fileClass "Form.AttachmentType"
+#define fileDir $g($$$settingsGlobal("fileDir"), ##class(%Library.File).GetDirectory())
+]]></Routine>
+</Export>

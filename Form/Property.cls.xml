@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Property">
+<Abstract>1</Abstract>
+<IncludeCode>Form</IncludeCode>
+<TimeCreated>64090,75759.538379</TimeCreated>
+
+<Method name="propertyToMetadata">
+<Description>
+Сгенерировать метаданные для поля формы</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>property:%Dictionary.PropertyDefinition</FormalSpec>
+<ReturnType>%Object</ReturnType>
+<Implementation><![CDATA[
+	set metadata = {}
+	set metadata.name = property.Name
+	set metadata.type = property.Type
+	set metadata.collection = property.Collection
+	set metadata.displayName = property.Parameters.GetAt("DISPLAYNAME")
+	set metadata.required = property.Required
+	set metadata.category = ..determineClassCategory(property.Type)
+	return metadata
+]]></Implementation>
+</Method>
+
+<Method name="determineClassCategory">
+<Description>
+Определить тип класса</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	return:$classmethod(className, "%Extends", "Form.RefBase") "catalog"
+	return:className=$$$fileClass "file"
+	return $$$getClassType(className)
+]]></Implementation>
+</Method>
+
+<Method name="addClassProperty">
+<Description>
+Добавить свойство класса
+className - класс
+name - имя свойства
+type - класс свойства
+collection - коллекция
+displayName - отобразжаемое имя
+required - обязательное свойство</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String="",name:%String,type:%String="%String",collection:%String(VALUELIST=",list,array")="",displayName:%String="",required:%Boolean=$$$NO</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	if (##class(%Dictionary.PropertyDefinition).IDKEYExists(className, name)) {
+		return $$$ERROR($$$GeneralError, "Property " _ name _ " already exists")
+	}
+	
+	set class = ##class(%Dictionary.ClassDefinition).%OpenId(className, ,.sc)
+	return:$$$ISERR(sc) sc
+	
+	set property = ##class(%Dictionary.PropertyDefinition).%New()
+	set property.Name = name
+	set property.Type = type
+	set property.Collection = collection
+	set property.Required = required
+	if (($get(displayName)'="") && ($$$comClassKeyGet(className,$$$cCLASSpropertyclass)["Form.Field")) {
+		set sc = property.Parameters.SetAt(displayName, "DISPLAYNAME")
+		return:$$$ISERR(sc) sc
+	}
+	
+	set sc = class.Properties.Insert(property)
+	return:$$$ISERR(sc) sc
+	
+	set sc = class.%Save()
+	return:$$$ISERR(sc) sc
+	
+	kill class	
+	return ..compileClass(className)
+]]></Implementation>
+</Method>
+
+<Method name="modifyClassProperty">
+<Description>
+Изменить свойство класса
+className - класс
+name - имя свойства
+type - класс свойства
+collection - коллекция
+displayName - отобразжаемое имя
+required - обязательное свойство</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String="",name:%String,type:%String="%String",collection:%String(VALUELIST=",list,array")="",displayName:%String="",required:%Boolean=$$$NO</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set property = ##class(%Dictionary.PropertyDefinition).IDKEYOpen(className, name, , sc)
+	return:$$$ISERR(sc) sc
+	
+	set property.Type = type
+	set property.Collection = collection
+	set property.Required = required
+	if (($get(displayName)'="") && ($$$comClassKeyGet(className,$$$cCLASSpropertyclass)="Form.Field")) {
+		set sc = property.Parameters.SetAt(displayName, "DISPLAYNAME")
+		return:$$$ISERR(sc) sc
+	}
+
+	set sc = property.%Save()
+	return:$$$ISERR(sc) sc
+	
+	kill property	
+	return ..compileClass(className)
+]]></Implementation>
+</Method>
+
+<Method name="deleteClassProperty">
+<Description>
+Удалить свойство класса
+className - класс
+name - имя свойства</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String="",name:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	if ('##class(%Dictionary.PropertyDefinition).IDKEYExists(className, name)) {
+		return $$$ERROR($$$GeneralError, "Property " _ name _ " does not exist")
+	}
+	
+	set sc = ##class(%Dictionary.PropertyDefinition).IDKEYDelete(className, name)
+	return:$$$ISERR(sc) sc
+	
+	return ..compileClass(className)
+]]></Implementation>
+</Method>
+
+<Method name="compileClass">
+<Description>
+Скомпилировать класс, вернуть статус.
+Не выводить ничего на устройство.</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[$system.OBJ.Compile(className, "cuks /checkuptodate=expandedonly /displaylog=0 /displayerror=0")
+]]></Implementation>
+</Method>
+
+<Method name="getPropertyDisplayName">
+<Description>
+Получить DISPLAYNAME свойства
+w ##class(Form.Property).getPropertyDisplayName("Form.TestForm", "Text")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String="",name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set displayName = $$$comMemberArrayGet(className, $$$cCLASSproperty, name, $$$cPROPparameter, "DISPLAYNAME")
+	set:displayName="" displayName = name
+	return displayName
+]]></Implementation>
+</Method>
+</Class>
+</Export>

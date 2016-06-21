@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Adaptor">
+<Description>
+Базовый класс-адаптер для форм</Description>
+<Abstract>1</Abstract>
+<CompileAfter>Form.Info</CompileAfter>
+<IncludeCode>Form</IncludeCode>
+<PropertyClass>Form.Field</PropertyClass>
+<TimeCreated>64090,75147.034342</TimeCreated>
+<DependsOn>Form.Info</DependsOn>
+
+<Parameter name="FORMNAME">
+<Description>
+Имя формы: латиница, менее 500 символов, в нижнем регистре </Description>
+<Type>%String</Type>
+</Parameter>
+
+<Parameter name="FORMDISPLAYNAME">
+<Description>
+Отображаемое имя формы</Description>
+<Type>%String</Type>
+</Parameter>
+
+<Method name="generateMetadata">
+<Description>
+Сгенерировать метаданные для формы</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>onFormCompile</GenerateAfter>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#define formGlobal  ^form.forms
+	#define formNameParam "FORMNAME"
+	#define metadata "metadata"
+	#define displayNameParam "FORMDISPLAYNAME"
+	#define propDisplayNameParam "DISPLAYNAME"
+
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	return:className="Form.Adaptor" sc
+
+	
+	set metadata = {}
+	set metadata.name = %parameter($$$formNameParam)
+	set metadata.class = className
+	set metadata.fields = []
+	
+	for i = 1:1:%compiledclass.Properties.Count() {
+		#dim property As %Dictionary.CompiledProperty
+		set property = %compiledclass.Properties.GetAt(i)
+		set propertyName = property.Name
+		CONTINUE:((propertyName="%%OID") || (propertyName="%Concurrency")) 
+		
+		/// В метаинформацию попадают только свойства у которых задан DISPLAYNAME
+		if (property.Parameters.GetAt($$$propDisplayNameParam)'="") {
+			set propertyMetaData = ##class(Form.Property).propertyToMetadata(property)
+			do metadata.fields.$push(propertyMetaData)
+		}
+	}
+	
+	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="toJSON">
+<Description>
+Выводит объект Id в формате JSON на текущее устройство
+Переопределите этот метод для конкретной формы, если есть какие-то особенности её обработки
+Возможно: заменить метод на генератор, который будет генерить код для формы
+Подразумевается, что форма хранимая</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%Integer=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set obj = ..%OpenId(id,,.sc)
+	return:$$$ISERR(sc) sc
+	return ##class(Form.REST.JSON).%ObjectToJSON(obj,,,$$$formatJSON)
+]]></Implementation>
+</Method>
+
+<Method name="updateIdFromObject">
+<Description>
+Открывает объект по Id и перезаписывает все его свойства 
+соответствующими значениями из object 
+После чего сохраняет объект</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%Integer="",object=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	return:'$isObject(object) $$$ERROR($$$GeneralError, "Pass an object as a second argument to updateIdFromObject from " _ $className())
+	set obj = ..%OpenId(id,,.sc)
+	return:$$$ISERR(sc) sc
+	set sc = obj.updateFromObject(object)
+	return:$$$ISERR(sc) sc
+	set sc = obj.%Save()
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="updateFromObject">
+<Description>
+Устанавливает все поля текущего объекта из переданного объекта
+Это может быть динамический объект или объект того же класса</Description>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec>object</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	for i = 1:1:%class.Properties.Count() {
+        set prop = %class.Properties.GetAt(i)
+        if prop.Internal || prop.Calculated || prop.ReadOnly || prop.Private || prop.Identity || prop.MultiDimensional continue
+        
+        // Вопросы:
+        // 1. Что с объектами - в принципе
+        // 2. Что со списками
+        // 3. Пустые поля - пропускать или что делать? 
+        // 4. Что с потоками
+        do %code.WriteLine(" set .." _ prop.Name _ " = object." _ prop.Name)
+    }
+    Do %code.WriteLine(" Quit $$$OK")
+]]></Implementation>
+</Method>
+
+<Method name="getObjectInfo">
+<Abstract>1</Abstract>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>id:%Integer</FormalSpec>
+<ReturnType>%Object</ReturnType>
+<Implementation><![CDATA[	Return {}
+]]></Implementation>
+</Method>
+
+<Method name="getObjectsInfo">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>list:%ListOfDataTypes</FormalSpec>
+<ReturnType>%Array</ReturnType>
+<Implementation><![CDATA[
+	set objectsList = []
+	for i=1:1:list.Count() {
+		set id = list.GetAt(i)
+		set item = ..getObjectInfo(id)
+		do objectsList.$push(item)
+	}
+	return objectsList
+]]></Implementation>
+</Method>
+</Class>
+</Export>

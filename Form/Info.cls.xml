@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Info">
+<Abstract>1</Abstract>
+<IncludeCode>Form</IncludeCode>
+<TimeCreated>64090,75344.051371</TimeCreated>
+
+<Method name="getFormsList">
+<Description>
+Получить список всех форм</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Array</ReturnType>
+<Implementation><![CDATA[
+	set forms = []
+	$$$forAll(form, $$$formGlobal)
+		do forms.$push(form)
+	$$$endFor
+	quit forms
+]]></Implementation>
+</Method>
+
+<Method name="formExists">
+<Description>
+Check that form with this classname exist</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	return:class="" $$$NO
+	return $select($data($$$formGlobal(class))#2=1:$$$YES, 1:$$$NO)
+]]></Implementation>
+</Method>
+
+<Method name="formExistsStatus">
+<Description>
+Check that form with this classname exist</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set formExists = ..formExists(class)
+	if 'formExists {
+		set sc = $$$ERROR($$$GeneralError, "Form " _ class _ " does not exist")
+	}
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="getFormMetadata">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[	return $$$formGlobal(class, $$$metadata)
+]]></Implementation>
+</Method>
+</Class>
+</Export>

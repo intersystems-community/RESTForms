@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.TestForm">
+<Super>%Persistent,Form.Adaptor,%Populate</Super>
+<TimeCreated>64090,75943.393938</TimeCreated>
+
+<Parameter name="FORMNAME">
+<Default>Тестовая форма</Default>
+</Parameter>
+
+<Property name="Text">
+<Type>%String</Type>
+<Parameter name="DISPLAYNAME" value="Текст"/>
+</Property>
+
+<Method name="recreate">
+<Description>
+do ##class(Form.TestForm).recreate()</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>count:%Integer=10,verbose:%Boolean=$$$NO</FormalSpec>
+<Implementation><![CDATA[
+	do ..%DeleteExtent()
+	do ..Populate(count, verbose)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Form.TestFormD</DataLocation>
+<DefaultData>TestFormDefaultData</DefaultData>
+<IdLocation>^Form.TestFormD</IdLocation>
+<IndexLocation>^Form.TestFormI</IndexLocation>
+<StreamLocation>^Form.TestFormS</StreamLocation>
+<Data name="TestFormDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Text</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>
