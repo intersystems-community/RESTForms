@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.File">
+<Super>%Persistent</Super>
+<TimeCreated>64090,76829.939948</TimeCreated>
+
+<Property name="name">
+<Description>
+Наименование вложения (полный путь)</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+<Parameter name="MINLEN" value="1"/>
+</Property>
+
+<Property name="description">
+<Description>
+Описание вложения</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="500"/>
+</Property>
+
+<Property name="attachmentHASH">
+<Description>
+SHA Хэш вложения в Base64</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="stream">
+<Description>
+Вложение</Description>
+<Type>%FileBinaryStream</Type>
+</Property>
+
+<Method name="%OnNew">
+<Description><![CDATA[
+This callback method is invoked by the <METHOD>%New</METHOD> method to 
+provide notification that a new instance of an object is being created.
+
+<P>If this method returns an error then the object will not be created.
+<p>It is passed the arguments provided in the %New call.
+When customizing this method, override the arguments with whatever variables and types you expect to receive from %New().
+For example, if you're going to call %New, passing 2 arguments, %OnNew's signature could be:
+<p>Method %OnNew(dob as %Date = "", name as %Name = "") as %Status
+If instead of returning a %Status code this returns an oref and this oref is a subclass of the current
+class then this oref will be the one returned to the caller of %New method.]]></Description>
+<FormalSpec>name:%String="",description:%String="",stream:%Stream.Object=##class(%FileBinaryStream).%New()</FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<ServerOnly>1</ServerOnly>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set ..name = ##class(%File).GetFilename(name)
+	set ..description = description
+	set ..stream.Filename = name
+	set ..attachmentHASH = $system.Encryption.Base64Encode($zcvt($system.Encryption.SHAHashStream(512, ..stream, .sc),"O","UTF8"), 1)  
+	return:$$$ISERR(sc) sc
+	set sc = ..stream.CopyFromAndSave(stream)
+	quit sc
+]]></Implementation>
+</Method>
+
+<Method name="serve">
+<Description>
+Возвращает файл в web контексте</Description>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+    #dim %response As %CSP.Response
+	kill %request.Data
+	set %request.Data("STREAMOID",1)= ##class(%CSP.StreamServer).Encrypt(..stream.%Oid())
+	if ##class(%CSP.StreamServer).OnPreHTTP() {
+		set %response.Headers("Content-Disposition")="attachment; filename*=UTF-8''"_##class(%CSP.Page).EscapeURL(..name,"UTF8")
+		set st = ##class(%CSP.StreamServer).OnPage()
+	}
+
+	quit sc
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Form.FileD</DataLocation>
+<DefaultData>FileDefaultData</DefaultData>
+<IdLocation>^Form.FileD</IdLocation>
+<IndexLocation>^Form.FileI</IndexLocation>
+<StreamLocation>^Form.FileS</StreamLocation>
+<Data name="FileDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>name</Value>
+</Value>
+<Value name="3">
+<Value>description</Value>
+</Value>
+<Value name="4">
+<Value>attachmentGUID</Value>
+</Value>
+<Value name="5">
+<Value>attachmentHASH</Value>
+</Value>
+<Value name="6">
+<Value>stream</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>
