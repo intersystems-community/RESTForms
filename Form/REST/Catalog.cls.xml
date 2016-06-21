@@ -20,7 +20,8 @@
 <ClassMethod>1</ClassMethod>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set sc = ##class(%ZEN.Auxiliary.altJSONSQLProvider).WriteJSONFromSQL(##class(Form.Ref).#GETCHILDRENSQL)
+	set list = ##class(Form.Ref).GetRefChildren()
+	write list.$toJSON()
 	return sc
 ]]></Implementation>
 </Method>
@@ -40,7 +41,7 @@
 	return:'isCatalog $$$ERROR($$$GeneralError, "Class " _ class _ " is not a catalog")
 	set table = $$$ClassSQLTable(class)
 	set sql = "SELECT * FROM " _ table
-	set sc = ##class(%ZEN.Auxiliary.altJSONSQLProvider).WriteJSONFromSQL(sql)
+	set sc = ##class(%ZEN.Auxiliary.altJSONSQLProvider).%WriteJSONFromSQL(,sql, $$$formatJSONSQL, $$$MaxCacheInt, $$$YES)
 	return sc
 ]]></Implementation>
 </Method>

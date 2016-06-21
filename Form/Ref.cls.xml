@@ -6,10 +6,28 @@ Base catalog class</Description>
 <Abstract>1</Abstract>
 <TimeCreated>64090,77689.333601</TimeCreated>
 
-<Parameter name="GETCHILDRENSQL">
-<Description>
-Параметр с SQL запросом, возвращающим список всех классов наследующихся от этого (Form.Ref)</Description>
-<Default>SELECT Id FROM %Dictionary.ClassDefinition Where Super [ 'Form.Refe'</Default>
-</Parameter>
+<Method name="GetRefChildren">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%AbstractList</ReturnType>
+<Implementation><![CDATA[
+	set class = $classname()
+	&sql(	DECLARE C1 CURSOR FOR
+			SELECT Id INTO :Id
+			FROM %Dictionary.ClassDefinition 
+			WHERE Super [ :class
+	 )
+
+	 &sql(OPEN C1)
+	 &sql(FETCH C1)
+	 
+	 #dim list As %Array = []
+	 while (SQLCODE = 0) {
+		 do list.$push(Id)   
+		 &sql(FETCH C1)
+	 }
+	 &sql(CLOSE C1)
+	 return list
+]]></Implementation>
+</Method>
 </Class>
 </Export>

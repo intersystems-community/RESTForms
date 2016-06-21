@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.TestRef">
+<Description>
+Test catalog class</Description>
+<Super>%Persistent,Form.Ref,%Populate</Super>
+<TimeCreated>64090,77849.473192</TimeCreated>
+
+<Property name="Value">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Form.TestRefD</DataLocation>
+<DefaultData>TestRefDefaultData</DefaultData>
+<IdLocation>^Form.TestRefD</IdLocation>
+<IndexLocation>^Form.TestRefI</IndexLocation>
+<StreamLocation>^Form.TestRefS</StreamLocation>
+<ExtentSize>10</ExtentSize>
+<Data name="TestRefDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Value</Value>
+</Value>
+</Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>1.1</AverageFieldSize>
+</Property>
+<Property name="Value">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>4.8</AverageFieldSize>
+</Property>
+<SQLMap name="IDKEY">
+<BlockCount>-4</BlockCount>
+</SQLMap>
+</Storage>
+</Class>
+</Export>
