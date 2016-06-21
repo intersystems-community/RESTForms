@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Main">
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64090,76630.913942</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Map Prefix="/form" Forward="Form.REST.Form"/>
+<Map Prefix="/catalog" Forward="Form.REST.Catalog"/>
+
+<Route Url="/logout" Method="GET" Call="logout"/>
+<Route Url="/test" Method="GET" Call="test"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="logout">
+<Description>
+Выход из системы</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim %session As %CSP.Session
+    set st = %session.Logout(1)
+    set %session.EndSession = 1
+    return st
+]]></Implementation>
+</Method>
+
+<Method name="test">
+<Description>
+Тестовый метод</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    write "{""Status"": ""OK""}"
+    return $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

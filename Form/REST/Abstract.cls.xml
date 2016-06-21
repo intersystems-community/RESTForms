@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Abstract">
+<Description>
+Абстрактный класс, реализующий техническую обработку входящего запроса.</Description>
+<IncludeCode>%occErrors,%ZEN.Utils,Form</IncludeCode>
+<Super>%CSP.REST</Super>
+<TimeCreated>64090,76470.397537</TimeCreated>
+
+<Parameter name="UseSession">
+<Type>Integer</Type>
+<Default>1</Default>
+</Parameter>
+
+<Method name="outputStatus">
+<Description>
+This method takes a status, renders it as jason (if requested) and outputs the result</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pSC:%Status</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+    #dim tSC As %Status = $$$OK
+    #dim e As %Exception.AbstractException
+    
+    Try {
+        
+        #dim tJSON As %ZEN.proxyObject
+    
+        If ..AcceptsContentType("application/json") {
+        
+            Set %response.ContentType = ..#CONTENTTYPEJSON
+        
+            #; Convert the exception to a status and render to JSON
+            Set tSC = ..StatusToProxyObject(pSC, .tJSON)
+            Set tJSON.stack = ..getDebugInfo()
+            If $$$ISERR(tSC) Quit
+
+            #; Write the JSON to the output device
+            Set tSC = tJSON.%ToJSON(, "aeloqutwc")
+            If $$$ISERR(tSC) Quit
+            
+        } else {
+            
+            #; Set plain text
+            Set %response.ContentType = ..#CONTENTTYPETEXT
+            
+            #; Write out a simple text message
+            Do ##class(%Exception.StatusException).CreateFromStatus(pSC).OutputToDevice()
+        }
+        
+    } Catch (e) {
+        
+        #; Oops
+        Set tSC = e.AsStatus()
+    }
+    Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="getDebugInfo">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	set obj = ##class(%ZEN.proxyObject).%New()
+	set obj.stack = ..getStackInfo()
+	set obj.objlasterror = $system.Status.GetErrorText($get(%objlasterror))
+	set obj.request = %request
+	set obj.responce = %response
+	set obj.session = %session 
+	set obj.user = $username 
+	
+	return obj
+]]></Implementation>
+</Method>
+
+<Method name="getStackInfo">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%ListOfDataTypes</ReturnType>
+<Implementation><![CDATA[
+
+	set ex = ##class(%Exception.SystemException).%New()
+	do ex.StackAsArray(.stack)
+	set list = ##class(%ListOfObjects).%New()
+	for i=1:1:stack {
+		set obj = ##class(%ZEN.proxyObject).%New()
+		set obj.line = stack(i,"PLACE")
+		set obj.call =  stack(i)
+		set obj.part = $piece($piece(stack(i,"PLACE"), "^", *), " ", 1)
+		do list.Insert(obj)
+	}
+	
+	return list
+]]></Implementation>
+</Method>
+
+<Method name="OnPreDispatch">
+<Description>
+This method Gets called prior to dispatch of the request. Put any common code here
+that you want to be executed for EVERY request. If pContinue is set to 0, the
+request will NOT be dispatched according to the UrlMap. If this case it's the
+responsibility of the user to return a response.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pUrl:%String,pMethod:%String,&pContinue:%Boolean]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[    Quit ..convertRequestBody()
+]]></Implementation>
+</Method>
+
+<Method name="convertRequestBody">
+<Description>
+Конвертируем %request.Content в UTF8 и в объект класса %ZEN.proxyObject</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim %request As %CSP.Request
+	#dim obj As %ZEN.proxyObject
+	
+	return:'$isObject(%request.Content) $$$OK // нет тела запроса
+	return:'$$$classIsStream($className(%request.Content)) $$$OK // уже сконвертировали
+	// Конвертируем объект в UTF8 %ZEN.proxyObject
+	set content = %request.Content.Read($$$MaxStringLength)
+	set content = $ZCVT(content,"I","UTF8") 
+	//k %objlasterror
+	set sс = ##class(mvk.rest.JSON).%ConvertJSONToObject(content,,.obj,1)
+	//zw obj
+	//w $System.Status.GetErrorText(%objlasterror)
+	return:$$$ISERR(sс) sс
+	return:'$isObject(obj) $$$ERROR($$$ArgumentIsNotAnObject,"Body")
+	
+	set %request.Content = obj // obj это валидный UTF8 %ZEN.proxyObject
+	return $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

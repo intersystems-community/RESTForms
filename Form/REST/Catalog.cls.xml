@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Catalog">
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64090,77497.138197</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Route Url="/info" Method="GET" Call="getCatalogs"/>
+<Route Url="/members/:class" Method="GET" Call="getCatalogMembers"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="getCatalogs">
+<Description>
+Получить список каталогов</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(%ZEN.Auxiliary.altJSONSQLProvider).WriteJSONFromSQL(##class(Form.Ref).#GETCHILDRENSQL)
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="getCatalogMembers">
+<Description>
+Вывести все записи каталога class</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#define ClassSQLTable(%c)    ($$$comClassKeyGet(%c,$$$cCLASSsqlschemaname)_"."_$$$comClassKeyGet(%c,$$$cCLASSsqltablename))
+	#dim sc As %Status = $$$OK
+	set sc = ##class(%Dictionary.CacheClassname).IsValid(class)
+	return:$$$ISERR(sc) sc
+	set isCatalog = $classmethod(class, "%Extends", "Form.Ref")
+	return:'isCatalog $$$ERROR($$$GeneralError, "Class " _ class _ " is not a catalog")
+	set table = $$$ClassSQLTable(class)
+	set sql = "SELECT * FROM " _ table
+	set sc = ##class(%ZEN.Auxiliary.altJSONSQLProvider).WriteJSONFromSQL(sql)
+	return sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>
