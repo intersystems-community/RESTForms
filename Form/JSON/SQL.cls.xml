@@ -7,13 +7,23 @@
 
 <Method name="WriteJSONFromSQL">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>sql:%String</FormalSpec>
+<FormalSpec>sql:%String,conditionClass=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
 	set provider = ..%New()
 	set provider.maxRows = $$$MaxCacheInt
 	set provider.%Format = $$$formatJSONSQL
+	
+	if ((##class(%Dictionary.CompiledClass).IDKEYExists(conditionClass)) && ($isobject($g(%request)))) {
+		set sc = ..ParceWhere(%request.Get("filter"), conditionClass, .where)
+		set sc = $$$ADDSC(sc, ..ParceOrderBy(%request.Get("orderby"), conditionClass, .orderBy))
+		set sql = sql _ where _ orderBy
+	} ElseIf (conditionClass'="") {
+		set sc = $$$ERROR($$$GeneralError, "Condition class " _ conditionClass _ " does not exist")
+	}
+	return:$$$ISERR(sc) sc 
+	
 	set provider.sql = sql
 	if $isobject($g(%request)) {
 		set provider.pageSize = %request.Get("size", 25)
@@ -22,6 +32,98 @@
 	
 	set sc = provider.%DrawJSON()
 	return sc
+]]></Implementation>
+</Method>
+
+<Method name="ParceWhere">
+<Description>
+Parce where condition:
+w ##class(Form.JSON.SQL).ParceWhere("(Text eq Admin Text neq 1)", "Form.TestForm", .out)
+result: out=" WHERE Text='Admin' AND Text='1'"</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>input,conditionClass,*condition</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	kill condition
+	set condition = ""
+	set input = $e(input,2,*-1)
+	return:input="" sc
+	
+	set condList = $LFS(input," ")
+	set listLength= $LL(condList)
+	
+	if listLength#3'=0 {
+		return $$$ERROR($$$GeneralError, "Incorrect number of filter  arguments")
+	}
+	
+	set condition = " WHERE "
+	
+	for i=1:3:listLength {
+		set:i'=1 condition = condition _ " AND "
+		set column = $lg(condList,i)
+		set predicate = $lg(condList,i+1)
+		set value = $TR($lg(condList,i+2),$c(9)," ") // replaces <TAB> in filter values eith whitespaces 
+		set value = $TR(value,"'"";")
+		
+		if '##class(%Dictionary.CompiledProperty).IDKEYExists(conditionClass, column) {
+			return $$$ERROR($$$GeneralError,"Filter column '" _column _ "' does not exist")
+		}
+		
+		set sqlpredicate = ..TranslatePredicate(predicate)
+		if sqlpredicate="" {
+			return $$$ERROR($$$GeneralError,"Incorrect filter predicate")
+		}
+		#define sq(%str) "'" _ %str _ "'"
+		set condition = condition _ column _ sqlpredicate _$$$sq(value)
+	}
+	return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="TranslatePredicate">
+<Description>
+Translate predicate from js into sql</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>predicate=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	q:predicate="" ""
+	q:predicate="neq" "!="
+	q:predicate="eq" "="
+	q:predicate="gte" ">="
+	q:predicate="gt" ">"
+	q:predicate="lte" "<="
+	q:predicate="lt" "<"
+	q:predicate="startswith" "%STARTSWITH"
+	q:predicate="contains" "["
+	q:predicate="doesnotcontain" "'["
+	q ""
+]]></Implementation>
+</Method>
+
+<Method name="ParceOrderBy">
+<Description>
+w ##class(Form.JSON.SQL).ParceOrderBy("Value desc", "Form.TestRef")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>input,class,*condition</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	kill condition
+	set condition = ""
+	return:input="" $$$OK
+	set descPos = $f(input," desc")
+	if descPos'=0 {
+		set column = $e(input,1,descPos-6) // 6 = $l("+desc")+1
+	} else {
+		set column=input
+	}
+	    
+	if '##class(%Dictionary.CompiledProperty).IDKEYExists(class, column) {
+		return $$$ERROR($$$GeneralError,"Sorting column '" _ column _ "' does not exist")
+	}
+	set condition = " ORDER BY " _ column _ $s(descPos'=0:" DESC",1:"")
+	return $$$OK
 ]]></Implementation>
 </Method>
 

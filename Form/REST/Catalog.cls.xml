@@ -41,7 +41,7 @@
 	return:'isCatalog $$$ERROR($$$GeneralError, "Class " _ class _ " is not a catalog")
 	set table = $$$ClassSQLTable(class)
 	set sql = "SELECT * FROM " _ table
-	set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql)
+	set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql, class)
 	return sc
 ]]></Implementation>
 </Method>
