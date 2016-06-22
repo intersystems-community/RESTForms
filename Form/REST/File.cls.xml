@@ -18,7 +18,7 @@
 
 <Method name="addFiles">
 <Description>
-Добавить к объекту id формы form, к его свойству field (класса mvk.model.AttachmentType) загружаемые файлы. 
+Добавить к объекту id формы form, к его свойству field (класса Form.Fole) загружаемые файлы. 
 Если свойство не list то добавляется только первый файл </Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>form:%String="",id:%Integer="",field:%String=""</FormalSpec>
@@ -73,8 +73,8 @@
 
 <Method name="deleteFiles">
 <Description>
-Очистить свойство field (класса mvk.model.AttachmentType) у объекта id формы form
-do ##class(Form.REST.File).deleteFiles("Form.TEstForm", 1, "file")</Description>
+Очистить свойство field у объекта id формы form
+do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>form:%String="",id:%Integer="",field:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -182,7 +182,7 @@ do ##class(Form.REST.File).deleteFiles("Form.TEstForm", 1, "file")</Description>
 		set propertyOREF = $property(obj, field)
 		set realFilename = $property(propertyOREF, "name")
 		if (realFilename = filename) {
-			#dim file As mvk.model.AttachmentType
+			#dim file As Form.File
 			set file = $property(obj, field)
 			set sc = file.serve()
 		}  else {

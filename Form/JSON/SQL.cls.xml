@@ -185,21 +185,21 @@ Draw JSON output.</Description>
  		Set aet = ##class(%AbstractObject).$fromJSON("{"""_..arrayName_""":[]}")
  		Set arrayNode = aet.$get(..arrayName)
  	
- 		// MVK - пагинация
+ 		// FORMS - пагинация
 		Set tStartRow = ..pageSize * (..currPage - 1)
 		Set tEndRow = tStartRow + ..pageSize
-		// END - MVK - пагинация
+		// END - FORMS - пагинация
 
 		// fetch and emit JSON
 		// n.b. this should be pushed into the result set itself
 		Set tRow = 0
-		While (tRS.%Next(.tSC) && ((..maxRows = 0) || (tRow < ..maxRows)) && (tRow < tEndRow)) { // Последнее условие - MVK - пагинация
+		While (tRS.%Next(.tSC) && ((..maxRows = 0) || (tRow < ..maxRows)) && (tRow < tEndRow)) { // Последнее условие - FORMS - пагинация
 			Quit:$$$ISERR(tSC)
 			Set tRow = tRow + 1
 			
-			// MVK - пагинация
+			// FORMS - пагинация
 			CONTINUE:(tRow<=tStartRow)
-			// END - MVK - пагинация
+			// END - FORMS - пагинация
 			
 			Set node = ##class(%Object).$new()
 			For c = 1:1:tCols {
@@ -214,10 +214,10 @@ Draw JSON output.</Description>
 			Do arrayNode.$push(node)
 		}
 		
-		// MVK - количество результатов
+		// FORMS - количество результатов
 		While tRS.%Next() {}
 		Set aet.total=tRS.%ROWCOUNT
-		// END - MVK - количество результатов
+		// END - FORMS - количество результатов
 				
 		Write aet.$toJSON()
 	}
