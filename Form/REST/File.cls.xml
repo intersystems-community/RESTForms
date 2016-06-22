@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.File">
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64091,74902.525566</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Route Url="/:form/:id/:field" Method="POST" Call="addFiles"/>
+<Route Url="/:form/:id/:field" Method="DELETE" Call="deleteFiles"/>
+<Route Url="/:form/:id/:field/:filename" Method="DELETE" Call="deleteFile"/>
+<Route Url="/:form/:id/:field/:filename" Method="GET" Call="serveFile"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="addFiles">
+<Description>
+Добавить к объекту id формы form, к его свойству field (класса mvk.model.AttachmentType) загружаемые файлы. 
+Если свойство не list то добавляется только первый файл </Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String="",id:%Integer="",field:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(form)
+	return:$$$ISERR(sc) sc
+	
+	set obj = $classMethod(form, "%OpenId", id, , .sc)
+	return:$$$ISERR(sc) sc
+	
+	set propertyType = $$$comMemberKeyGet(form, $$$cCLASSproperty, field, $$$cPROPtype)
+	
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+
+	set propertyCollectionType = $$$comMemberKeyGet(form ,$$$cCLASSproperty, field, $$$cPROPcollection)
+	
+	
+	#dim stream As %CSP.BinaryStream
+	set filename = ""
+	if propertyCollectionType = "" {
+		set filename = %request.NextMimeData(filename)
+		quit:filename=""
+		set stream = %request.GetMimeData(filename) // Проверить на больших файлах/делит ли ангулар
+		set attachment = ##class(Form.File).%New(stream.FileName, filename, stream)
+		set $property(obj, field) = attachment  
+	} else {
+		set propertyOREF = $property(obj, field)
+		for {
+	        set filename = %request.NextMimeData(filename)
+	        quit:filename=""
+	        
+	        set stream = %request.GetMimeData(filename) // Проверить на больших файлах/делит ли ангулар
+	        set fullFilename = ..getFullFilename(form, id, field, stream.FileName)
+	        set attachment = ##class(Form.File).%New(fullFilename, filename, stream)
+	        if propertyCollectionType="list" {
+		        // propertyOREF тут %Collection.ListOfObj
+	        	do $method(propertyOREF, "Insert", attachment)
+	        } else {
+		        /// Тут если массивы. 
+		        /// Как получить следующий индекс
+		        /// Так как у нас пока нет, то не пишу		        
+	        }
+	    }
+	}
+	set sc = obj.%Save()
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="deleteFiles">
+<Description>
+Очистить свойство field (класса mvk.model.AttachmentType) у объекта id формы form
+do ##class(Form.REST.File).deleteFiles("Form.TEstForm", 1, "file")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String="",id:%Integer="",field:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(form)
+	return:$$$ISERR(sc) sc
+	
+	set obj = $classMethod(form, "%OpenId", id, , .sc)
+	return:$$$ISERR(sc) sc
+	
+	set propertyType = $$$comMemberKeyGet(form, $$$cCLASSproperty, field, $$$cPROPtype)
+	
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	
+	set $property(obj, field) = ""
+	set sc = obj.%Save()
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="deleteFile">
+<Description>
+Удалить запись с name=filename из свойства field у объекта id формы form </Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String="",id:%Integer="",field:%String="",filename=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(form)
+	return:$$$ISERR(sc) sc
+	
+	set obj = $classMethod(form, "%OpenId", id, , .sc)
+	return:$$$ISERR(sc) sc
+	
+	set propertyType = $$$comMemberKeyGet(form, $$$cCLASSproperty, field, $$$cPROPtype)
+	
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	
+	set propertyCollectionType = $$$comMemberKeyGet(form ,$$$cCLASSproperty, field, $$$cPROPcollection)
+	
+	
+	#dim stream As %CSP.BinaryStream
+	if propertyCollectionType = "" {
+		set propertyOREF = $property(obj, field)
+		set realFilename = propertyOREF.name
+		if (realFilename = filename) {
+			set fullFilename = ..getFullFilename(form, id, field, filename, $$$NO)
+			do ##class(%File).Delete(fullFilename)
+			set $property(obj, field) = ""
+		}  else {
+			set sc = $$$ERROR($$$GeneralError, filename _ " is incorrect, right one is " _ realFilename)
+		}
+	} else {
+		#dim propertyOREF As %Collection.ListOfObj
+		set propertyOREF = $property(obj, field)
+		for i=1:1:propertyOREF.Count() {
+			set file = propertyOREF.GetAt(i)
+			set realFilename = file.name
+			if (realFilename=filename) {
+				set fullFilename = ..getFullFilename(form, id, field, filename, $$$NO)
+				do ##class(%File).Delete(fullFilename)
+				do propertyOREF.RemoveAt(i)
+				/// Удаляем только первый файл
+				/// TODO: уникальные имена файлов
+				quit
+			}
+		}
+	}
+	
+	return:$$$ISERR(sc) sc
+	set sc = obj.%Save()
+	
+	
+		
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="serveFile">
+<Description>
+Отдаёт пользователю файл с name=filename из свойства field (класса Form.File) у объекта id формы form </Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String="",id:%Integer="",field:%String="",filename=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(form)
+	return:$$$ISERR(sc) sc
+	
+	set form = ##class(Form.Info).getFormClass(form)
+	set obj = $classMethod(form, "%OpenId", id, , .sc)
+	return:$$$ISERR(sc) sc
+	
+	set propertyType = $$$comMemberKeyGet(form, $$$cCLASSproperty, field, $$$cPROPtype)
+	
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	
+	set propertyCollectionType = $$$comMemberKeyGet(form ,$$$cCLASSproperty, field, $$$cPROPcollection)
+	
+	
+	#dim stream As %CSP.BinaryStream
+	if propertyCollectionType = "" {
+		set propertyOREF = $property(obj, field)
+		set realFilename = $property(propertyOREF, "name")
+		if (realFilename = filename) {
+			#dim file As mvk.model.AttachmentType
+			set file = $property(obj, field)
+			set sc = file.serve()
+		}  else {
+			set sc = $$$ERROR($$$GeneralError, filename _ " is incorrect, right one is " _ realFilename)
+		}
+	} else {
+		#dim propertyOREF As %Collection.ListOfObj
+		set propertyOREF = $property(obj, field)
+		for i=1:1:propertyOREF.Count() {
+			set file = propertyOREF.GetAt(i)
+			set realFilename = file.name
+			if (realFilename=filename) {
+				set sc = file.serve()
+				quit
+			}
+		}
+	}
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="getFullFilename">
+<Description><![CDATA[
+Получить полное имя (+ путь) файла. 
+Если файл уже существует, и new = 1, добавляет _<int> к имени]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String,id:%String,field:%String,filename:%String,new:%Boolean=$$$YES</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set directory = ..getFileDir(form, id, field)
+	set fullFilename = directory _ filename
+	if ((##class(%File).Exists(fullFilename)) && (new)) {
+		do ..filenameToNameExt(filename, .name, .ext)
+		
+		while ##class(%File).Exists(fullFilename) {
+			// Генерируем новое имя файла name.ext -> name_1.ext -> name_2.ext
+			set fullFilename = directory _ name _ "_" _ $increment(i) _ $select(ext'="":"." _ ext, 1:"")
+		}
+	}
+	quit fullFilename
+]]></Implementation>
+</Method>
+
+<Method name="getFileDir">
+<Description>
+Получить путь к папке для вложений поля field, объекта id, класса form</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>form:%String,id:%String,field:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set directory = ##class(%File).NormalizeDirectory($$$fileDir)
+	set directory = ##class(%File).NormalizeDirectory(directory _ form)
+	set directory = ##class(%File).NormalizeDirectory(directory _ id)
+	set directory = ##class(%File).NormalizeDirectory(directory _ field)
+	if '##class(%File).DirectoryExists(directory) {
+		do ##class(%File).CreateDirectoryChain(directory)
+	}
+	quit directory
+]]></Implementation>
+</Method>
+
+<Method name="filenameToNameExt">
+<Description>
+Получить расширение ext и имя файла (без расширения) name по имени файла filename</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>filename:%String,*name:%String,*ext:%String</FormalSpec>
+<Implementation><![CDATA[
+	set ext = "", name = ""
+	if $length(filename, ".") > 1 {
+		set name = $piece(filename, ".", 1, *-1)
+		set ext = $piece(filename, ".", *)
+	} else {
+		set name = filename
+		set ext = ""
+	}
+]]></Implementation>
+</Method>
+</Class>
+</Export>
