@@ -1,7 +1,12 @@
 # Forms
 Forms adapter for InterSystems Cache
 
+# Installation
+
+Import classes and create web app with `Form.REST.Main` broker.
+
 # Requests
+
 
 | URL                         | Type   | Description                            |
 |-----------------------------|--------|----------------------------------------|
@@ -22,11 +27,11 @@ Forms adapter for InterSystems Cache
 
 For POST/PUT requests see method descriptions for request body samples
 
-#SQL requests
+# SQL requests
 
 `GET http://localhost:57772/forms/catalog/members/Form.TestRef?size=2&page=1&orderby=Value+desc&filter=(Value+contains+W)`
 
-Url arguments:
+## URL arguments:
 
 | Argument | Sample Value       | Description     |
 |----------|--------------------|-----------------|
@@ -34,4 +39,29 @@ Url arguments:
 | page     | 1                  | page number     |
 | filter   | (Value+contains+W) | WHERE clause    |
 | orderby  | Value+desc         | ORDER BY clause |
+
+## ORDER BY clause
+
+Value can be: `Column` or `Column+desc`
+
+## WHERE clause 
+
+In a format: `(Column+condition+Value)`. 
+
+Several conditions are possible: `(Column+condition+Value+Column2+condition2+Value2)`.
+
+Conditions:
+
+| URL            | SQL         |
+|----------------|-------------|
+| neq            | !=          |
+| eq             | =           |
+| gte            | >=          |
+| gt             | >           |
+| lte            | <=          |
+| lt             | <           |
+| startswith     | %STARTSWITH |
+| contains       | [           |
+| doesnotcontain | [           |
+
 
