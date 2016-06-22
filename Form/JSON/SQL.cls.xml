@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.JSON.SQL">
+<IncludeCode>Form</IncludeCode>
+<Super>%ZEN.Auxiliary.altJSONSQLProvider</Super>
+<TimeCreated>64091,68899.667254</TimeCreated>
+
+<Method name="WriteJSONFromSQL">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>sql:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set provider = ..%New()
+	set provider.maxRows = $$$MaxCacheInt
+	set provider.%Format = $$$formatJSONSQL
+	set provider.sql = sql
+	if $isobject($g(%request)) {
+		set provider.pageSize = %request.Get("size", 25)
+		set provider.currPage = %request.Get("page", 1)
+	}
+	
+	set sc = provider.%DrawJSON()
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="%DrawJSON">
+<Description>
+Draw JSON output.</Description>
+<Internal>1</Internal>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set ..contentType = "array"
+	// override base method to get information from SQL statement
+	Set tSC = $$$OK
+	Try {
+		#; convert parameters to local array
+		Set key = ..parameters.Next("")
+		While (key'="") {
+			Set value = ..parameters.GetAt(key).value
+			Set tParms(key) = $$$ZENVAL(value)
+			Set key = ..parameters.Next(key)
+		}
+		Set tOrigSQL = ..sql
+		Set tSQL = ..sql
+
+		If (..OnGetSQL '= "") {
+			Set tSC = ..%OnGetSQL(.tParms,.tSQL)
+			If $$$ISERR(tSC) {
+				Write "null"
+				Quit
+			}
+			Set ..sql = tSQL
+		}
+
+		Set tInfo = ##class(%ZEN.Auxiliary.QueryInfo).%New()
+		Merge tInfo.parms=tParms
+		
+		#Dim tRS As %Library.ResultSet
+		Set tRS = ..%CreateResultSet(.tSC,tInfo)
+		If $$$ISERR(tSC)||'$IsObject(tRS) {
+			Write "null"
+			Quit
+		}
+
+		// find number and name of columns
+		Kill tColInfo
+		If tRS.%IsA("%Library.ResultSet") {
+			Set tCols = tRS.GetColumnCount()
+			For c = 1:1:tCols { 
+				Set tColInfo(c,"name") = tRS.GetColumnHeader(c)
+			}
+		}
+		Else {
+			Set tCols = tRS.%ResultColumnCount
+			For c = 1:1:tCols {
+				Set tColInfo(c,"name") = tRS.%Metadata.columns.GetAt(c).label
+			}
+		}
+		Set ..sql = tOrigSQL
+
+ 		Set aet = ##class(%AbstractObject).$fromJSON("{"""_..arrayName_""":[]}")
+ 		Set arrayNode = aet.$get(..arrayName)
+ 	
+ 		// MVK - пагинация
+		Set tStartRow = ..pageSize * (..currPage - 1)
+		Set tEndRow = tStartRow + ..pageSize
+		// END - MVK - пагинация
+
+		// fetch and emit JSON
+		// n.b. this should be pushed into the result set itself
+		Set tRow = 0
+		While (tRS.%Next(.tSC) && ((..maxRows = 0) || (tRow < ..maxRows)) && (tRow < tEndRow)) { // Последнее условие - MVK - пагинация
+			Quit:$$$ISERR(tSC)
+			Set tRow = tRow + 1
+			
+			// MVK - пагинация
+			CONTINUE:(tRow<=tStartRow)
+			// END - MVK - пагинация
+			
+			Set node = ##class(%Object).$new()
+			For c = 1:1:tCols {
+				Set tVal = tRS.%GetData(c)
+				If ($IsValidNum(tVal)) {
+					Do node.$set($Get(tColInfo(c,"name")),$Num(tVal),"number")
+				}
+				Else {
+					Do node.$set($Get(tColInfo(c,"name")),tVal)
+				}
+			}
+			Do arrayNode.$push(node)
+		}
+		
+		// MVK - количество результатов
+		While tRS.%Next() {}
+		Set aet.total=tRS.%ROWCOUNT
+		// END - MVK - количество результатов
+				
+		Write aet.$toJSON()
+	}
+	Catch(ex) {
+		Write "null"
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+</Export>
