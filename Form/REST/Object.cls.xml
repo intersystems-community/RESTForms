@@ -11,7 +11,6 @@
 <Data><![CDATA[
 <Routes>
 <Route Url="/:form/:id" Method="GET" Call="getFormObject"/>
-<Route Url="/:form/:id/history" Method="GET" Call="getFormObjectHistory"/>
 <Route Url="/:form" Method="POST" Call="createFormObject"/>
 <Route Url="/:form/:id" Method="PUT" Call="updateFormDynamicObject"/>
 <Route Url="/:form" Method="PUT" Call="updateFormClassObject"/>
