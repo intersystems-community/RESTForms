@@ -66,6 +66,6 @@ Conditions:
 | lt             | <           |
 | startswith     | %STARTSWITH |
 | contains       | [           |
-| doesnotcontain | [           |
+| doesnotcontain | '[           |
 
 
