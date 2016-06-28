@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.REST.Objects">
+<Description>
+Брокер работы с индивидуальными объектами</Description>
+<Super>Form.REST.Abstract</Super>
+<TimeCreated>64090,79332.572705</TimeCreated>
+
+<XData name="UrlMap">
+<XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
+<Data><![CDATA[
+<Routes>
+<Route Url="/:form/query" Method="GET" Call="getFormObjects"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="getFormObjects">
+<Description>
+Вывести все записи формы class</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#define ClassSQLTable(%c)    ($$$comClassKeyGet(%c,$$$cCLASSsqlschemaname)_"."_$$$comClassKeyGet(%c,$$$cCLASSsqltablename))
+	#dim sc As %Status = $$$OK
+	set sc = ##class(%Dictionary.CacheClassname).IsValid(class)
+	return:$$$ISERR(sc) sc
+	set isCatalog = $classmethod(class, "%Extends", "Form.Adaptor")
+	return:'isCatalog $$$ERROR($$$GeneralError, "Class " _ class _ " is not a form")
+	set table = $$$ClassSQLTable(class)
+	set sql = "SELECT * FROM " _ table
+	set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql, class)
+	return sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>
