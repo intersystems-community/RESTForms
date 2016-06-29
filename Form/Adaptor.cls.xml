@@ -120,7 +120,7 @@
         // 4. Что с потоками
         do %code.WriteLine(" set .." _ prop.Name _ " = object." _ prop.Name)
     }
-    Do %code.WriteLine(" Quit $$$OK")
+    do %code.WriteLine(" Quit $$$OK")
 ]]></Implementation>
 </Method>
 
@@ -129,7 +129,11 @@
 <ClassMethod>1</ClassMethod>
 <FormalSpec>id:%Integer</FormalSpec>
 <ReturnType>%Object</ReturnType>
-<Implementation><![CDATA[	Return {}
+<Implementation><![CDATA[
+	set item = {}
+	set item."_id" = id
+	set item.displayName = obj.displayNameGetStored(id)
+	return item
 ]]></Implementation>
 </Method>
 

@@ -8,6 +8,17 @@
 <Default>Тестовая форма</Default>
 </Parameter>
 
+<Property name="displayName">
+<Description>
+The main property describing this object, automatically computes 
+on insert or update (for SQL) or on save (for object access)</Description>
+<Type>%String</Type>
+<SqlComputeCode>set {*} = {Text}</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+<SqlComputeOnChange>%%INSERT,%%UPDATE</SqlComputeOnChange>
+<Parameter name="DISPLAYNAME" value="Имя"/>
+</Property>
+
 <Property name="Text">
 <Type>%String</Type>
 <Parameter name="DISPLAYNAME" value="Текст"/>
@@ -24,6 +35,18 @@ do ##class(Form.TestForm).recreate()</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="recreate2">
+<Description>
+do ##class(Form.TestForm).recreate2()</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	do ..%DeleteExtent()
+	set obj = ..%New()
+	set obj.Text = 123
+	w obj.%Save()
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Form.TestFormD</DataLocation>
@@ -37,6 +60,9 @@ do ##class(Form.TestForm).recreate()</Description>
 </Value>
 <Value name="2">
 <Value>Text</Value>
+</Value>
+<Value name="3">
+<Value>displayName</Value>
 </Value>
 </Data>
 </Storage>
