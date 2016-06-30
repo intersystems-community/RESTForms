@@ -80,7 +80,7 @@ w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</Descrip
 	#dim sc As %Status = $$$OK
 	set obj = ..%OpenId(id,,.sc)
 	return:$$$ISERR(sc) sc
-	return ##class(Form.REST.JSON).%ObjectToJSON(obj,,,$$$formatJSON)
+	return ##class(Form.JSON.OBJ).%ObjectToJSON(obj,,,$$$formatJSON)
 ]]></Implementation>
 </Method>
 
