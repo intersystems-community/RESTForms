@@ -83,3 +83,39 @@ Conditions:
 #Samples
 
 See `Form.TestForm` for samples.
+
+# Object creation
+
+For `Form.TestForm`.
+
+`POST http://localhost:57772/forms/form/object/Form.TestForm`
+Headers must contain `Content-Type` and (probably) authorization
+
+```
+Content-Type: application/json
+Authorization: Basic Base64String
+```  
+
+Body:
+```
+{
+        "_class":"Form.TestForm",
+        "text":3
+}
+```
+
+# Object update
+
+For `Form.TestForm`.
+
+`PUT http://localhost:57772/forms/form/object/Form.TestForm`
+
+Body:
+```
+{
+        "_class":"Form.TestForm",
+        "_id":3,
+        "text":4444
+}
+```
+
