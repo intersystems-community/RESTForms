@@ -5,6 +5,8 @@
 <TimeCreated>64090,75943.393938</TimeCreated>
 
 <Parameter name="FORMNAME">
+<Description>
+Form name, not a global key so it can be anything</Description>
 <Default>Тестовая форма</Default>
 </Parameter>
 
@@ -13,7 +15,7 @@
 The main property describing this object, automatically computes 
 on insert or update (for SQL) or on save (for object access)</Description>
 <Type>%String</Type>
-<SqlComputeCode>set {*} = {Text}</SqlComputeCode>
+<SqlComputeCode>set {*} = {text}</SqlComputeCode>
 <SqlComputed>1</SqlComputed>
 <SqlComputeOnChange>%%INSERT,%%UPDATE</SqlComputeOnChange>
 <Parameter name="DISPLAYNAME" value="Имя"/>

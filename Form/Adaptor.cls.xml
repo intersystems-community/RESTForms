@@ -12,7 +12,7 @@
 
 <Parameter name="FORMNAME">
 <Description>
-Form name, not a global key so kan be anything</Description>
+Form name, not a global key so it can be anything</Description>
 <Type>%String</Type>
 </Parameter>
 
