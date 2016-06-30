@@ -49,7 +49,7 @@
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
-	set sc = ..checkPermission(class, "С")
+	set sc = ..checkPermission(class, "C")
 	return:$$$ISERR(sc) sc
 	
 	set obj = %request.Content

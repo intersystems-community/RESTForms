@@ -10,6 +10,13 @@ Form name, not a global key so it can be anything</Description>
 <Default>Тестовая форма</Default>
 </Parameter>
 
+<Parameter name="PERMISSIONS">
+<Description>
+Default permissions</Description>
+<Type>%String</Type>
+<Default>CRUD</Default>
+</Parameter>
+
 <Property name="displayName">
 <Description>
 The main property describing this object, automatically computes 
