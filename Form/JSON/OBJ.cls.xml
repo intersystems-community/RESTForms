@@ -600,7 +600,7 @@ not perform complete error checking.]]></Description>
 					
 					If tId'="" {
 						Set pObject = $classmethod(tClass,"%OpenId", tId)
-						If ((##class(Form.Info).formExists(pObject.%ClassName(1))) && (pLevel'="")) {
+						If ((##class(Form.Info).formExists(pObject.%ClassName(1))) && (pLevel'=1)) {
 							/// FORMS - object is a form, but not a base form
 							/// so we open it and that's it 
 							Quit
