@@ -12,8 +12,6 @@ Import classes and create web app with `Form.REST.Main` broker.
 |--------------------------------------|--------|----------------------------------------|
 | test                                 | GET    | Test request                           |
 | logout                               | GET    | End current session                    |
-| catalog/info                         | GET    | List of all availible catalogs         |
-| catalog/members/:class               | GET    | (SQL) Get all members of the catalog   |
 | form/info                            | GET    | List of all availible forms            |
 | form/info/:class                     | GET    | Form metainformation                   |
 | form/field/:class                    | POST   | Add field to form                      |
@@ -24,6 +22,8 @@ Import classes and create web app with `Form.REST.Main` broker.
 | form/object/:class/:id               | PUT    | Update form object from dynamic object |
 | form/object/:class                   | PUT    | Update form object from object         |
 | form/object/:class/:id               | DELETE | Delete form object                     |
+| forms/form/objects/:class/all        | GET    | (SQL) Get all members for the form     |
+| forms/form/objects/:class/info       | GET    | (SQL) Get basic info for the form      |
 | form/file/:class/:id/:property       | POST   | Add files to this property             |
 | form/file/:class/:id/:property       | DELETE | Delete all files from this property    |
 | form/file/:class/:id/:property/:name | DELETE | Delete one file from property          |

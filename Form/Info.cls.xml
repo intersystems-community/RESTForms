@@ -27,7 +27,7 @@ Check that form with this classname exist</Description>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
 	return:class="" $$$NO
-	return $select($data($$$formGlobal(class))#2=1:$$$YES, 1:$$$NO)
+	return $select($data($$$formGlobal(class))'=0:$$$YES, 1:$$$NO)
 ]]></Implementation>
 </Method>
 
@@ -41,7 +41,7 @@ Check that form with this classname exist</Description>
 	#dim sc As %Status = $$$OK
 	set formExists = ..formExists(class)
 	if 'formExists {
-		set sc = $$$ERROR($$$GeneralError, "Form " _ class _ " does not exist")
+		set sc = $$$ERROR($$$GeneralError, "Form '" _ class _ "' does not exist")
 	}
 	return sc
 ]]></Implementation>
