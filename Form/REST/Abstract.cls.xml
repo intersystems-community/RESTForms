@@ -132,5 +132,13 @@ responsibility of the user to return a response.</Description>
 	return $$$OK
 ]]></Implementation>
 </Method>
+
+<Method name="checkPermission">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String,action:%String(VALUELIST="C,R,U,D")</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	return $classmethod(class, "checkPermissionStatus", action)
+]]></Implementation>
+</Method>
 </Class>
 </Export>

@@ -19,7 +19,9 @@ based on a role/user/whatever</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>action:%String(VALUELIST="C,R,U,D")</FormalSpec>
 <ReturnType>%Boolean</ReturnType>
-<Implementation><![CDATA[	return ..#PERMISSIONS [ action
+<Implementation><![CDATA[
+	return:action="" $$$NO
+	return ..#PERMISSIONS [ action
 ]]></Implementation>
 </Method>
 
