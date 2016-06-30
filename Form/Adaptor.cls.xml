@@ -37,11 +37,12 @@
 
 	#dim sc As %Status = $$$OK
 	set className = %compiledclass.Name
-	return:className="Form.Adaptor" sc
+	set formName = %parameter($$$formNameParam)
+	return:((className="Form.Adaptor")||(formName="")) sc
 
 	
 	set metadata = {}
-	set metadata.name = %parameter($$$formNameParam)
+	set metadata.name = formName
 	set metadata.class = className
 	set metadata.fields = []
 	

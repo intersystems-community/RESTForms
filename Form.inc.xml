@@ -2,7 +2,6 @@
 <Export generator="Cache" version="25">
 <Routine name="Form" type="INC"><![CDATA[
 #define formGlobal ^form.forms
-#define catGlobal ^form.catalogs
 #define settingsGlobal ^form.settings
 #define formNameParam "FORMNAME"
 #define metadata "metadata"
