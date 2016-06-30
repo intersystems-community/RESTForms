@@ -19,7 +19,7 @@ on insert or update (for SQL) or on save (for object access)</Description>
 <Parameter name="DISPLAYNAME" value="Имя"/>
 </Property>
 
-<Property name="Text">
+<Property name="text">
 <Type>%String</Type>
 <Parameter name="DISPLAYNAME" value="Текст"/>
 </Property>
@@ -43,7 +43,7 @@ do ##class(Form.TestForm).recreate2()</Description>
 	do ..%DeleteExtent()
 	set obj = ..%New()
 	set obj.Text = 123
-	w obj.%Save()
+	write obj.%Save()
 ]]></Implementation>
 </Method>
 
@@ -59,10 +59,10 @@ do ##class(Form.TestForm).recreate2()</Description>
 <Value>%%CLASSNAME</Value>
 </Value>
 <Value name="2">
-<Value>Text</Value>
+<Value>displayName</Value>
 </Value>
 <Value name="3">
-<Value>displayName</Value>
+<Value>text</Value>
 </Value>
 </Data>
 </Storage>
