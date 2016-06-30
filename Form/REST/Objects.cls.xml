@@ -52,10 +52,12 @@ Get all form objects</Description>
 <Implementation><![CDATA[
 	set queryBase = ""
 	#dim sc As %Status = $$$OK
-	if ($parameter(, $ZCVT(queryType, "U"))'="") {
+	if ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), $ZCVT(queryType, "U")) {
+		/// we want only parameters defined in this class
 		set queryBase = $parameter(, $ZCVT(queryType, "U"))
 	} elseif 0 {
-		/// Some other type of "get stuff between SELECT and FROM"
+		/// TODO Some other type of "get stuff between SELECT and FROM"
+		/// some callback class maybe
 	} else {
 		set sc = $$$ERROR($$$GeneralError, "Query type " _ queryType _ " not found")		
 	}

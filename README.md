@@ -33,8 +33,12 @@ For POST/PUT requests see method descriptions for request body samples
 # SQL requests
 
 `GET http://localhost:57772/forms/form/objects/Form.TestForm/info?size=2&page=1&orderby=text`
+`GET http://localhost:57772/forms/form/objects/Form.TestForm/all?orderby=text+desc`
 
 ## Query types
+
+It's a second REST (not URL) parameter in `form/objects/:class/:query` request, it determines the contents of query between SELECT and FROM.
+Currently new query types can be specified as parameters in `Form.REST.Objects` class. 
 
 | Query    |  Description         |
 |----------|----------------------|
