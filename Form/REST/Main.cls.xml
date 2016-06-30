@@ -9,7 +9,6 @@
 <Data><![CDATA[
 <Routes>
 <Map Prefix="/form" Forward="Form.REST.Form"/>
-<Map Prefix="/catalog" Forward="Form.REST.Catalog"/>
 
 <Route Url="/logout" Method="GET" Call="logout"/>
 <Route Url="/test" Method="GET" Call="test"/>
