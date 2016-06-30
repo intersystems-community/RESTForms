@@ -12,28 +12,21 @@
 
 <Parameter name="FORMNAME">
 <Description>
-Имя формы: латиница, менее 500 символов, в нижнем регистре </Description>
-<Type>%String</Type>
-</Parameter>
-
-<Parameter name="FORMDISPLAYNAME">
-<Description>
-Отображаемое имя формы</Description>
+Form name, not a global key so kan be anything</Description>
 <Type>%String</Type>
 </Parameter>
 
 <Method name="generateMetadata">
 <Description>
-Сгенерировать метаданные для формы</Description>
+Generate form metadata
+For results see:
+w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>objectgenerator</CodeMode>
 <GenerateAfter>onFormCompile</GenerateAfter>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	#define formGlobal  ^form.forms
-	#define formNameParam "FORMNAME"
-	#define metadata "metadata"
-	#define propDisplayNameParam "DISPLAYNAME"
+	#Include Form
 
 	#dim sc As %Status = $$$OK
 	set className = %compiledclass.Name
@@ -52,7 +45,7 @@
 		set propertyName = property.Name
 		CONTINUE:((propertyName="%%OID") || (propertyName="%Concurrency")) 
 		
-		/// В метаинформацию попадают только свойства у которых задан DISPLAYNAME
+		/// Only properties with set DISPLAYNAME param are included in metainformation
 		if (property.Parameters.GetAt($$$propDisplayNameParam)'="") {
 			set propertyMetaData = ##class(Form.Property).propertyToMetadata(property)
 			do metadata.fields.$push(propertyMetaData)

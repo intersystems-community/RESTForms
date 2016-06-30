@@ -18,7 +18,7 @@ Generate metadata for one field of a form</Description>
 	set metadata.name = property.Name
 	set metadata.type = property.Type
 	set metadata.collection = property.Collection
-	set metadata.displayName = property.Parameters.GetAt("DISPLAYNAME")
+	set metadata.displayName = property.Parameters.GetAt($$$propDisplayNameParam)
 	set metadata.required = property.Required
 	set metadata.category = ..determineClassCategory(property.Type)
 	return metadata
@@ -64,8 +64,8 @@ required - обязательное свойство</Description>
 	set property.Type = type
 	set property.Collection = collection
 	set property.Required = required
-	if (($get(displayName)'="") && ($$$comClassKeyGet(className,$$$cCLASSpropertyclass)["Form.Field")) {
-		set sc = property.Parameters.SetAt(displayName, "DISPLAYNAME")
+	if (($get(displayName)'="") && ($$$comClassKeyGet(className,$$$cCLASSpropertyclass)[$$$propClass)) {
+		set sc = property.Parameters.SetAt(displayName, $$$propDisplayNameParam)
 		return:$$$ISERR(sc) sc
 	}
 	
@@ -100,8 +100,8 @@ required - обязательное свойство</Description>
 	set property.Type = type
 	set property.Collection = collection
 	set property.Required = required
-	if (($get(displayName)'="") && ($$$comClassKeyGet(className,$$$cCLASSpropertyclass)="Form.Field")) {
-		set sc = property.Parameters.SetAt(displayName, "DISPLAYNAME")
+	if (($get(displayName)'="") && ($$$comClassKeyGet(className,$$$cCLASSpropertyclass)=$$$propClass)) {
+		set sc = property.Parameters.SetAt(displayName, $$$propDisplayNameParam)
 		return:$$$ISERR(sc) sc
 	}
 
@@ -154,7 +154,7 @@ w ##class(Form.Property).getPropertyDisplayName("Form.TestForm", "Text")</Descri
 <FormalSpec>className:%String="",name:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	set displayName = $$$comMemberArrayGet(className, $$$cCLASSproperty, name, $$$cPROPparameter, "DISPLAYNAME")
+	set displayName = $$$comMemberArrayGet(className, $$$cCLASSproperty, name, $$$cPROPparameter, $$$propDisplayNameParam)
 	set:displayName="" displayName = name
 	return displayName
 ]]></Implementation>

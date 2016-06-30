@@ -4,7 +4,9 @@
 #define formGlobal ^form.forms
 #define settingsGlobal ^form.settings
 #define formNameParam "FORMNAME"
+#define propDisplayNameParam "DISPLAYNAME"
 #define metadata "metadata"
+
 
 #define forAll(%in,%gn) s gn%in=$na(%gn) s %in="" f { s %in=$o(@gn%in@(%in)) q:%in=""
 #define forAllk(%in,%kn,%gn) s gn%in=$na(%gn) s %in="" f %kn=1:1 { s %in=$o(@gn%in@(%in)) q:%in=""
@@ -20,6 +22,7 @@
 #define updateClassMethod "updateIdFromObject"
 
 #define fileClass "Form.File"
+#define propClass "Form.Field"
 #define fileDir $g($$$settingsGlobal("fileDir"), ##class(%Library.File).GetDirectory())
 ]]></Routine>
 </Export>
