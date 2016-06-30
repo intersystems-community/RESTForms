@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.JSON.OBJ">
+<Description>
+Преобразует объект класса Cache в JSON. 
+Единственное отличие от  %ZEN.Auxiliary.jsonProvider выводит приватные и % свойства
+Закомментировано 3 строки - ищется по "Including private properties"</Description>
+<Super>%ZEN.Auxiliary.jsonProvider</Super>
+<TimeCreated>64099,77101.820492</TimeCreated>
+
+<Method name="%ObjectToJSON">
+<Description><![CDATA[
+Write out the contents of object instance <var>pObject</var> to
+the current device using JSON notation.
+<var>pFormat</var> is a flags string to control output formatting options.</br>
+The following character option codes are supported:<br/>
+1-9 : indent with this number of spaces (4 is the default with the 'i' format specifier)<br/>
+a - output null arrays/objects<br/>
+b - line break before opening { of objects<br/>
+c - output the Cach&eacute;-specific "_class" and "_id" properties<br/>
+d - output Cach&eacute; numeric properties that have value "" as null<br/>
+e - output empty object properties<br/>
+i - indent with 4 spaces unless 't' or 1-9<br/>
+l - output empty lists<br/>
+n - newline (lf)<br/>
+o - output empty arrays/objects<br/>
+q - output numeric values unquoted even when they come from a non-numeric property<br/>
+s - use strict JSON output - <strong>NOTE:</strong> special care should be taken when sending data to a browser, as using this flag 
+may expose you to cross site scripting (XSS) vulnerabilities if the data is sent inside <code>&lt;script&gt;</code> tags. Zen uses
+this technique extensively, so this flag should <strong>NOT</strong> be specified for jsonProviders in Zen pages.<br/>
+t - indent with tab character<br/>
+u - output pre-converted to UTF-8 instead of in native internal format<br/>
+w - Windows-style cr/lf newline<br/>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pObject:%RegisteredObject,&pVisited,pLevel:%Integer=0,pFormat:%String="aceloqtw"]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+		If ((pObject="")||'$IsObject(pObject)||($D(pVisited(pObject)))) {
+			// cycle
+			Write:pFormat["a"||'pLevel "null"
+			Quit
+		}
+		Set tClass = $classname(pObject)
+		
+		/// Forms can be drawn several times - we don't set 'pVisited' for them
+		Set:'##class(Form.Info).formExists(tClass) pVisited(pObject) = ""
+		
+		If (tClass = "%ZEN.proxyObject") {
+			Set tSC = pObject.%ToJSON(pLevel,pFormat)
+			Quit
+		}
+		Set tLF=$S(pFormat["w":$C(13,10), pFormat["n":$C(10), 1:"")
+		If pFormat'=$TR(pFormat,"it123456789") { Set tN=+$ZStrip(pFormat,"<E'N"), $P(tTab,$S(pFormat["t":$C(9),1:" "),1+$S(tN:tN,pFormat["t":1,1:4))="" }
+		Else { Set tTab="" }
+		Set tIncludeWhitespace = (tLF_tTab'="")
+
+		If (pObject.%Extends("%Collection.AbstractList")) {
+			Set tList = pObject
+			Set tCount = tList.Count()
+			If (pFormat["l" || tCount) {
+				Write "["
+				For n = 1:1:tCount {
+					Set tValue = tList.GetAt(n)
+					Write:n>1 ","
+					If $IsObject(tValue) {
+						If (tValue.%IsA("%ZEN.proxyObject")) {
+							Set tSC = tValue.%ToJSON(pLevel+1,pFormat)
+							Quit:$$$ISERR(tSC)
+						} Else {
+							Set tSC = ..%ObjectToJSON(tValue,.pVisited, pLevel+1, pFormat)
+							Quit:$$$ISERR(tSC)
+						}
+					} Else {
+						Write $$$ZENJSONVALUE(tValue,pFormat)
+					}
+				}
+				Quit:$$$ISERR(tSC)
+				If tIncludeWhitespace Set tIndent="", $P(tIndent,tTab,pLevel+1)="" Write tLF_tIndent
+				Write "]"
+			}
+			Quit
+		}
+		ElseIf (pObject.%Extends("%Stream.Object")) {
+			Write """"
+			#; Initialize stream read length, if needed
+			If '$data(tStreamMaxReadLen) Set tStreamMaxReadLen = ($$$MaxLocalLength\2)
+			Do pObject.Rewind()
+			While 'pObject.AtEnd {
+				Write $$$ZENJSONESCAPE(pObject.Read(tStreamMaxReadLen),pFormat)
+			}
+			Write """"
+			Quit
+		}
+
+		If pFormat["o" || 'pLevel {
+			Set tPropCount = ""
+			If (tIncludeWhitespace && pLevel) Set tIndent="", $P(tIndent,tTab,pLevel+1)="" Write $S(pFormat["b":tLF_tIndent,1:" ")
+			Write "{"
+		} Else {
+			Set tPropCount = 0
+		}
+		If pFormat["c" {
+			// add class name to model
+			Do nextProp
+			Write $$$ZENJSONPAIR("_class",tClass,pFormat)
+			// add id for persistent objects
+			If (pObject.%IsA("%Library.Persistent")) {
+				Do nextProp
+				Set tID = pObject.%Id()
+				Write $$$ZENJSONPAIR("_id",tID,pFormat)
+			}
+		}
+
+		#; Special treatment for top-level array: output no matter what
+		If pObject.%Extends("%Collection.AbstractArray") {
+			#; write out (eligible) array elements/properties
+			If pObject.%Extends("%Collection.AbstractArrayOfObj") {
+				#; object elements
+				Set tKey=""  For { Set tValue = pObject.GetNext(.tKey)  Quit:""=tKey
+					If $IsObject(tValue) {
+						If tValue.%Extends("%Stream.Object")||tValue.%Extends("%IO.I.Stream") {
+							Do tValue.Rewind()
+							If (pFormat["e" || tValue.Size()) {
+								Do nextProp
+								Write $$$ZENJSONPROP(tKey,pFormat)_":"""
+								#; Initialize stream read length, if needed
+								If '$data(tStreamMaxReadLen) Set tStreamMaxReadLen = ($$$MaxLocalLength\2)
+								#; Rewind non-%IO streams if needed
+								If tValue.AtEnd && tValue.%Extends("%Stream.Object") Do tValue.Rewind()
+								While 'tValue.AtEnd {
+									Write $$$ZENJSONESCAPE(tValue.Read(tStreamMaxReadLen),pFormat)
+								}
+								Write """"
+							}
+						} ElseIf pFormat["o" || ..hasObjContent(tValue,.pVisited,pFormat) {
+							Do nextProp
+							Write $$$ZENJSONPROP(tKey,pFormat)_":"
+							Set tSC = ..%ObjectToJSON(tValue,.pVisited, pLevel+1,pFormat)
+							Quit:$$$ISERR(tSC)
+						}
+					} ElseIf pFormat["a" {
+						Do nextProp
+						Write $$$ZENJSONPROP(tKey,pFormat)_":null"
+					}
+				} ; end tKey object array loop
+			} Else {
+				#; scalar array elements
+				Set tKey=""  For { Set tValue = pObject.GetNext(.tKey)  Quit:""=tKey
+					If (pFormat["e") || (tValue'="") {
+						Do nextProp
+						Write $$$ZENJSONPAIR(tKey,tValue,pFormat)
+					}
+				} ; end tKey scalar array loop
+			}
+			If tPropCount'=0 {
+				#; either we wrote at least one property or we wrote an empty '{' due to "o" mode or level zero
+				If tIncludeWhitespace Set tIndent="", $P(tIndent,tTab,pLevel+1)="" Write tLF_tIndent
+				Write "}"
+			}
+			Quit
+		}
+		#; else: main object is not a collection
+
+		#; loop over properties using class meta-data
+		Do ..getOrderedProps(tClass,.tProps)
+		Set tSeq="" For { Set tSeq=$O(tProps(tSeq),1,tPropName)  Quit:""=tSeq
+		
+			// Including private properties
+			//Set tPrivate = +$$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPprivate)
+			//Continue:tPrivate||(tPropName["%")
+
+			Set tType = $$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPtype)
+			Set tClsType = $$$getClassType(tType)
+			Set tClientType = $$$comClassKeyGet(tType,$$$cCLASSclientdatatype)
+			Set tCollection = $$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPcollection)
+			If (tClsType '= "datatype") {
+				#; Check for the case where we have a property declared as a %ListOf**
+				If ($classmethod(tType,"%IsA","%Collection.AbstractList")) {
+					Set tCollection = "list"
+					If ($classmethod(tType,"%IsA","%Collection.AbstractListOfDT")) {
+						#; Reset object information for %ListOfDataTypes
+						Set tClientType = "VARCHAR"
+						Set tDataType = ""
+					}
+				}
+			} Else {
+				Set tDataType=$Case(tClientType, "BOOLEAN":"b", "INTEGER":"n","NUMERIC":"n","FLOAT":"n", "TIMESTAMP":"u", "DATE":"d", "TIME":"t", :"")
+			}
+			Set tMultiDim = 0
+			If (tCollection="array") {
+				Set tCardinality = $$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPcardinality)
+				Set tInverse = $$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPinverse)
+				If ((tCardinality'="")&&(tInverse'="")) {
+					// treat relationship as list
+					Set tCollection = "list"
+				}
+			} ElseIf (tCollection = "") {
+				Set tMultiDim = +$$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPmultidimensional)
+			}
+			Continue:tMultiDim
+			
+			// FORMS - display some datatypes in XSD
+			If tType = "%Library.TimeStamp" {
+				Set tValue = ##class(%TimeStamp).LogicalToXSD($property(pObject,tPropName))
+			} ElseIf tType = "%Library.Date" {
+				Set tValue = ##class(%Date).LogicalToXSD($property(pObject,tPropName))
+			} Else {
+				Set tValue = $property(pObject,tPropName) // раньше была только эта строка
+			}
+			// FORMS - END - display some datatypes in XSD 
+
+			#; If the value is "" or $c(0) and we are NOT including empty properties, skip if we are not a collection, object or stream
+			If (((tValue = "") || (tValue = $c(0))) && (pFormat'["e") && (tCollection = "") && $Case(tClientType, "HANDLE": 0, "CHARACTERSTREAM": 0, "BINARYSTREAM": 0, :1)) {
+				Continue
+			}
+			// Write the property if not inhibited
+			If (tCollection="list") {
+				// list collection
+				If '$IsObject(tValue) {
+					Set tCount = 0
+				} Else {
+					Set tList = tValue
+					Set tCount = tList.Count()
+				}
+				If (pFormat["l" || tCount) {
+					Do nextProp
+					Write $$$ZENJSONPROP(tPropName,pFormat)_":["
+					For n = 1:1:tCount {
+						Set tValue = tList.GetAt(n)
+						Write:n>1 ","
+						If (tClientType = "HANDLE") {
+							#; object items
+							If $IsObject(tValue) {
+								Set tSC = ..%ObjectToJSON(tValue,.pVisited, pLevel+1, pFormat)
+								Quit:$$$ISERR(tSC)
+							} Else {
+								Write "null" ; not conditional because it has to hold the place in the list
+							}
+						} Else {
+							#; scalar list item ; converts $List to empty string!
+							Write $S(tDataType="b":$S(tValue:"true",1:"false")
+								, ((tDataType="n")||(pFormat["q"))&&$$$ZENJSISNUM(tValue):$$$ZENJSNUM(tValue)
+								, (tDataType="n")&&(tValue="")&&(pFormat["d"):"null"
+								, ($C(0)=tValue)||$ListValid(tValue):""""""
+								//, "dtu"[tDataType:$S(pFormat["u":$$$ZENJSUSTR(..formatDateTime(tValue,tType,tDataType,pFormat)), 1:$$$ZENJSSTR(..formatDateTime(tValue,tType,tDataType,pFormat)))
+								, 1:$$$ZENJSONSTR(tValue,pFormat))
+						}
+					}
+					Write "]"
+				}
+			}
+			ElseIf (tCollection="array") {
+				// array collection (object on client)
+				If '$IsObject(tValue) {
+					Set tKey = ""
+				} Else {
+					Set tArray = tValue
+					Set tKey = tArray.Next("")
+					If pFormat'["o" && (""'=tKey) {
+						#; look ahead to see if there is any content
+						Set tHasArrayContent=0, k=tKey  While (k '= "") { Set tValue = tArray.GetAt(k)
+							If (tClientType = "HANDLE") {
+								If $IsObject(tValue) {
+									If ..hasObjContent(tValue,.pVisited,pFormat) Set tHasArrayContent=1  Quit
+								} ElseIf (pFormat["a") {
+									Set tHasArrayContent=1  Quit
+								}
+							} Else {
+								If $S(tDataType="b":1
+									, $C(0)=tValue||$ListValid(tValue):pFormat["e"
+									//, "dtu"[tDataType:$S(pFormat["u":$$$ZENJSUSTR(..formatDateTime(tValue,tType,tDataType,pFormat)), 1:$$$ZENJSSTR(..formatDateTime(tValue,tType,tDataType,pFormat)))
+									, 1:""'=tValue||(pFormat["e")) {
+									Set tHasArrayContent=1  Quit
+								}
+							}
+							Set k = tArray.Next(k)
+						}
+					}
+				}
+				If (pFormat["o" || (""'=tKey && tHasArrayContent)) {
+					Do nextProp
+					Write $$$ZENJSONPROP(tPropName,pFormat)_": {"
+					Set n = 0
+					While (tKey '= "") { Set tValue = tArray.GetAt(tKey)
+						If (tClientType = "HANDLE") {
+							#; object elements
+							If $IsObject(tValue) {
+								Set n = n+1
+								Write $S(n>1:",",1:"")_$$$ZENJSONPROP(tKey,pFormat)_":"
+								Set tSC = ..%ObjectToJSON(tValue,.pVisited, pLevel+1, pFormat)
+								Quit:$$$ISERR(tSC)
+							} ElseIf (pFormat["a") {
+								Set n = n+1
+								Write $S(n>1:",",1:"")_$$$ZENJSONPROP(tKey,pFormat)_":null"
+							}
+						} Else {
+							#; scalar array item ; converts $List to empty string!
+							Set tStr = $S(tDataType="b":$S(tValue:"true",1:"false")
+								, ((tDataType="n")||(pFormat["q"))&&$$$ZENJSISNUM(tValue):$$$ZENJSNUM(tValue)
+								, (tDataType="n")&&(tValue="")&&(pFormat["d"):"null"
+								, ($C(0)=tValue)||$ListValid(tValue):""""""
+								//, "dtu"[tDataType:$S(pFormat["u":$$$ZENJSUSTR(..formatDateTime(tValue,tType,tDataType,pFormat)), 1:$$$ZENJSSTR(..formatDateTime(tValue,tType,tDataType,pFormat)))
+								, 1:$$$ZENJSONSTR(tValue,pFormat))
+							If (pFormat["e") || (tStr'="""""") {
+								Set n = n+1
+								Write $S(n>1:",",1:"")_$$$ZENJSONPROP(tKey,pFormat)_":"_tStr
+							}
+						}
+						Set tKey = tArray.Next(tKey)
+					}
+					Write "}"
+				}
+			}
+			ElseIf (tClientType = "HANDLE") {
+				// object
+				If $IsObject(tValue) {
+					If ..hasObjContent(tValue,.pVisited,pFormat) || (pFormat["o")  {
+						Do nextProp
+						Write $$$ZENJSONPROP(tPropName,pFormat)_":"
+						Set tSC = ..%ObjectToJSON(tValue,.pVisited, pLevel+1, pFormat)
+						Quit:$$$ISERR(tSC)
+					}
+				} ElseIf (pFormat["a") {
+					Do nextProp
+					Write $$$ZENJSONPROP(tPropName,pFormat)_":null"
+				}
+			}
+			ElseIf (tClientType = "CHARACTERSTREAM") {
+				If $IsObject(tValue) {
+					If tValue.Size || (pFormat["e") {
+						Do nextProp
+						Write $$$ZENJSONPROP(tPropName,pFormat)_":"""
+						If tValue.Size {
+							#; Initialize stream read length, if needed
+							If '$data(tStreamMaxReadLen) Set tStreamMaxReadLen = ($$$MaxLocalLength\2)
+							Do tValue.Rewind()
+							While 'tValue.AtEnd {
+								Write $$$ZENJSONESCAPE(tValue.Read(tStreamMaxReadLen),pFormat)
+							}
+						}
+						Write """"
+					}
+				} ElseIf (pFormat["a") {
+					Do nextProp
+					Write $$$ZENJSONPROP(tPropName,pFormat)_":null"
+				}
+			}
+			ElseIf (tClientType = "BINARYSTREAM") {
+				Do nextProp
+				Write $$$ZENJSONPROP(tPropName,pFormat)_":null"
+			}
+			Else {
+				#; scalar item ; converts $List to empty string!
+				Set tStr = $S(tDataType="b":$S(tValue:"true",1:"false")
+					, ((tDataType="n")||(pFormat["q"))&&$$$ZENJSISNUM(tValue):$$$ZENJSNUM(tValue)
+					, (tDataType="n")&&(tValue="")&&(pFormat["d"):"null"
+					, ($C(0)=tValue)||$ListValid(tValue):""""""
+					//, "dtu"[tDataType:$S(pFormat["u":$$$ZENJSUSTR(..formatDateTime(tValue,tType,tDataType,pFormat)), 1:$$$ZENJSSTR(..formatDateTime(tValue,tType,tDataType,pFormat)))
+					, 1:$$$ZENJSONSTR(tValue,pFormat))
+
+				If (pFormat["e") || (tStr'="""""") {
+					Do nextProp
+					Write $$$ZENJSONPROP(tPropName,pFormat)_":"_tStr
+				}
+			}
+		} ; end properties loop
+		Quit:$$$ISERR(tSC)
+
+		If tPropCount'=0 {
+			#; either we wrote at least one property or we wrote an empty '{' due to "o" mode or level zero
+			If tIncludeWhitespace Set tIndent="", $P(tIndent,tTab,pLevel+1)="" Write tLF_tIndent
+			Write "}"
+		}
+	}
+	Catch ex {
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+
+nextProp
+	If tPropCount=0 {
+		If (tIncludeWhitespace && pLevel) Set tIndent="", $P(tIndent,tTab,pLevel+1)="" Write $S(pFormat["b":tLF_tIndent,1:" ")
+		Write "{"
+	} ElseIf tPropCount {
+		Write ","
+	} ; else tPropCount="" means we already did the starting '{' due to "o" mode
+	Set tPropCount = tPropCount + 1
+	If tIncludeWhitespace Set tIndent="", $P(tIndent,tTab,pLevel+2)="" Write tLF_tIndent
+	Quit
+]]></Implementation>
+</Method>
+
+<Method name="%ParseJSON">
+<Description><![CDATA[
+Parse the string <var>pJSON</var> containing JSON notation
+and convert it to an object instance <var>pObject</var>.<br/>
+<var>pJSON</var> could also be a character stream.<br/>
+<var>pClass</var> is the name of the class to create to hold
+the instantiated object. This class must match the data within the JSON
+notation. If <var>pClass</var> is empty (""), then an instance
+of the generic class <class>%ZEN.proxyObject</class> will be created.
+<var>pCharsProcessed</var> and <var>pLevel</var> are used
+internally and do not have to be supplied.
+<var>pIgnoreUnknownProps</var> controls whether we will
+ignore errors when we process a property that isn't expected. The default 
+behaviour is to treat this as an error.<br/>
+Note that this method assumes well-formed JSON notation: it does
+not perform complete error checking.]]></Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pJSON:%String,pClass:%String="",*pObject:%RegisteredObject,*pCharsProcessed:%Integer,pLevel:%Integer=1,pFirstChar:%String="",pIgnoreUnknownProps:%Boolean=0</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+#define WHITESPACE(%c) (((%c)=" ")||((%c)=$C(10))||((%c)=$C(13))||((%c)=$C(9)))
+#define MATCHHEXCHARS(%hex,%n) (%hex ? %n(1N,1(1"A",1"B",1"C",1"D",1"E",1"F",1"a",1"b",1"c",1"d",1"e",1"f")))
+
+	Set tSC = $$$OK
+	Try {
+		Set tOrigClass = pClass
+		Set tClass = $S(pClass="":"%ZEN.proxyObject",1:pClass)
+		Set pObject = ""
+		Set pCharsProcessed = 0
+
+		Set p = 1
+		Set tToken = ""
+		Set tProperty = ""
+		Set tValue = ""
+		Set tState = 0
+		Set tInArray = 0
+		Set tArrayType = ""
+		Set tArrayState = "value"
+		Set tArrayKey = ""
+		Set tIsString = 0
+		Set tQuote = ""
+		Set tPropQuoted = 0
+		Set tUnicodeHex = ""
+		Set tHex = ""
+		Set tJSONArray = 0
+		While ($$$ISOK(tSC)) {
+			// test end condition; get next character
+			If ($IsObject(pJSON)) {
+				If (pFirstChar'="") {
+					Set ch = pFirstChar
+					Set pFirstChar = ""
+				}
+				Else {
+	 				If (pJSON.AtEnd) Quit
+					Set ch = pJSON.Read(1,.tSC)
+					If $$$ISERR(tSC) Quit
+				}
+			}
+			Else {
+ 				If (p > $L(pJSON)) Quit
+				Set ch = $E(pJSON,p)
+			}
+
+			Set p = p + 1
+			Set pCharsProcessed = pCharsProcessed + 1
+			If (tState = 0) {
+				If (ch = "{") {
+					// start of object
+					// we will hold the property values in here until the end
+					Kill tPropValues	
+					Set pObject = ""
+					Set tState = 1
+				}
+				ElseIf (ch = "[") {
+					Set tJSONArray = 1
+					Kill tPropValues
+					Set pObject = ""
+					Set tCollectionClass = $select((pClass '= "")&&$classmethod(pClass,"%Extends","%Collection.AbstractList"): pClass, 1 :"")
+					// start of list/array-valued property
+					Set tInArray = 1
+					Set tArrayType = "list"
+					Kill tArray
+					Set tArrayIndex = 0
+					Set tToken = ""
+					Set tIsString = 0
+					Set tState = 5
+					Set tArrayState = "value"
+				}
+				ElseIf '$$$WHITESPACE(ch) {
+					Set tSC = $$$ERROR($$$GeneralError,"Expected { at start of JSON text.")
+					Quit
+				}
+			}
+			ElseIf (tState = 1) {
+				If (ch = "}") {
+					// end of object
+					// create object, stuff properties into it
+					Set pClass = $G(tPropValues("_class"),pClass)
+					Set tClass = $G(tPropValues("_class"),tClass)
+					
+					// FORMS - instantiate object by id
+					Set tId = $G(tPropValues("_id"))
+					
+					If tId'="" {
+						Set pObject = $classmethod(tClass,"%OpenId", tId)
+					} Else {
+						Set pObject = $classmethod(tClass,"%New")
+					}
+					// FORMS - END - instantiate object by id
+					
+					Set p = $O(tPropValues(""))
+					While (p'="") {
+						If (p '= "_class") && (p '= "_id") {
+							Try {
+								// test for stream property
+								Set tStream = $property(pObject,p)
+								If ($IsObject(tStream) && (tStream.%Extends("%Stream.Object") || tStream.%Extends("%IO.I.Stream"))) {
+									Do tStream.Rewind()
+									Do tStream.Write($G(tPropValues(p)))
+								}
+								Else {
+									Set $property(pObject,p) = $G(tPropValues(p))
+								}
+							}
+							Catch ex {
+								If $case(ex.Name, "<CANNOT SET THIS PROPERTY>" : 0, "<PROPERTY DOES NOT EXIST>": 'pIgnoreUnknownProps, :1) Throw ex
+							}
+						}
+						Set p = $O(tPropValues(p))
+					}
+					Quit
+				}
+				ElseIf (ch = """") && ('tPropQuoted) {
+					Set tPropQuoted = 1
+				}
+				ElseIf ('$$$WHITESPACE(ch) && (ch'="")) {
+					// start of property name
+					Set tToken = ch
+					Set tState = 2
+				}
+			}
+			ElseIf (tState = 2) {
+				// property name
+				If (ch = "\") {
+					Set tState = "2a"
+				}
+				ElseIf (tPropQuoted) {
+					If (ch = """") {
+						Set tPropQuoted = 0
+					}
+					Else {
+						Set:'$IsObject(tToken) tToken = tToken _ ch
+					}
+				}
+				Else {
+					If (ch = ":") {
+						Set tProperty = tToken
+						#; Set tProperty = $select($IsObject(tToken): tToken, 1: ..%UnescapeJSONString(tToken))
+						Set tToken = ""
+						Set tState = 3
+						Set tIsString = 0
+					}
+					ElseIf ('$$$WHITESPACE(ch)) {
+						Set:'$IsObject(tToken) tToken = tToken _ ch
+					}
+				}
+			}
+			// NOTE: States 2a, 2b and 2c are defined as the last few states as we expect escaped property names to be very rare
+			ElseIf (tState = 3) {
+				// value
+				If (ch = ",") {
+					// end of value
+					If (tIsString || $IsObject(tToken)) {
+						Set tValue = tToken
+					}
+					Else {
+						Set tValue = $Case(tToken,"null":"","true":1,"false":0,:+tToken)
+					}
+					If (tProperty '= "") {
+						Set tPropValues(tProperty) = tValue
+					}
+					Set pClass = $G(tPropValues("_class"),pClass)
+					Set tToken = ""
+					Set tValue = ""
+					Set tState = 1
+				}
+				ElseIf (ch = "}") {
+					// end of value and object
+					If (tIsString || $IsObject(tToken)) {
+						Set tValue = tToken
+					}
+					Else {
+						Set tValue = $Case(tToken,"null":"","true":1,"false":0,:+tToken)
+					}
+					If (tProperty '= "") {
+						Set tPropValues(tProperty) = tValue
+					}
+
+					// create object, stuff properties into it
+					Set pClass = $G(tPropValues("_class"),pClass)
+					Set tClass = $G(tPropValues("_class"),tClass)
+					
+					// FORMS - instantiate object by id
+					Set tId = $G(tPropValues("_id"))
+					
+					If tId'="" {
+						Set pObject = $classmethod(tClass,"%OpenId", tId)
+						If ((##class(Form.Info).formExists(pObject.%ClassName(1))) && (pLevel'="")) {
+							/// FORMS - object is a form, but not a base form
+							/// so we open it and that's it 
+							Quit
+						}
+					} Else {
+						Set pObject = $classmethod(tClass,"%New")
+					}
+					// FORMS - END - instantiate object by id
+
+					Set p = $O(tPropValues(""))
+					While (p'="") {
+						If (p '= "_class") && (p '= "_id") {
+							Try {
+								// test for stream property
+								Set tStream = $property(pObject,p)
+								If ($IsObject(tStream) && (tStream.%Extends("%Stream.Object") || tStream.%Extends("%IO.I.Stream"))) {
+									Do tStream.Rewind()
+									Do tStream.Write($G(tPropValues(p)))
+								} ElseIf ($IsObject(tStream) && tStream.%Extends("%Library.Persistent")) {
+									// FORMS - set persistent properties
+									If $IsObject($G(tPropValues(p))) {
+										Set tStream = tPropValues(p)
+									} Else {
+										Set tStream = tStream.%OpenId($G(tPropValues(p)),,.st)
+									}
+									
+									Set $property(pObject,p) = tStream
+									// set relashonship
+								} ElseIf ($$$comMemberKeyGet($classname(pObject),$$$cCLASSproperty,p,$$$cPROPrelationship)) {
+									// TODO: parent-child	
+									#dim list As %Collection.ListOfObj
+									Set list = tPropValues(p)
+									For i = 1:1:list.Count() {
+										Do $method($property(pObject,p),"Insert",list.GetAt(i))
+									}							
+								}Else {
+									// set datatypes
+									Set tPropClassName = $$$comMemberKeyGet($classname(pObject),$$$cCLASSproperty,p,$$$cPROPtype)
+									If tPropClassName = "%Library.TimeStamp" {
+										Set $property(pObject,p) = ##class(%TimeStamp).XSDToLogical($G(tPropValues(p)))
+									} ElseIf tPropClassName = "%Library.Date" {
+										Set $property(pObject,p) = ##class(%Date).XSDToLogical($G(tPropValues(p)))
+									} Else {
+										Set $property(pObject,p) = $G(tPropValues(p))
+									}
+									// FORMS - END - set persistent properties
+								}
+							}
+							Catch ex {
+								If $case(ex.Name, "<CANNOT SET THIS PROPERTY>": 0, "<PROPERTY DOES NOT EXIST>": 'pIgnoreUnknownProps, :1) Throw ex
+							}
+						}
+						Set p = $O(tPropValues(p))
+					}
+					Set tToken = ""
+					Set tValue = ""
+					Quit
+				}
+				ElseIf (ch = "{") {
+					// start of object-valued property
+					Set pClass = $G(tPropValues("_class"),pClass)
+
+					If ((pClass="")||(tProperty="")) {
+						Set tChildClass = ""
+						Set tCollection = ""
+					}
+					Else {
+						// lookup type in meta data
+						Set tChildClass = $$$comMemberKeyGet(pClass,$$$cCLASSproperty,tProperty,$$$cPROPtype)
+						Set tCollection = $$$comMemberKeyGet(pClass,$$$cCLASSproperty,tProperty,$$$cPROPcollection)
+					}
+					// Note: This if block assumes pClass and tProperty are defined when tCollection '= ""
+					If (tCollection = "array") {
+						// start of array-valued property
+						Set tArrayType = "array"
+						Set tArrayKey = ""
+						Set tInArray = 1
+						Kill tArray
+						Set tToken = ""
+						Set tIsString = 0
+						Set tState = 5
+						Set tArrayState = "name"
+
+						// look up the runtime type of the array
+						// set tCollectionClass to the runtime type if the runtime type is not in %Library or %Collection
+						Set tCollectionClass = ""
+						Set tArrayRuntimeType = $$$comMemberKeyGet(pClass,$$$cCLASSproperty,tProperty,$$$cPROPruntimetype)
+						If (tArrayRuntimeType '= "") {
+							Set tArrayRuntimePackage = $piece(tArrayRuntimeType,".",1)
+							If (tArrayRuntimePackage '= "%Library") && (tArrayRuntimePackage '= "%Collection") {
+								Set tCollectionClass = tArrayRuntimeType
+							}
+						}
+					}
+					Else {
+						If ($IsObject(pJSON)) {
+							Set tSubJSON = pJSON
+							Set tPoke = ch  // simulate stream unwind
+						}
+						Else {
+							Set tSubJSON = $E(pJSON,p-1,*)
+							Set tPoke = ""
+						}
+						Set tSC = ..%ParseJSON(tSubJSON,tChildClass,.tToken,.tChars,pLevel+1,tPoke,pIgnoreUnknownProps)
+						If $$$ISERR(tSC) Quit
+						Set p = p + tChars - 1
+						Set pCharsProcessed = pCharsProcessed + tChars - 1
+					}
+				}
+				ElseIf (ch = "[") {
+					Set tCollectionClass = ""
+					If ((pClass'="")&&(tProperty'="")) {
+						// lookup type in meta data
+						// we could have a normal collection: List Of PropType
+						// OR
+						// the proptype could be a subclass of a collection
+						Set tCollectionClass = $$$comMemberKeyGet(pClass,$$$cCLASSproperty,tProperty,$$$cPROPtype)
+						If (tCollectionClass '= "") && (($$$comClassKeyGet(tCollectionClass,$$$cCLASSclasstype)="datatype") || '$classmethod(tCollectionClass,"%Extends","%Collection.AbstractIterator")) {
+							// use "built-in" collection
+							Set tCollectionClass = ""
+						}
+					}
+
+					// start of list/array-valued property
+					Set tInArray = 1
+					Set tArrayType = "list"
+					Kill tArray
+					Set tArrayIndex = 0
+					Set tToken = ""
+					Set tIsString = 0
+					Set tState = 5
+					Set tArrayState = "value"
+				}
+				ElseIf ((ch = """")||(ch = "'")) {
+					// start of string
+					Set tToken = ""
+					Set tIsString = 1
+					Set tQuote = ch
+					Set tState = 4
+				}
+				ElseIf ('$$$WHITESPACE(ch)) {
+					// must be a numeric value, or true,false,or null
+					Set:'$IsObject(tToken) tToken = tToken _ ch
+				}
+			}
+			ElseIf (tState = 4) {
+				// string literal
+				If (ch = "\") {
+					// escape?
+					Set tState = "4a"
+				}
+				ElseIf (ch = tQuote) {
+					// end of string
+					If (tInArray) {
+						Set tState = 5
+					}
+					Else {
+						Set tState = 3
+					}
+				}
+				Else {
+					Set:'$IsObject(tToken) tToken = tToken _ ch
+				}
+			}
+			// NOTE: States 4a, 4b and 4c are defined *after* state 5 as we expect escaped text less often than arrays (state 5)
+			ElseIf (tState = 5) {
+				// array items
+				If (ch = ",") {
+					// end of array item
+					If (tArrayType = "list") {
+						Set tArrayIndex = tArrayIndex + 1
+					}
+					If (tIsString || $IsObject(tToken)) {
+						Set tValue = tToken
+					}
+					Else {
+						Set tValue = $Case(tToken,"null":"","true":1,"false":0,:+tToken)
+					}
+					If (tArrayType = "list") {
+						Set tArray(tArrayIndex) = tValue
+					}
+					ElseIf (tArrayKey'="") {
+						Set tArray(tArrayKey) = tValue
+					}
+					Set tToken = ""
+					Set tArrayKey = ""
+					Set tIsString = 0
+					If (tArrayType = "list") {
+						Set tArrayState = "value"
+					}
+					Else {
+						Set tArrayState = "name"
+					}
+				}
+				ElseIf ((tArrayType="list")&&(ch = "]")) {
+					// end of list array
+					If (tToken '= "") {
+						Set tArrayIndex = tArrayIndex + 1
+						If (tIsString || $IsObject(tToken)) {
+							Set tValue = tToken
+						}
+						Else {
+							Set tValue = $Case(tToken,"null":"","true":1,"false":0,:+tToken)
+						}
+						Set tArray(tArrayIndex) = tValue
+					}
+
+					If ($G(tCollectionClass)'="") {
+						Set tListObj = $classmethod(tCollectionClass,"%New")
+					}
+					Else {
+						#; Look for first non-"" value to determine whether the list contains objects or datatypes
+						Set tUseObjectArray = 1
+						Set n = $O(tArray(""))
+						While n {
+							If $IsObject($G(tArray(n))) Quit
+							If ($G(tArray(n)) '= "") {
+								Set tUseObjectArray = 0
+								Quit
+							}
+							Set n = $O(tArray(n))
+						}
+						Set tListObj = $select(tUseObjectArray: ##class(%Library.ListOfObjects).%New(), 1: ##class(%Library.ListOfDataTypes).%New())
+					}
+					Set tCollectionClass = ""
+					Set n = $O(tArray(""))
+					While (n'="") {
+						Do tListObj.Insert(tArray(n))
+						Set n = $O(tArray(n))
+					}
+
+					Set tToken = tListObj
+					Set tListObj = ""
+					Set tInArray = 0
+					Kill tArray
+					Set tArrayIndex = 0
+					Set tState = 3
+					If tJSONArray {
+						Set pObject = tToken
+						Set tJSONArray = 0
+						Quit
+					}
+				}
+				ElseIf ((tArrayType="array")&&(ch = "}")) {
+					// end of array
+					If (tToken '= "") {
+						If (tIsString || $IsObject(tToken)) {
+							Set tValue = tToken
+						}
+						Else {
+							Set tValue = $Case(tToken,"null":"","true":1,"false":0,:+tToken)
+						}
+						If (tArrayKey'="") {
+							Set tArray(tArrayKey) = tValue
+						}
+					}
+
+					If ($G(tCollectionClass)'="") {
+						Set tArrayObj = $classmethod(tCollectionClass,"%New")
+					}
+					Else {
+						Set tUseObjectArray = 1
+						Set n = $O(tArray(""))
+						While n '= "" {
+							If $IsObject($G(tArray(n))) Quit
+							If ($G(tArray(n)) '= "") {
+								Set tUseObjectArray = 0
+								Quit
+							}
+							Set n = $O(tArray(n))
+						}
+						Set tArrayObj = $select(tUseObjectArray: ##class(%Library.ArrayOfObjects).%New(), 1: ##class(%Library.ArrayOfDataTypes).%New())
+					}
+					Set tCollectionClass = ""
+
+					Set n = $O(tArray(""))
+					While (n'="") {
+						Do tArrayObj.SetAt(tArray(n),n)
+						Set n = $O(tArray(n))
+					}
+
+					Set tToken = tArrayObj
+					Set tArrayObj = ""
+					Set tInArray = 0
+					Kill tArray
+					Set tArrayIndex = 0
+					Set tArrayKey = ""
+					Set tState = 3
+				}
+				ElseIf (ch = "{") {
+					// object-valued item: token is the object
+					If (pClass'="") && (tProperty="") && $classmethod(pClass,"%Extends","%Library.ListOfObjects") {
+						Set tPropElementType = $parameter(pClass,"ELEMENTTYPE")
+						Set tChildClass = $select(tPropElementType = "%RegisteredObject": "", 1: tPropElementType)
+					}
+					ElseIf ((pClass="")||(tProperty="")) {
+						Set tChildClass = ""
+					}
+					Else {
+						// lookup type in meta data
+						If (tCollectionClass="") {
+							// property types tells us the type of items in the collection
+							Set tChildClass = $$$comMemberKeyGet(pClass,$$$cCLASSproperty,tProperty,$$$cPROPtype)
+						}
+						Else {
+							// we have to get the element type from the collection class
+							Set tChildClass = $parameter(tCollectionClass,"ELEMENTTYPE")
+						}
+					}
+					If ($IsObject(pJSON)) {
+						Set tSubJSON = pJSON
+						Set tPoke = ch  // simulate stream unwind
+					}
+					Else {
+						Set tSubJSON = $E(pJSON,p-1,*)
+						Set tPoke = ""
+					}
+						
+					Set tSC = ..%ParseJSON(tSubJSON,tChildClass,.tToken,.tChars,pLevel+1,tPoke,pIgnoreUnknownProps)
+					If $$$ISERR(tSC) Quit
+					Set p = p + tChars - 1
+					Set pCharsProcessed = pCharsProcessed + tChars - 1
+				}
+				ElseIf (ch = "[") {
+					If ((pClass="")||(tProperty="")) {
+						Set tChildCollectionClass = ""
+					}
+					Else {
+						Set tChildCollectionClass = $$$comMemberKeyGet(pClass,$$$cCLASSproperty,tProperty,$$$cPROPtype)
+						If (tChildCollectionClass '= "") && (($$$comClassKeyGet(tCollectionClass,$$$cCLASSclasstype)="datatype") || '$classmethod(tCollectionClass,"%Extends","%Collection.AbstractIterator")) {
+							// use "built-in" collection
+							Set tChildCollectionClass = ""
+						}
+					}
+					If ($IsObject(pJSON)) {
+						Set tSubJSON = pJSON
+						Set tPoke = ch  // simulate stream unwind
+					}
+					Else {
+						Set tSubJSON = $E(pJSON,p-1,*)
+						Set tPoke = ""
+					}
+					Set tSC = ..%ParseJSON(tSubJSON,tChildCollectionClass,.tToken,.tChars,pLevel+1,tPoke,pIgnoreUnknownProps)
+					If $$$ISERR(tSC) Quit
+					Set p = p + tChars - 1
+					Set pCharsProcessed = pCharsProcessed + tChars - 1
+				}
+				ElseIf ((ch = """")||(ch = "'")) {
+					// start of string
+					Set tToken = ""
+					Set tIsString = 1
+					Set tQuote = ch
+					Set tState = 4
+				}
+				ElseIf ((tArrayType="array")&&(ch=":")) {
+					// end of name
+					If (tArrayState = "name") {
+						Set tArrayState = "value"
+						Set tArrayKey = tToken
+						Set tToken = ""
+					}
+				}
+				ElseIf ('$$$WHITESPACE(ch)) {
+					// literal
+					Set:'$IsObject(tToken) tToken = tToken _ ch
+				}
+			}
+			// NOTE: States 4a, 4b and 4c precede states 2a, 2b and 2c as we expect literal strings to need escaping more often than property names
+			ElseIf (tState = "4a") {
+				// \ in string
+				If (ch = "u") {
+					Set tUnicodeHex = ""
+					Set tState = "4b"
+				}
+				// add special case support for \xNN escape sequences that are valid in Javascript
+				ElseIf (ch = "x") {
+					Set tHex = ""
+					Set tState = "4c"
+				}
+				Else {
+					// Support escape sequences defined in RFC 4627, as well as \'
+					Set tToken = tToken _ $Case(ch, "\": "\", "'": "'", """": """", "/": "/", "b": $char(8), "f": $char(12), "n": $char(10), "r": $char(13), "t": $char(9), : "\" _ ch)
+					Set tState = 4
+				}
+			}
+			ElseIf (tState = "4b") {
+				// in \uXXXX escape sequence
+				Set tUnicodeHex = tUnicodeHex _ ch
+				If ($length(tUnicodeHex) = 4) {
+					// Check that we do actually have a Hex value
+					If $$$MATCHHEXCHARS(tUnicodeHex,4) {
+						Set tUnicodeDecimal = $zhex(tUnicodeHex)
+						Set tToken = tToken _ $char(tUnicodeDecimal)
+					}
+					Else {
+						Set tToken = tToken _ "\u" _ tUnicodeHex
+					}
+					Set tState = 4
+				}
+			}
+			ElseIf (tState = "4c") {
+				// in \xNN escape sequence
+				Set tHex = tHex _ ch
+				If ($length(tHex) = 2) {
+					// Check that we do actually have a Hex value
+					If $$$MATCHHEXCHARS(tHex,2) {
+						Set tCodeDecimal = $zhex(tHex)
+						Set tToken = tToken _ $char(tCodeDecimal)
+					}
+					Else { // Not a hex escape
+						Set tToken = tToken _ "\x" _ tHex
+					}
+					Set tState = 4
+				}
+			}
+			ElseIf (tState = "2a") {
+				// \ in property name
+				If (ch = "u") {
+					Set tUnicodeHex = ""
+					Set tState = "2b"
+				}
+				// add special case support for \xNN escape sequences that are valid in Javascript
+				ElseIf (ch = "x") {
+					Set tHex = ""
+					Set tState = "2c"
+				}
+				Else {
+					// Support escape sequences defined in RFC 4627, as well as \'
+					Set tToken = tToken _ $Case(ch, "\": "\", "'": "'", """": """", "/": "/", "b": $char(8), "f": $char(12), "n": $char(10), "r": $char(13), "t": $char(9), : "\" _ ch)
+					Set tState = 2
+				}
+			}
+			ElseIf (tState = "2b") {
+				// in \uXXXX escape sequence
+				Set tUnicodeHex = tUnicodeHex _ ch
+				If ($length(tUnicodeHex) = 4) {
+					#; Check that we do actually have a Hex value
+					If $$$MATCHHEXCHARS(tUnicodeHex,4) {
+						Set tUnicodeDecimal = $zhex(tUnicodeHex)
+						Set tToken = tToken _ $char(tUnicodeDecimal)
+					}
+					Else {
+						Set tToken = tToken _ "\u" _ tUnicodeHex
+					}
+					Set tState = 2
+				}
+			}
+			ElseIf (tState = "2c") {
+				// in \xNN escape sequence
+				Set tHex = tHex _ ch
+				If ($length(tHex) = 2) {
+					#; Check that we do actually have a Hex value
+					If $$$MATCHHEXCHARS(tHex,2) {
+						Set tCodeDecimal = $zhex(tHex)
+						Set tToken = tToken _ $char(tCodeDecimal)
+					}
+					Else { // Not a hex escape
+						Set tToken = tToken _ "\x" _ tHex
+					}
+					Set tState = 2
+				}
+			}
+		}
+	}
+	Catch ex {
+		// Do ..%WriteJSONToFile(pJSON,"jsonout.txt")
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+</Export>
