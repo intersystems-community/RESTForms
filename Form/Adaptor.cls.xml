@@ -60,6 +60,7 @@ w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</Descrip
 		}
 	}
 	
+	set $$$formGlobal(className) = formName
 	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
 	
 	return sc

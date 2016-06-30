@@ -7,13 +7,15 @@
 
 <Method name="getFormsList">
 <Description>
-Получить список всех форм</Description>
+Get all forms list
+w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Array</ReturnType>
 <Implementation><![CDATA[
 	set forms = []
 	$$$forAll(form, $$$formGlobal)
-		do forms.$push(form)
+		set formObj = {"name":$$$formGlobal(form), "class": form}
+		do forms.$push(formObj)
 	$$$endFor
 	quit forms
 ]]></Implementation>
