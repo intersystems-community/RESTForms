@@ -7,6 +7,7 @@
 <CompileAfter>Form.Info</CompileAfter>
 <IncludeCode>Form</IncludeCode>
 <PropertyClass>Form.Field</PropertyClass>
+<Super>Form.Security</Super>
 <TimeCreated>64090,75147.034342</TimeCreated>
 <DependsOn>Form.Info</DependsOn>
 
@@ -14,6 +15,13 @@
 <Description>
 Form name, not a global key so it can be anything</Description>
 <Type>%String</Type>
+</Parameter>
+
+<Parameter name="PERMISSIONS">
+<Description>
+Default permissions</Description>
+<Type>%String</Type>
+<Default>CRUD</Default>
 </Parameter>
 
 <Method name="generateMetadata">

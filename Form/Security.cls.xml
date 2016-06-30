@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Security">
+<Abstract>1</Abstract>
+<TimeCreated>64099,78607.760597</TimeCreated>
+
+<Parameter name="PERMISSIONS">
+<Description>
+Default permissions</Description>
+<Type>%String</Type>
+<Default>CRUD</Default>
+</Parameter>
+
+<Method name="checkPermission">
+<Description>
+This is an override method to perform an actual permission check
+By default it uses PERMISSIONS parameter, but the form can override 
+based on a role/user/whatever</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>action:%String(VALUELIST="C,R,U,D")</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[	return ..#PERMISSIONS [ action
+]]></Implementation>
+</Method>
+
+<Method name="checkPermissionStatus">
+<Description>
+Check, if the action we want to perform can be done
+This method is final. Override checkPermission method</Description>
+<Final>1</Final>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>action:%String(VALUELIST="C,R,U,D")</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set permission = ..checkPermission(action)
+	if 'permission {
+		set sc = $$$ERROR($$$GeneralError, "Action '" _ action _ "' cannot be performed in the context of " _ $classname())
+	}
+	return sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>
