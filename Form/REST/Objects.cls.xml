@@ -2,15 +2,19 @@
 <Export generator="Cache" version="25">
 <Class name="Form.REST.Objects">
 <Description>
-Брокер работы с индивидуальными объектами</Description>
+Broker class to work with queries</Description>
 <Super>Form.REST.Abstract</Super>
 <TimeCreated>64090,79332.572705</TimeCreated>
 
 <Parameter name="ALL">
+<Description>
+Query to return all availible information about form objects</Description>
 <Default>*</Default>
 </Parameter>
 
 <Parameter name="INFO">
+<Description>
+Return id and dislpayName</Description>
 <Default>id AS _id, displayName</Default>
 </Parameter>
 
