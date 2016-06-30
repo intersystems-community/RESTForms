@@ -33,6 +33,7 @@ For POST/PUT requests see method descriptions for request body samples
 # SQL requests
 
 `GET http://localhost:57772/forms/form/objects/Form.TestForm/info?size=2&page=1&orderby=text`
+
 `GET http://localhost:57772/forms/form/objects/Form.TestForm/all?orderby=text+desc`
 
 ## Query types
