@@ -22,8 +22,7 @@ Import classes and create web app with `Form.REST.Main` broker.
 | form/object/:class/:id               | PUT    | Update form object from dynamic object |
 | form/object/:class                   | PUT    | Update form object from object         |
 | form/object/:class/:id               | DELETE | Delete form object                     |
-| forms/form/objects/:class/all        | GET    | (SQL) Get all members for the form     |
-| forms/form/objects/:class/info       | GET    | (SQL) Get basic info for the form      |
+| form/objects/:class/:query           | GET    | (SQL) Get all members for the form by query|
 | form/file/:class/:id/:property       | POST   | Add files to this property             |
 | form/file/:class/:id/:property       | DELETE | Delete all files from this property    |
 | form/file/:class/:id/:property/:name | DELETE | Delete one file from property          |
@@ -33,7 +32,14 @@ For POST/PUT requests see method descriptions for request body samples
 
 # SQL requests
 
-`GET http://localhost:57772/forms/catalog/members/Form.TestRef?size=2&page=1&orderby=Value+desc&filter=(Value+contains+W)`
+`GET http://localhost:57772/forms/form/objects/Form.TestForm/info?size=2&page=1&orderby=text`
+
+## Query types
+
+| Query    |  Description         |
+|----------|----------------------|
+| all      | all information      |
+| info     | displayName and id   |
 
 ## URL arguments:
 
