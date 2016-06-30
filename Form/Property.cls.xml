@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="Form.Property">
+<Description>
+Methods for form field === class property</Description>
 <Abstract>1</Abstract>
 <IncludeCode>Form</IncludeCode>
 <TimeCreated>64090,75759.538379</TimeCreated>
 
 <Method name="propertyToMetadata">
 <Description>
-Сгенерировать метаданные для поля формы</Description>
+Generate metadata for one field of a form</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>property:%Dictionary.PropertyDefinition</FormalSpec>
 <ReturnType>%Object</ReturnType>
@@ -25,12 +27,12 @@
 
 <Method name="determineClassCategory">
 <Description>
-Определить тип класса</Description>
+Determine class type</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String=""</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	return:$classmethod(className, "%Extends", "Form.Ref") "catalog"
+	return:##class(Form.Info).formExists(className) "form"
 	return:className=$$$fileClass "file"
 	return $$$getClassType(className)
 ]]></Implementation>
