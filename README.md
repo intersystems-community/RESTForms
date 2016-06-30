@@ -82,4 +82,4 @@ Conditions:
 
 #Samples
 
-See `Form.TestForm` and `Form.TestRef` for samples.
+See `Form.TestForm` for samples.

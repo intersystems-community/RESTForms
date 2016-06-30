@@ -50,7 +50,7 @@
 	
 	set obj = %request.Content
 	set objClass = $className(obj)
-	return:objClass'=class $$$ERROR("Expected instance of " _ class _ " class, received instance of " _ objClass)
+	return:objClass'=class $$$ERROR("Expected instance of '" _ class _ "' class, received instance of '" _ objClass _ "'")
 	
 	set sc = obj.%Save()
 	
@@ -90,7 +90,7 @@
 	set obj = %request.Content
 
 	set objClass = $className(obj)
-	return:objClass'=class $$$ERROR("Expected instance of " _ class _ " class, received instance of " _ objClass)
+	return:objClass'=class $$$ERROR("Expected instance of '" _ class _ "' class, received instance of '" _ objClass _"'")
 	
 	set sc = obj.%Save()
 	
