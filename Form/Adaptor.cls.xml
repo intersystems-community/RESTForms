@@ -18,7 +18,7 @@ Set to empty string (like here) to not have a class as a form </Description>
 <Type>%String</Type>
 </Parameter>
 
-<Parameter name="PERMISSIONS">
+<Parameter name="OBJPERMISSIONS">
 <Description>
 Default permissions
 Objects of this form can be Created, Read, Updated and Deleted

@@ -29,7 +29,7 @@
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
-	set sc = ..checkPermission(class, "R")
+	set sc = ..checkObjPermission(class, "R")
 	return:$$$ISERR(sc) sc
 	
 	set sc = $classMethod(class, $$$toJSONClassMethod, id)
@@ -49,7 +49,7 @@
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
-	set sc = ..checkPermission(class, "C")
+	set sc = ..checkObjPermission(class, "C")
 	return:$$$ISERR(sc) sc
 	
 	set obj = %request.Content
@@ -74,7 +74,7 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set sc = ..checkPermission(class, "U")
+	set sc = ..checkObjPermission(class, "U")
 	return:$$$ISERR(sc) sc
 	
 	set obj = %request.Content
@@ -92,7 +92,7 @@
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set sc = ..checkPermission(class, "U")
+	set sc = ..checkObjPermission(class, "U")
 	return:$$$ISERR(sc) sc
 	
 	set obj = %request.Content
@@ -116,7 +116,7 @@
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
-	set sc = ..checkPermission(class, "D")
+	set sc = ..checkObjPermission(class, "D")
 	return:$$$ISERR(sc) sc
 
 	set sc = $classMethod(class, "%DeleteId", id)

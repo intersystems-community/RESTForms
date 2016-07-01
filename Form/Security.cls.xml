@@ -4,14 +4,14 @@
 <Abstract>1</Abstract>
 <TimeCreated>64099,78607.760597</TimeCreated>
 
-<Parameter name="PERMISSIONS">
+<Parameter name="OBJPERMISSIONS">
 <Description>
-Default permissions</Description>
+Default permissions to access form object</Description>
 <Type>%String</Type>
 <Default>CRUD</Default>
 </Parameter>
 
-<Method name="checkPermission">
+<Method name="checkObjPermission">
 <Description>
 This is an override method to perform an actual permission check
 By default it uses PERMISSIONS parameter, but the form can override 
@@ -21,11 +21,11 @@ based on a role/user/whatever</Description>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
 	return:action="" $$$NO
-	return ..#PERMISSIONS [ action
+	return ..#OBJPERMISSIONS [ action
 ]]></Implementation>
 </Method>
 
-<Method name="checkPermissionStatus">
+<Method name="checkObjPermissionStatus">
 <Description>
 Check, if the action we want to perform can be done
 This method is final. Override checkPermission method</Description>
@@ -35,7 +35,7 @@ This method is final. Override checkPermission method</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set permission = ..checkPermission(action)
+	set permission = ..checkObjPermission(action)
 	if 'permission {
 		set sc = $$$ERROR($$$GeneralError, "Action '" _ action _ "' cannot be performed in the context of " _ $classname())
 	}

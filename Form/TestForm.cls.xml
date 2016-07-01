@@ -10,7 +10,7 @@ Form name, not a global key so it can be anything</Description>
 <Default>Тестовая форма</Default>
 </Parameter>
 
-<Parameter name="PERMISSIONS">
+<Parameter name="OBJPERMISSIONS">
 <Description>
 Default permissions
 Objects of this form can be Created, Read, Updated and Deleted
