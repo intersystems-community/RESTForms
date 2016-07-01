@@ -21,6 +21,21 @@ to add custom security based on user/roles/etc.</Description>
 <Default>CRUD</Default>
 </Parameter>
 
+<Parameter name="DISPLAYPROPERTY">
+<Description>
+Property used for basic information about the object
+By default getObjectDisplayName method gets its value from it</Description>
+<Type>%String</Type>
+<Default>displayName</Default>
+</Parameter>
+
+<UDLText name="T">
+<Content><![CDATA[
+// TestForm properties below. Mandatory part above. 
+
+]]></Content>
+</UDLText>
+
 <Property name="displayName">
 <Description>
 The main property describing this object, automatically computes 
@@ -32,16 +47,16 @@ on insert or update (for SQL) or on save (for object access)</Description>
 <Parameter name="DISPLAYNAME" value="Имя"/>
 </Property>
 
-<UDLText name="T">
-<Content><![CDATA[
-// TestForm properties below. Mandatory part above. 
-
-]]></Content>
-</UDLText>
-
 <Property name="text">
 <Type>%String</Type>
 <Parameter name="DISPLAYNAME" value="Текст"/>
+</Property>
+
+<Property name="gender">
+<Type>%String</Type>
+<Parameter name="DISPLAYLIST" value=",М,Ж"/>
+<Parameter name="DISPLAYNAME" value="Пол"/>
+<Parameter name="VALUELIST" value=",1,2"/>
 </Property>
 
 <Method name="recreate">
@@ -74,6 +89,7 @@ do ##class(Form.TestForm).recreate2()</Description>
 <IdLocation>^Form.TestFormD</IdLocation>
 <IndexLocation>^Form.TestFormI</IndexLocation>
 <StreamLocation>^Form.TestFormS</StreamLocation>
+<ExtentSize>10</ExtentSize>
 <Data name="TestFormDefaultData">
 <Value name="1">
 <Value>%%CLASSNAME</Value>
@@ -84,7 +100,33 @@ do ##class(Form.TestForm).recreate2()</Description>
 <Value name="3">
 <Value>text</Value>
 </Value>
+<Value name="4">
+<Value>gender</Value>
+</Value>
 </Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>1.1</AverageFieldSize>
+</Property>
+<Property name="displayName">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>4.8</AverageFieldSize>
+</Property>
+<Property name="gender">
+<Selectivity>50.0000%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="text">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>4.8</AverageFieldSize>
+</Property>
+<SQLMap name="IDKEY">
+<BlockCount>-4</BlockCount>
+</SQLMap>
 </Storage>
 </Class>
 </Export>

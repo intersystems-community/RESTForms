@@ -19,6 +19,13 @@ Generate metadata for one field of a form</Description>
 	set metadata.type = property.Type
 	set metadata.collection = property.Collection
 	set metadata.displayName = property.Parameters.GetAt($$$propDisplayNameParam)
+	
+	set valueList = property.Parameters.GetAt("VALUELIST")
+	set:valueList'="" metadata.valueList = ##class(Form.Util.Converter).stringToArray(valueList)
+	
+	set displayList = property.Parameters.GetAt("DISPLAYLIST")
+	set:displayList'="" metadata.displayList = ##class(Form.Util.Converter).stringToArray(displayList)
+	
 	set metadata.required = property.Required
 	set metadata.category = ..determineClassCategory(property.Type)
 	return metadata

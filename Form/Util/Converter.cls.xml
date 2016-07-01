@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Util.Converter">
+<Description>
+Various datatype conversion utilities</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64100,82956.192829</TimeCreated>
+
+<Method name="stringToArray">
+<Description>
+Convert delimited string to dynamic array</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>string:%String,delimiter:%String=","</FormalSpec>
+<ReturnType>%Array</ReturnType>
+<Implementation><![CDATA[
+	set list = $listFromString(string, delimiter)
+	return ..listToArray(list)
+]]></Implementation>
+</Method>
+
+<Method name="listToArray">
+<Description>
+Convert $list to dynamic array</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>list:%List</FormalSpec>
+<ReturnType>%Array</ReturnType>
+<Implementation><![CDATA[
+	set array = []
+	set pointer = 0
+	while $listNext(list, pointer, piece) {
+		do array.$push(piece)
+	}
+	return array
+]]></Implementation>
+</Method>
+</Class>
+</Export>
