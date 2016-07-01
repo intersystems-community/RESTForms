@@ -25,5 +25,12 @@
 #define fileClass "Form.File"
 #define propClass "Form.Field"
 #define fileDir $g($$$settingsGlobal("fileDir"), ##class(%Library.File).GetDirectory())
+
+#define ClassSQLTable(%c)    ($$$comClassKeyGet(%c,$$$cCLASSsqlschemaname)_"."_$$$comClassKeyGet(%c,$$$cCLASSsqltablename))
+
+#; Get a Class Parameter from a class
+#; #define GetClassParameter(%cls,%parm) $$$comMemberKeyGet(%cls,$$$cCLASSparameter,%parm,$$$cPARAMdefault)
+#; #define GetPropertyParameter(%cls,%prop,%parm) $$$comMemberArrayGet(%cls,$$$cCLASSproperty,%prop,$$$cPROPparameter,%parm)
+
 ]]></Routine>
 </Export>

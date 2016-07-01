@@ -184,6 +184,7 @@ Redefine to implement your custom logic</Description>
 <FormalSpec>id:%Integer</FormalSpec>
 <GenerateAfter>onFormCompile</GenerateAfter>
 <ReturnType>%String</ReturnType>
+<SqlProc>1</SqlProc>
 <Implementation><![CDATA[
 	#Include Form
 	#dim sc As %Status = $$$OK

@@ -12,12 +12,6 @@ Query to return all availible information about form objects</Description>
 <Default>*</Default>
 </Parameter>
 
-<Parameter name="INFO">
-<Description>
-Return id and dislpayName</Description>
-<Default>id AS _id, displayName</Default>
-</Parameter>
-
 <XData name="UrlMap">
 <XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
 <Data><![CDATA[
@@ -34,13 +28,12 @@ Get all form objects</Description>
 <FormalSpec>class:%String="",queryType:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	#define ClassSQLTable(%c)    ($$$comClassKeyGet(%c,$$$cCLASSsqlschemaname)_"."_$$$comClassKeyGet(%c,$$$cCLASSsqltablename))
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
 	set sc = ..checkObjPermission(class, "R")
 	return:$$$ISERR(sc) sc
-	set sc = ..getBaseQuery(queryType, .queryBase)
+	set sc = ..getBaseQuery(queryType, class, .queryBase)
 	return:$$$ISERR(sc) sc	
 	
 	set table = $$$ClassSQLTable(class)
@@ -53,14 +46,17 @@ Get all form objects</Description>
 
 <Method name="getBaseQuery">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>queryType:%String,*queryBase:%String</FormalSpec>
+<FormalSpec>queryType:%String,class:%String,*queryBase:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set queryBase = ""
+	set queryType = $ZCVT(queryType, "U")
 	#dim sc As %Status = $$$OK
-	if ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), $ZCVT(queryType, "U")) {
+	if ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), queryType) {
 		/// we want only parameters defined in this class
-		set queryBase = $parameter(, $ZCVT(queryType, "U"))
+		set queryBase = $parameter(, queryType)
+	} elseif ##class(%Dictionary.MethodDefinition).IDKEYExists($classname(), "query" _ queryType) {
+		set queryBase = $classmethod(, "query" _ queryType, class)
 	} elseif 0 {
 		/// TODO Some other type of "get stuff between SELECT and FROM"
 		/// some callback class maybe
@@ -73,6 +69,20 @@ Get all form objects</Description>
 	}
 	
 	return sc
+]]></Implementation>
+</Method>
+
+<Method name="queryINFO">
+<Description>
+Return id and dislpayName
+w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set sqlProc = $$$ClassSQLTable(class) _ "_getObjectDisplayName(id)"
+	set queryBase = "id AS _id, " _ sqlProc _ " As displayName"
+	return queryBase
 ]]></Implementation>
 </Method>
 </Class>
