@@ -58,6 +58,8 @@ For results see:
 	set metadata = {}
 	set metadata.name = formName
 	set metadata.class = className
+	set metadata.objpermissions = %parameter("OBJPERMISSIONS")
+	
 	set metadata.fields = []
 	
 	for i = 1:1:%compiledclass.Properties.Count() {
