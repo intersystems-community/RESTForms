@@ -40,7 +40,7 @@ Determine class type</Description>
 
 <Method name="addClassProperty">
 <Description>
-Добавить свойство класса
+Add class property
 className - класс
 name - имя свойства
 type - класс свойства
