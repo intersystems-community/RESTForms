@@ -198,9 +198,9 @@ Redefine to implement your custom logic</Description>
 	
 	if ((prop.Calculated = $$$YES) || (prop.Transient = $$$YES)) {
 		do %code.WriteLine(" set obj = ..%OpenId(id)")
-		do %code.WriteLine(" return obj." _ prop.Name)
+		do %code.WriteLine(" return obj." _ propName)
 	} else {
-		do %code.WriteLine(" return .." _ prop.Name _ "GetStored(id)")
+		do %code.WriteLine(" return .." _ propName _ "GetStored(id)")
 	}
 		
 	quit sc
