@@ -13,7 +13,7 @@ Form name, not a global key so it can be anything</Description>
 <Parameter name="PERMISSIONS">
 <Description>
 Default permissions
-Objects of this for can be Created, Read, Updated and Deleted
+Objects of this form can be Created, Read, Updated and Deleted
 Redefine this parameter to change permissions for everyone
 Redefine checkPermission method (see Form.Security) for this class 
 to add custom security based on user/roles/etc.</Description>
@@ -31,6 +31,13 @@ on insert or update (for SQL) or on save (for object access)</Description>
 <SqlComputeOnChange>%%INSERT,%%UPDATE</SqlComputeOnChange>
 <Parameter name="DISPLAYNAME" value="Имя"/>
 </Property>
+
+<UDLText name="T">
+<Content><![CDATA[
+// TestForm properties below. Mandatory part above. 
+
+]]></Content>
+</UDLText>
 
 <Property name="text">
 <Type>%String</Type>

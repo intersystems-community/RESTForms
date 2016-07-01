@@ -2,7 +2,7 @@
 <Export generator="Cache" version="25">
 <Class name="Form.Adaptor">
 <Description>
-Базовый класс-адаптер для форм</Description>
+Base form adaptor class, all forms must inherit from this class</Description>
 <Abstract>1</Abstract>
 <CompileAfter>Form.Info</CompileAfter>
 <IncludeCode>Form</IncludeCode>
@@ -13,22 +13,27 @@
 
 <Parameter name="FORMNAME">
 <Description>
-Form name, not a global key so it can be anything</Description>
+Form name, not a global key so it can be anything
+Set to empty string (like here) to not have a class as a form </Description>
 <Type>%String</Type>
 </Parameter>
 
 <Parameter name="PERMISSIONS">
 <Description>
-Default permissions</Description>
+Default permissions
+Objects of this form can be Created, Read, Updated and Deleted
+Redefine this parameter to change permissions for everyone
+Redefine checkPermission method (see Form.Security) for this class 
+to add custom security based on user/roles/etc.</Description>
 <Type>%String</Type>
 <Default>CRUD</Default>
 </Parameter>
 
 <Method name="generateMetadata">
-<Description>
+<Description><![CDATA[
 Generate form metadata
 For results see:
-w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</Description>
+<example>w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>objectgenerator</CodeMode>
 <GenerateAfter>onFormCompile</GenerateAfter>
@@ -128,6 +133,8 @@ w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</Descrip
 </Method>
 
 <Method name="getObjectInfo">
+<Description>
+Get basic information about one object</Description>
 <Abstract>1</Abstract>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>id:%Integer</FormalSpec>
@@ -141,6 +148,9 @@ w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</Descrip
 </Method>
 
 <Method name="getObjectsInfo">
+<Description><![CDATA[
+Get basic information about several form objects.<br>
+<var>list</var> - contains objects ids (not oids)]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>list:%ListOfDataTypes</FormalSpec>
 <ReturnType>%Array</ReturnType>
