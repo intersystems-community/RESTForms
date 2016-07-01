@@ -4,6 +4,7 @@
 #define formGlobal ^form.forms
 #define settingsGlobal ^form.settings
 #define formNameParam "FORMNAME"
+#define displayProp "DISPLAYPROPERTY"
 #define propDisplayNameParam "DISPLAYNAME"
 #define metadata "metadata"
 

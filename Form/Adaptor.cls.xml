@@ -29,6 +29,14 @@ to add custom security based on user/roles/etc.</Description>
 <Default>CRUD</Default>
 </Parameter>
 
+<Parameter name="DISPLAYPROPERTY">
+<Description>
+Property used for basic information about the object
+By default getObjectDisplayName method gets its value from it</Description>
+<Type>%String</Type>
+<Default>displayName</Default>
+</Parameter>
+
 <Method name="generateMetadata">
 <Description><![CDATA[
 Generate form metadata
@@ -142,7 +150,7 @@ Get basic information about one object</Description>
 <Implementation><![CDATA[
 	set item = {}
 	set item."_id" = id
-	set item.displayName = obj.displayNameGetStored(id)
+	set item.displayName = ..getObjectDisplayName(id)
 	return item
 ]]></Implementation>
 </Method>
@@ -162,6 +170,40 @@ Get basic information about several form objects.<br>
 		do objectsList.$push(item)
 	}
 	return objectsList
+]]></Implementation>
+</Method>
+
+<Method name="getObjectDisplayName">
+<Description>
+Get vale of a property specified in DISPLAYPROPERTY parameter.
+If it is stored, then GetStored value would be taken
+If it is calculated, then the object would be opened and the value would be calculated
+Redefine to implement your custom logic</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec>id:%Integer</FormalSpec>
+<GenerateAfter>onFormCompile</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	#Include Form
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	return:className="Form.Adaptor" sc
+	
+	set propName = %parameter($$$displayProp)
+	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ propName)
+	
+	#dim prop As %Dictionary.CompiledProperty
+	set prop = %compiledclass.Properties.GetAt(key)
+	
+	if ((prop.Calculated = $$$YES) || (prop.Transient = $$$YES)) {
+		do %code.WriteLine(" set obj = ..%OpenId(id)")
+		do %code.WriteLine(" return obj." _ prop.Name)
+	} else {
+		do %code.WriteLine(" return .." _ prop.Name _ "GetStored(id)")
+	}
+		
+	quit sc
 ]]></Implementation>
 </Method>
 </Class>
