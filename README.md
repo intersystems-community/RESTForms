@@ -45,6 +45,7 @@ Currently new query types can be specified as parameters in `Form.REST.Objects` 
 |----------|----------------------|
 | all      | all information      |
 | info     | displayName and id   |
+| infoclass| displayName, id, class|
 
 ## URL arguments:
 
