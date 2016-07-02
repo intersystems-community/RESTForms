@@ -45,6 +45,11 @@ Get all form objects</Description>
 </Method>
 
 <Method name="getBaseQuery">
+<Description><![CDATA[
+Returns the part between SELECT and FORM (queryBase) based on queryType and target class
+Supported queryBase sources:<br>
+1. Uppercase parameter values defined in this class<br>
+2. ClassMethods, defined in this class with the name: queryQUERYTYPE]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>queryType:%String,class:%String,*queryBase:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -73,9 +78,9 @@ Get all form objects</Description>
 </Method>
 
 <Method name="queryINFO">
-<Description>
+<Description><![CDATA[
 Return id and dislpayName
-w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</Description>
+<example>w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
@@ -87,15 +92,14 @@ w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</Description>
 </Method>
 
 <Method name="queryINFOCLASS">
-<Description>
-Return id and dislpayName
-w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</Description>
+<Description><![CDATA[
+Return id, dislpayName and class
+<example>w ##class(Form.REST.Objects).queryINFOCLASS("Form.TestForm")</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	set sqlProc = $$$ClassSQLTable(class) _ "_getObjectDisplayName(id)"
-	set queryBase = "id AS _id, %CLASSNAME AS _class, " _ sqlProc _ " As displayName"
+	set queryBase = ..queryINFO(class) _ ", %CLASSNAME AS _class "
 	return queryBase
 ]]></Implementation>
 </Method>
