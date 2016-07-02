@@ -44,6 +44,28 @@ Person's Date of Birth.</Description>
 <Parameter name="POPSPEC" value="Date()"/>
 </Property>
 
+<Property name="аge">
+<Description><![CDATA[
+Person's age.<br>
+This is a calculated field whose value is derived from <property>DOB</property>.]]></Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode> Set {аge}=##class(Form.Test.Person).CurrentAge({dob})</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+<SqlComputeOnChange>dob</SqlComputeOnChange>
+</Property>
+
+<Method name="сurrentAge">
+<Description><![CDATA[
+This class method calculates a current age given a date of birth <var>date</var>.]]></Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>date:%Date=""</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[$Select(date="":"",1:($ZD($H,8)-$ZD(date,8)\10000))
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Form.Test.PersonD</DataLocation>
