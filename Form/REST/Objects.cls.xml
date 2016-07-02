@@ -85,5 +85,19 @@ w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</Description>
 	return queryBase
 ]]></Implementation>
 </Method>
+
+<Method name="queryINFOCLASS">
+<Description>
+Return id and dislpayName
+w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set sqlProc = $$$ClassSQLTable(class) _ "_getObjectDisplayName(id)"
+	set queryBase = "id AS _id, %CLASSNAME AS _class, " _ sqlProc _ " As displayName"
+	return queryBase
+]]></Implementation>
+</Method>
 </Class>
 </Export>
