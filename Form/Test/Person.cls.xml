@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Test.Person">
+<Description>
+Test form: Person</Description>
+<Super>%Persistent,Form.Adaptor,%Populate</Super>
+<TimeCreated>64101,38189.100761</TimeCreated>
+
+<Parameter name="FORMNAME">
+<Default>Тестовая форма: человек</Default>
+</Parameter>
+
+<Parameter name="OBJPERMISSIONS">
+<Type>%String</Type>
+<Default>CRUD</Default>
+</Parameter>
+
+<Parameter name="DISPLAYPROPERTY">
+<Type>%String</Type>
+<Default>name</Default>
+</Parameter>
+
+<Property name="name">
+<Description>
+Person's name.</Description>
+<Type>%String</Type>
+<Parameter name="DISPLAYNAME" value="Имя"/>
+</Property>
+
+<Property name="gender">
+<Description>
+Person's gender</Description>
+<Type>%String</Type>
+<Parameter name="DISPLAYLIST" value=",М,Ж"/>
+<Parameter name="DISPLAYNAME" value="Пол"/>
+<Parameter name="VALUELIST" value=",1,2"/>
+</Property>
+
+<Property name="dob">
+<Description>
+Person's Date of Birth.</Description>
+<Type>%Date</Type>
+<Parameter name="DISPLAYNAME" value="Дата рождения"/>
+<Parameter name="POPSPEC" value="Date()"/>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Form.Test.PersonD</DataLocation>
+<DefaultData>PersonDefaultData</DefaultData>
+<IdLocation>^Form.Test.PersonD</IdLocation>
+<IndexLocation>^Form.Test.PersonI</IndexLocation>
+<StreamLocation>^Form.Test.PersonS</StreamLocation>
+<Data name="PersonDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>name</Value>
+</Value>
+<Value name="3">
+<Value>gender</Value>
+</Value>
+<Value name="4">
+<Value>dob</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>
