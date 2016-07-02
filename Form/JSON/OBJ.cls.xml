@@ -37,15 +37,22 @@ w - Windows-style cr/lf newline<br/>]]></Description>
 <Implementation><![CDATA[
 	Set tSC = $$$OK
 	Try {
-		If ((pObject="")||'$IsObject(pObject)||($D(pVisited(pObject)))) {
+		
+		/// On the first level object can be drawn several times
+		If ((pObject="")||'$IsObject(pObject)||(($D(pVisited(pObject))) && pLevel'=0)) {
 			// cycle
 			Write:pFormat["a"||'pLevel "null"
 			Quit
 		}
+		
+		set pVisited(pObject) = ""
+		
 		Set tClass = $classname(pObject)
 		
 		/// Forms can be drawn several times - we don't set 'pVisited' for them
-		Set:'##class(Form.Info).formExists(tClass) pVisited(pObject) = ""
+		//if (('##class(Form.Info).formExists(tClass)) || (pLevel '= 0)) {
+		//	set pVisited(pObject) = ""
+		//}
 		
 		If (tClass = "%ZEN.proxyObject") {
 			Set tSC = pObject.%ToJSON(pLevel,pFormat)
