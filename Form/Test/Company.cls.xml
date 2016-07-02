@@ -5,7 +5,7 @@
 <TimeCreated>64101,39307.619051</TimeCreated>
 
 <Parameter name="FORMNAME">
-<Default>Тестовая форма: человек</Default>
+<Default>Тестовая форма: компания</Default>
 </Parameter>
 
 <Parameter name="OBJPERMISSIONS">
