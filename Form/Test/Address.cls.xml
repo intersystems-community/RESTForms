@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Test.Address">
+<Super>%SerialObject,%Populate</Super>
+<TimeCreated>64101,39590.214377</TimeCreated>
+
+<Property name="House">
+<Type>%Integer</Type>
+<Parameter name="MAXVAL" value="999"/>
+<Parameter name="MINVAL" value="1"/>
+</Property>
+
+<Property name="Street">
+<Description>
+The street address.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="80"/>
+<Parameter name="POPSPEC" value="Street()"/>
+</Property>
+
+<Property name="City">
+<Description>
+The city name.</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="80"/>
+<Parameter name="POPSPEC" value="City()"/>
+</Property>
+</Class>
+</Export>

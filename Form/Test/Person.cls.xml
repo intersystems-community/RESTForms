@@ -16,6 +16,8 @@ Test form: Person</Description>
 </Parameter>
 
 <Parameter name="DISPLAYPROPERTY">
+<Description>
+Name is a field used as a basic info about this form object</Description>
 <Type>%String</Type>
 <Default>name</Default>
 </Parameter>
@@ -50,12 +52,13 @@ Person's age.<br>
 This is a calculated field whose value is derived from <property>DOB</property>.]]></Description>
 <Type>%Integer</Type>
 <Calculated>1</Calculated>
-<SqlComputeCode> Set {аge}=##class(Form.Test.Person).CurrentAge({dob})</SqlComputeCode>
+<SqlComputeCode> set {*}=##class(Form.Test.Person).currentAge({dob})</SqlComputeCode>
 <SqlComputed>1</SqlComputed>
 <SqlComputeOnChange>dob</SqlComputeOnChange>
+<Parameter name="DISPLAYNAME" value="Возраст"/>
 </Property>
 
-<Method name="сurrentAge">
+<Method name="currentAge">
 <Description><![CDATA[
 This class method calculates a current age given a date of birth <var>date</var>.]]></Description>
 <ClassMethod>1</ClassMethod>
@@ -65,6 +68,31 @@ This class method calculates a current age given a date of birth <var>date</var>
 <Implementation><![CDATA[$Select(date="":"",1:($ZD($H,8)-$ZD(date,8)\10000))
 ]]></Implementation>
 </Method>
+
+<Property name="company">
+<Description>
+The company this person works for.</Description>
+<Type>Form.Test.Company</Type>
+<Cardinality>one</Cardinality>
+<Inverse>employees</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="DISPLAYNAME" value="Компания"/>
+</Property>
+
+<Property name="relative">
+<Description>
+Person's spouse. 
+This is a reference to another persistent object.</Description>
+<Type>Form.Test.Person</Type>
+<Parameter name="DISPLAYNAME" value="Родственник"/>
+</Property>
+
+<Property name="Home">
+<Description>
+Person's home address. This uses an embedded object.</Description>
+<Type>Form.Test.Address</Type>
+<Parameter name="DISPLAYNAME" value="Дом"/>
+</Property>
 
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
@@ -85,6 +113,18 @@ This class method calculates a current age given a date of birth <var>date</var>
 </Value>
 <Value name="4">
 <Value>dob</Value>
+</Value>
+<Value name="5">
+<Value>company</Value>
+</Value>
+<Value name="6">
+<Value>spouse</Value>
+</Value>
+<Value name="7">
+<Value>Home</Value>
+</Value>
+<Value name="8">
+<Value>relative</Value>
 </Value>
 </Data>
 </Storage>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Util.Init">
+<Abstract>1</Abstract>
+<TimeCreated>64101,40238.796897</TimeCreated>
+
+<Method name="populateTestForms">
+<Description><![CDATA[
+<example>do ##class(Form.Util.Init).populateTestForms()</example>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>count:%Integer=100,verbose:%Boolean=$$$NO</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc,sc1,sc2 AS %Status = $$$OK
+	set sc = ##class(Form.Test.Company).Populate(count, verbose, , , $$$NO)
+	set sc1 = ##class(Form.Test.Person).Populate(count, verbose, , , $$$NO)
+	set sc2 = ##class(Form.TestForm).Populate(count, verbose, , , $$$NO)
+	set sc = $$$ADDSC(sc, $$$ADDSC(sc1, sc2))
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="deleteTestForms">
+<Description><![CDATA[
+<example>do ##class(Form.Util.Init).deleteTestForms()</example>]]></Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc AS %Status = $$$OK
+	set sc = ##class(Form.Test.Person).%DeleteExtent()
+	set sc1 = ##class(Form.Test.Company).%DeleteExtent()
+	set sc2 = ##class(Form.TestForm).%DeleteExtent()
+	set sc = $$$ADDSC(sc, $$$ADDSC(sc1, sc2))
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="killTestForms">
+<Description><![CDATA[
+<example>do ##class(Form.Util.Init).killTestForms()</example>]]></Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	do ##class(Form.Test.Person).%KillExtent()
+	do ##class(Form.Test.Company).%KillExtent()
+	do ##class(Form.TestForm).%KillExtent()
+	return $$$OK
+]]></Implementation>
+</Method>
+</Class>
+</Export>

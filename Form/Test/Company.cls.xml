@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Test.Company">
+<Super>%Persistent,Form.Adaptor,%Populate</Super>
+<TimeCreated>64101,39307.619051</TimeCreated>
+
+<Parameter name="FORMNAME">
+<Default>Тестовая форма: человек</Default>
+</Parameter>
+
+<Parameter name="OBJPERMISSIONS">
+<Type>%String</Type>
+<Default>CRUD</Default>
+</Parameter>
+
+<Property name="displayName">
+<Description>
+The main property describing this object, automatically computes 
+on insert or update (for SQL) or on save (for object access)</Description>
+<Type>%String</Type>
+<SqlComputeCode>set {*} = {name}</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+<SqlComputeOnChange>%%INSERT,%%UPDATE</SqlComputeOnChange>
+<Parameter name="DISPLAYNAME" value="Компаниия"/>
+</Property>
+
+<Property name="name">
+<Type>%String</Type>
+<Parameter name="DISPLAYNAME" value="Название"/>
+<Parameter name="POPSPEC" value="Company()"/>
+</Property>
+
+<Property name="employees">
+<Description><![CDATA[
+The <class>Person</class> objects associated with this <class>Company</class>.]]></Description>
+<Type>Form.Test.Person</Type>
+<Cardinality>many</Cardinality>
+<Inverse>company</Inverse>
+<Relationship>1</Relationship>
+<Parameter name="DISPLAYNAME" value="Работники"/>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Form.Test.CompanyD</DataLocation>
+<DefaultData>CompanyDefaultData</DefaultData>
+<IdLocation>^Form.Test.CompanyD</IdLocation>
+<IndexLocation>^Form.Test.CompanyI</IndexLocation>
+<StreamLocation>^Form.Test.CompanyS</StreamLocation>
+<Data name="CompanyDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>displayName</Value>
+</Value>
+<Value name="3">
+<Value>name</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+</Export>
