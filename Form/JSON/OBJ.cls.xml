@@ -637,11 +637,17 @@ not perform complete error checking.]]></Description>
 									Set $property(pObject,p) = tStream
 									// set relashonship
 								} ElseIf ($$$comMemberKeyGet($classname(pObject),$$$cCLASSproperty,p,$$$cPROPrelationship)) {
-									// TODO: parent-child	
-									#dim list As %Collection.ListOfObj
-									Set list = tPropValues(p)
-									For i = 1:1:list.Count() {
-										Do $method($property(pObject,p),"Insert",list.GetAt(i))
+									Set cardinality = $$$defMemberKeyGet($classname(pObject),$$$cCLASSproperty,p,$$$cPROPcardinality)
+									
+									If cardinality = "one" {
+										Set $property(pObject,p) = tPropValues(p)
+									} Else {
+										// TODO: parent-child	
+										#dim list As %Collection.ListOfObj
+										Set list = tPropValues(p)
+										For i = 1:1:list.Count() {
+											Do $method($property(pObject,p),"Insert",list.GetAt(i))
+										}
 									}							
 								}Else {
 									// set datatypes
