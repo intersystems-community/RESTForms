@@ -58,7 +58,7 @@ Currently new query types can be specified as parameters in `Form.REST.Objects` 
 
 ## ORDER BY clause
 
-Value can be: `Column` or `Column+desc`
+Value can be: `Column` or `Column+desc`. Column is a column from the sql table or a colum number.
 
 ## WHERE clause 
 
