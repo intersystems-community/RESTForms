@@ -109,21 +109,29 @@ w ##class(Form.JSON.SQL).ParceOrderBy("Value desc", "Form.TestRef")</Description
 <FormalSpec>input,class,*condition</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
 	kill condition
 	set condition = ""
-	return:input="" $$$OK
-	set descPos = $f(input," desc")
+	return:input="" sc
+	
+	set descPos = $f(input, " desc")
 	if descPos'=0 {
-		set column = $e(input,1,descPos-6) // 6 = $l("+desc")+1
+		set column = $e(input, 1, descPos-6) // 6 = $l("+desc")+1
 	} else {
 		set column=input
 	}
-	    
-	if '##class(%Dictionary.CompiledProperty).IDKEYExists(class, column) {
-		return $$$ERROR($$$GeneralError,"Sorting column '" _ column _ "' does not exist")
+	
+	if ##class(%Dictionary.CompiledProperty).IDKEYExists(class, column) {
+		/// nothing to do here
+	} elseif $isValidNum($normalize(column, 0)) {
+		set column = $normalize(column, 0)
+	} else {
+		set sc = $$$ERROR($$$GeneralError, "Sorting column '" _ column _ "' does not exist")
+		set column = "" // invalidate SQL jic
 	}
+	
 	set condition = " ORDER BY " _ column _ $s(descPos'=0:" DESC",1:"")
-	return $$$OK
+	return sc
 ]]></Implementation>
 </Method>
 
