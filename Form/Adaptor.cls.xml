@@ -66,12 +66,21 @@ For results see:
 		#dim property As %Dictionary.CompiledProperty
 		set property = %compiledclass.Properties.GetAt(i)
 		set propertyName = property.Name
-		CONTINUE:((propertyName="%%OID") || (propertyName="%Concurrency")) 
+		CONTINUE:property.Internal 
 		
 		/// Only properties with set DISPLAYNAME param are included in metainformation
 		if (property.Parameters.GetAt($$$propDisplayNameParam)'="") {
 			set propertyMetaData = ##class(Form.Property).propertyToMetadata(property)
-			do metadata.fields.$push(propertyMetaData)
+			do metadata.fields.$setAt(property.SequenceNumber, propertyMetaData)
+		}
+	}
+	
+	/// we're moving from the end of array to the beginning 
+	/// so we can delete null elements without affecting 
+	/// the position of elements we're yet to check
+	for i = metadata.fields.$size()-1:-1:0 {
+		if metadata.fields.$getTypeOf(i)="unassigned" {
+			 do metadata.fields.$remove(i)
 		}
 	}
 	
