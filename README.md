@@ -36,6 +36,8 @@ For POST/PUT requests see method descriptions for request body samples
 
 `GET http://localhost:57772/forms/form/objects/Form.TestForm/all?orderby=text+desc`
 
+Note, that for SQL access user must have relevant SQL privileges (SELECT on form table).
+
 ## Query types
 
 It's a second REST (not URL) parameter in `form/objects/:class/:query` request, it determines the contents of query between SELECT and FROM.
