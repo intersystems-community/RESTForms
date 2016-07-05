@@ -85,7 +85,14 @@ Return id and dislpayName
 <FormalSpec>class:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	set sqlProc = $$$ClassSQLTable(class) _ "_getObjectDisplayName(id)"
+	set method = "getObjectDisplayName"
+	
+	if ##class(%Dictionary.MethodDefinition).IDKEYExists(class, method) {
+		set sqlProc = $$$ClassSQLTable(class) _ "_" _ method _ "(id)"
+	} else {
+		set sqlProc = $parameter(class, $$$displayProp)
+	}
+	
 	set queryBase = "id AS _id, " _ sqlProc _ " As displayName"
 	return queryBase
 ]]></Implementation>
