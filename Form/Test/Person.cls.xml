@@ -24,9 +24,13 @@ Name is a field used as a basic info about this form object</Description>
 
 <Property name="name">
 <Description>
-Person's name.</Description>
+Person's name.
+Use only first 250 symbols for comparison.
+Required for all long properties used by "order by" </Description>
 <Type>%String</Type>
+<Parameter name="COLLATION" value="TRUNCATE(250)"/>
 <Parameter name="DISPLAYNAME" value="Имя"/>
+<Parameter name="MAXLEN" value="2000"/>
 </Property>
 
 <Property name="gender">
