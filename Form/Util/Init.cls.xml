@@ -2,6 +2,7 @@
 <Export generator="Cache" version="25">
 <Class name="Form.Util.Init">
 <Abstract>1</Abstract>
+<IncludeCode>Form</IncludeCode>
 <TimeCreated>64101,40238.796897</TimeCreated>
 
 <Method name="populateTestForms">
@@ -45,6 +46,19 @@
 	do ##class(Form.Test.Company).%KillExtent()
 	do ##class(Form.TestForm).%KillExtent()
 	return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="validateMetadata">
+<Description><![CDATA[
+Validate metadata (remove unused entries).
+<example>do ##class(Form.Util.Init).validateMetadata()</example>]]></Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	$$$forAll(class, $$$formGlobal)
+		set classExists = ##class(%Dictionary.ClassDefinition).%ExistsId(class)
+		kill:(classExists=$$$NO) $$$formGlobal(class)
+	$$$endFor
 ]]></Implementation>
 </Method>
 </Class>
