@@ -44,14 +44,13 @@ For results see:
 <example>w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>objectgenerator</CodeMode>
-<GenerateAfter>onFormCompile</GenerateAfter>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#Include Form
 
 	#dim sc As %Status = $$$OK
 	set className = %compiledclass.Name
-	set formName = %parameter($$$formNameParam)
+	set formName = %class.Parameters.GetAt($$$formNameParam)
 	return:((className="Form.Adaptor")||(formName="")) sc
 
 	
@@ -190,21 +189,26 @@ Get basic information about several form objects.<br>
 Get vale of a property specified in DISPLAYPROPERTY parameter.
 If it is stored, then GetStored value would be taken
 If it is calculated, then the object would be opened and the value would be calculated
-Redefine to implement your custom logic</Description>
+Redefine to implement your custom logic. 
+Note, that if you redefine this method, it must be availible as an sql procedure and would be used as a display property.
+Also remenber to limit result length to 250-490 symbols depending on a collation in use. </Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>objectgenerator</CodeMode>
 <FormalSpec>id:%Integer</FormalSpec>
-<GenerateAfter>onFormCompile</GenerateAfter>
+<GenerateAfter>generateMetadata</GenerateAfter>
 <ReturnType>%String</ReturnType>
 <SqlProc>1</SqlProc>
+<ReturnTypeParams>MAXLEN=490</ReturnTypeParams>
 <Implementation><![CDATA[
 	#Include Form
 	#dim sc As %Status = $$$OK
 	set className = %compiledclass.Name
-	return:className="Form.Adaptor" sc
+	set formName = %class.Parameters.GetAt($$$formNameParam)
+	return:((className="Form.Adaptor")||(formName="")) sc
 	
 	set propName = %parameter($$$displayProp)
 	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ propName)
+	return:key="" $$$ERROR($$$GeneralError, "Display property '" _ propName _"' does not exist in '" _ className _ "' class. Redefine DISPLAYPROPERTY parameter")
 	
 	#dim prop As %Dictionary.CompiledProperty
 	set prop = %compiledclass.Properties.GetAt(key)
