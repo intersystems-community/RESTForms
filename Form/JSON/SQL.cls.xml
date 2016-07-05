@@ -111,6 +111,9 @@ w ##class(Form.JSON.SQL).ParceOrderBy("Value desc", "Form.TestRef")</Description
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
 	kill condition
+	
+	// If input is an empty string use form FORMORDERBY parameter
+	set:input="" input = $parameter(class, $$$orderByParam)
 	set condition = ""
 	return:input="" sc
 	

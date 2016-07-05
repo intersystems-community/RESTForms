@@ -37,6 +37,12 @@ By default getObjectDisplayName method gets its value from it</Description>
 <Default>displayName</Default>
 </Parameter>
 
+<Parameter name="FORMORDERBY">
+<Description>
+Use value of this parameter in SQL, as ORDER BY clause value </Description>
+<Type>%String</Type>
+</Parameter>
+
 <Method name="generateMetadata">
 <Description><![CDATA[
 Generate form metadata
@@ -198,7 +204,7 @@ Also remenber to limit result length to 250-490 symbols depending on a collation
 <GenerateAfter>generateMetadata</GenerateAfter>
 <ReturnType>%String</ReturnType>
 <SqlProc>1</SqlProc>
-<ReturnTypeParams>MAXLEN=490</ReturnTypeParams>
+<ReturnTypeParams>MAXLEN=250</ReturnTypeParams>
 <Implementation><![CDATA[
 	#Include Form
 	#dim sc As %Status = $$$OK
@@ -208,7 +214,7 @@ Also remenber to limit result length to 250-490 symbols depending on a collation
 	
 	set propName = %parameter($$$displayProp)
 	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ propName)
-	return:key="" $$$ERROR($$$GeneralError, "Display property '" _ propName _"' does not exist in '" _ className _ "' class. Redefine DISPLAYPROPERTY parameter")
+	return:key="" $$$ERROR($$$GeneralError, "Display property '" _ propName _"' does not exist in '" _ className _ "' class. Redefine " _ $$$displayProp _ " parameter")
 	
 	#dim prop As %Dictionary.CompiledProperty
 	set prop = %compiledclass.Properties.GetAt(key)
@@ -220,6 +226,27 @@ Also remenber to limit result length to 250-490 symbols depending on a collation
 		do %code.WriteLine(" return .." _ propName _ "GetStored(id)")
 	}
 		
+	quit sc
+]]></Implementation>
+</Method>
+
+<Method name="validateOrderBy">
+<Description>
+During compilation validate FORMORDERBY parameter value if present</Description>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>generateMetadata</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	#Include Form
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	set formName = %parameter($$$formNameParam)
+	set orderBy = %parameter($$$orderByParam)
+	return:((className="Form.Adaptor")||(formName="")||(orderBy="")) sc
+	
+	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ orderBy)
+	return:key="" $$$ERROR($$$GeneralError, "Order by property '" _ orderBy _"' does not exist in '" _ className _ "' class. Redefine " _ $$$orderByParam _ " parameter")
+	
 	quit sc
 ]]></Implementation>
 </Method>
