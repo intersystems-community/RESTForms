@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
 <Class name="Form.REST.File">
+<Description>
+This broker does file-related work.
+All file properies are assumed to be of Form.File class</Description>
 <Super>Form.REST.Abstract</Super>
 <TimeCreated>64091,74902.525566</TimeCreated>
 
@@ -8,20 +11,20 @@
 <XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
 <Data><![CDATA[
 <Routes>
-<Route Url="/:class/:id/:field" Method="POST" Call="addFiles"/>
-<Route Url="/:class/:id/:field" Method="DELETE" Call="deleteFiles"/>
-<Route Url="/:class/:id/:field/:filename" Method="DELETE" Call="deleteFile"/>
-<Route Url="/:class/:id/:field/:filename" Method="GET" Call="serveFile"/>
+<Route Url="/:class/:id/:property" Method="POST" Call="addFiles"/>
+<Route Url="/:class/:id/:property" Method="DELETE" Call="deleteFiles"/>
+<Route Url="/:class/:id/:property/:filename" Method="DELETE" Call="deleteFile"/>
+<Route Url="/:class/:id/:property/:filename" Method="GET" Call="serveFile"/>
 </Routes>
 ]]></Data>
 </XData>
 
 <Method name="addFiles">
 <Description>
-Добавить к объекту id формы class, к его свойству field (класса Form.Fole) загружаемые файлы. 
-Если свойство не list то добавляется только первый файл </Description>
+class and id are object identificators.  
+If it's not a list property, then the first file is set as property value </Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String="",id:%Integer="",field:%String=""</FormalSpec>
+<FormalSpec>class:%String="",id:%Integer="",property:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -33,11 +36,10 @@
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
 	return:$$$ISERR(sc) sc
 	
-	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, field, $$$cPROPtype)
-	
-	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, property, $$$cPROPtype)
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, property _ " is not file property")
 
-	set propertyCollectionType = $$$comMemberKeyGet(class ,$$$cCLASSproperty, field, $$$cPROPcollection)
+	set propertyCollectionType = $$$comMemberKeyGet(class ,$$$cCLASSproperty, property, $$$cPROPcollection)
 	
 	
 	#dim stream As %CSP.BinaryStream
@@ -47,15 +49,15 @@
 		quit:filename=""
 		set stream = %request.GetMimeData(filename) // Проверить на больших файлах/делит ли ангулар
 		set attachment = ##class(Form.File).%New(stream.FileName, filename, stream)
-		set $property(obj, field) = attachment  
+		set $property(obj, property) = attachment  
 	} else {
-		set propertyOREF = $property(obj, field)
+		set propertyOREF = $property(obj, property)
 		for {
 	        set filename = %request.NextMimeData(filename)
 	        quit:filename=""
 	        
 	        set stream = %request.GetMimeData(filename) // Проверить на больших файлах/делит ли ангулар
-	        set fullFilename = ..getFullFilename(class, id, field, stream.FileName)
+	        set fullFilename = ..getFullFilename(class, id, property, stream.FileName)
 	        set attachment = ##class(Form.File).%New(fullFilename, filename, stream)
 	        if propertyCollectionType="list" {
 		        // propertyOREF тут %Collection.ListOfObj
@@ -75,10 +77,10 @@
 
 <Method name="deleteFiles">
 <Description>
-Очистить свойство field у объекта id формы class
+Очистить свойство property у объекта id формы class
 do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String="",id:%Integer="",field:%String=""</FormalSpec>
+<FormalSpec>class:%String="",id:%Integer="",property:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -90,11 +92,11 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
 	return:$$$ISERR(sc) sc
 	
-	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, field, $$$cPROPtype)
+	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, property, $$$cPROPtype)
 	
-	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, property _ " is not file property")
 	
-	set $property(obj, field) = ""
+	set $property(obj, property) = ""
 	set sc = obj.%Save()
 	
 	return sc
@@ -103,9 +105,9 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="deleteFile">
 <Description>
-Удалить запись с name=filename из свойства field у объекта id формы class </Description>
+Удалить запись с name=filename из свойства property у объекта id формы class </Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String="",id:%Integer="",field:%String="",filename=""</FormalSpec>
+<FormalSpec>class:%String="",id:%Integer="",property:%String="",filename=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -117,32 +119,32 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
 	return:$$$ISERR(sc) sc
 	
-	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, field, $$$cPROPtype)
+	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, property, $$$cPROPtype)
 	
-	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, property _ " is not file property")
 	
-	set propertyCollectionType = $$$comMemberKeyGet(class ,$$$cCLASSproperty, field, $$$cPROPcollection)
+	set propertyCollectionType = $$$comMemberKeyGet(class ,$$$cCLASSproperty, property, $$$cPROPcollection)
 	
 	
 	#dim stream As %CSP.BinaryStream
 	if propertyCollectionType = "" {
-		set propertyOREF = $property(obj, field)
+		set propertyOREF = $property(obj, property)
 		set realFilename = propertyOREF.name
 		if (realFilename = filename) {
-			set fullFilename = ..getFullFilename(class, id, field, filename, $$$NO)
+			set fullFilename = ..getFullFilename(class, id, property, filename, $$$NO)
 			do ##class(%File).Delete(fullFilename)
-			set $property(obj, field) = ""
+			set $property(obj, property) = ""
 		}  else {
 			set sc = $$$ERROR($$$GeneralError, filename _ " is incorrect, right one is " _ realFilename)
 		}
 	} else {
 		#dim propertyOREF As %Collection.ListOfObj
-		set propertyOREF = $property(obj, field)
+		set propertyOREF = $property(obj, property)
 		for i=1:1:propertyOREF.Count() {
 			set file = propertyOREF.GetAt(i)
 			set realFilename = file.name
 			if (realFilename=filename) {
-				set fullFilename = ..getFullFilename(class, id, field, filename, $$$NO)
+				set fullFilename = ..getFullFilename(class, id, property, filename, $$$NO)
 				do ##class(%File).Delete(fullFilename)
 				do propertyOREF.RemoveAt(i)
 				/// Удаляем только первый файл
@@ -163,9 +165,9 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="serveFile">
 <Description>
-Отдаёт пользователю файл с name=filename из свойства field (класса Form.File) у объекта id формы class </Description>
+Отдаёт пользователю файл с name=filename из свойства property (класса Form.File) у объекта id формы class </Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String="",id:%Integer="",field:%String="",filename=""</FormalSpec>
+<FormalSpec>class:%String="",id:%Integer="",property:%String="",filename=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -178,27 +180,27 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
 	return:$$$ISERR(sc) sc
 	
-	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, field, $$$cPROPtype)
+	set propertyType = $$$comMemberKeyGet(class, $$$cCLASSproperty, property, $$$cPROPtype)
 	
-	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, field _ " is not file field")
+	return:propertyType'=$$$fileClass $$$ERROR($$$GeneralError, property _ " is not file property")
 	
-	set propertyCollectionType = $$$comMemberKeyGet(class ,$$$cCLASSproperty, field, $$$cPROPcollection)
+	set propertyCollectionType = $$$comMemberKeyGet(class ,$$$cCLASSproperty, property, $$$cPROPcollection)
 	
 	
 	#dim stream As %CSP.BinaryStream
 	if propertyCollectionType = "" {
-		set propertyOREF = $property(obj, field)
+		set propertyOREF = $property(obj, property)
 		set realFilename = $property(propertyOREF, "name")
 		if (realFilename = filename) {
 			#dim file As Form.File
-			set file = $property(obj, field)
+			set file = $property(obj, property)
 			set sc = file.serve()
 		}  else {
 			set sc = $$$ERROR($$$GeneralError, filename _ " is incorrect, right one is " _ realFilename)
 		}
 	} else {
 		#dim propertyOREF As %Collection.ListOfObj
-		set propertyOREF = $property(obj, field)
+		set propertyOREF = $property(obj, property)
 		for i=1:1:propertyOREF.Count() {
 			set file = propertyOREF.GetAt(i)
 			set realFilename = file.name
@@ -218,10 +220,10 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 Получить полное имя (+ путь) файла. 
 Если файл уже существует, и new = 1, добавляет _<int> к имени]]></Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String,id:%String,field:%String,filename:%String,new:%Boolean=$$$YES</FormalSpec>
+<FormalSpec>class:%String,id:%String,property:%String,filename:%String,new:%Boolean=$$$YES</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	set directory = ..getFileDir(class, id, field)
+	set directory = ..getFileDir(class, id, property)
 	set fullFilename = directory _ filename
 	if ((##class(%File).Exists(fullFilename)) && (new)) {
 		do ..filenameToNameExt(filename, .name, .ext)
@@ -237,15 +239,15 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="getFileDir">
 <Description>
-Получить путь к папке для вложений поля field, объекта id, класса class</Description>
+Получить путь к папке для вложений поля property, объекта id, класса class</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String,id:%String,field:%String</FormalSpec>
+<FormalSpec>class:%String,id:%String,property:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
 	set directory = ##class(%File).NormalizeDirectory($$$fileDir)
 	set directory = ##class(%File).NormalizeDirectory(directory _ class)
 	set directory = ##class(%File).NormalizeDirectory(directory _ id)
-	set directory = ##class(%File).NormalizeDirectory(directory _ field)
+	set directory = ##class(%File).NormalizeDirectory(directory _ property)
 	if '##class(%File).DirectoryExists(directory) {
 		do ##class(%File).CreateDirectoryChain(directory)
 	}
