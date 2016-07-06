@@ -77,7 +77,7 @@ If it's not a list property, then the first file is set as property value </Desc
 
 <Method name="deleteFiles">
 <Description>
-Очистить свойство property у объекта id формы class
+Clear property value for object with class/id
 do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String="",id:%Integer="",property:%String=""</FormalSpec>
@@ -105,7 +105,7 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="deleteFile">
 <Description>
-Удалить запись с name=filename из свойства property у объекта id формы class </Description>
+Delete value with name=filename from property for object with class/id</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String="",id:%Integer="",property:%String="",filename=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -165,7 +165,7 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="serveFile">
 <Description>
-Отдаёт пользователю файл с name=filename из свойства property (класса Form.File) у объекта id формы class </Description>
+Server file with name=filename from property for object with class/id</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String="",id:%Integer="",property:%String="",filename=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -217,8 +217,8 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="getFullFilename">
 <Description><![CDATA[
-Получить полное имя (+ путь) файла. 
-Если файл уже существует, и new = 1, добавляет _<int> к имени]]></Description>
+Get full path and file name
+If the file already exists, and new = 1, then adds  _<int> to name]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String,id:%String,property:%String,filename:%String,new:%Boolean=$$$YES</FormalSpec>
 <ReturnType>%String</ReturnType>
@@ -229,7 +229,7 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 		do ..filenameToNameExt(filename, .name, .ext)
 		
 		while ##class(%File).Exists(fullFilename) {
-			// Генерируем новое имя файла name.ext -> name_1.ext -> name_2.ext
+			// Generate new file name: name.ext -> name_1.ext -> name_2.ext
 			set fullFilename = directory _ name _ "_" _ $increment(i) _ $select(ext'="":"." _ ext, 1:"")
 		}
 	}
@@ -239,7 +239,7 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="getFileDir">
 <Description>
-Получить путь к папке для вложений поля property, объекта id, класса class</Description>
+Get directory path based on structure: basedir/class/id/property </Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String,id:%String,property:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
@@ -257,7 +257,7 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 
 <Method name="filenameToNameExt">
 <Description>
-Получить расширение ext и имя файла (без расширения) name по имени файла filename</Description>
+Get file extension ext and filename (without extension) name from filename (without path)</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>filename:%String,*name:%String,*ext:%String</FormalSpec>
 <Implementation><![CDATA[
