@@ -27,6 +27,8 @@
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
+	set sc = ..checkObjPermission(class, "U")
+	return:$$$ISERR(sc) sc
 	
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
 	return:$$$ISERR(sc) sc
@@ -82,6 +84,8 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
 	return:$$$ISERR(sc) sc
+	set sc = ..checkObjPermission(class, "U")
+	return:$$$ISERR(sc) sc
 	
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
 	return:$$$ISERR(sc) sc
@@ -106,6 +110,8 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	set sc = ..checkObjPermission(class, "U")
 	return:$$$ISERR(sc) sc
 	
 	set obj = $classMethod(class, "%OpenId", id, , .sc)
@@ -164,6 +170,8 @@ do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
 	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	set sc = ..checkObjPermission(class, "R")
 	return:$$$ISERR(sc) sc
 	
 	set class = ##class(Form.Info).getFormClass(class)
