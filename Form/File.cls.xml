@@ -6,7 +6,7 @@
 
 <Property name="name">
 <Description>
-Наименование вложения (полный путь)</Description>
+Full filepath (path+name)</Description>
 <Type>%String</Type>
 <Required>1</Required>
 <Parameter name="MAXLEN" value="1000"/>
@@ -15,20 +15,20 @@
 
 <Property name="description">
 <Description>
-Описание вложения</Description>
+Description</Description>
 <Type>%String</Type>
 <Parameter name="MAXLEN" value="500"/>
 </Property>
 
 <Property name="attachmentHASH">
 <Description>
-SHA Хэш вложения в Base64</Description>
+Attachmentt SHA Hash in Base64</Description>
 <Type>%String</Type>
 </Property>
 
 <Property name="stream">
 <Description>
-Вложение</Description>
+The file itself (data is stored on disk, it's just a link)</Description>
 <Type>%FileBinaryStream</Type>
 </Property>
 
@@ -62,7 +62,7 @@ class then this oref will be the one returned to the caller of %New method.]]></
 
 <Method name="serve">
 <Description>
-Возвращает файл в web контексте</Description>
+Serve file in web context</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
