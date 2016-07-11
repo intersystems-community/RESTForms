@@ -16,8 +16,8 @@
 	set provider.%Format = $$$formatJSONSQL
 	
 	if ((##class(%Dictionary.CompiledClass).IDKEYExists(conditionClass)) && ($isobject($g(%request)))) {
-		set sc = ..ParceWhere(%request.Get("filter"), conditionClass, .where)
-		set sc = $$$ADDSC(sc, ..ParceOrderBy(%request.Get("orderby"), conditionClass, .orderBy))
+		set sc = ..ParseWhere(%request.Get("filter"), conditionClass, .where)
+		set sc = $$$ADDSC(sc, ..ParseOrderBy(%request.Get("orderby"), conditionClass, .orderBy))
 		set sql = sql _ where _ orderBy
 	} ElseIf (conditionClass'="") {
 		set sc = $$$ERROR($$$GeneralError, "Condition class " _ conditionClass _ " does not exist")
@@ -35,10 +35,10 @@
 ]]></Implementation>
 </Method>
 
-<Method name="ParceWhere">
+<Method name="ParseWhere">
 <Description>
-Parce where condition:
-w ##class(Form.JSON.SQL).ParceWhere("(Text eq Admin Text neq 1)", "Form.TestForm", .out)
+Parse where condition:
+w ##class(Form.JSON.SQL).ParseWhere("(Text eq Admin Text neq 1)", "Form.TestForm", .out)
 result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>input,conditionClass,*condition</FormalSpec>
@@ -102,9 +102,9 @@ Translate predicate from js into sql</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="ParceOrderBy">
+<Method name="ParseOrderBy">
 <Description>
-w ##class(Form.JSON.SQL).ParceOrderBy("Value desc", "Form.TestRef")</Description>
+w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>input,class,*condition</FormalSpec>
 <ReturnType>%Status</ReturnType>
