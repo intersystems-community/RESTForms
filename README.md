@@ -55,7 +55,7 @@ Currently new query types can be specified as parameters in `Form.REST.Objects` 
 |----------|--------------------|-----------------|
 | size     | 2                  | page size       |
 | page     | 1                  | page number     |
-| filter   | (Value+contains+W) | WHERE clause    |
+| filter   | Value+contains+W   | WHERE clause    |
 | orderby  | Value+desc         | ORDER BY clause |
 
 ## ORDER BY clause
@@ -64,9 +64,9 @@ Value can be: `Column` or `Column+desc`. Column is a column from the sql table o
 
 ## WHERE clause 
 
-In a format: `(Column+condition+Value)`. 
+In a format: `Column+condition+Value`. 
 
-Several conditions are possible: `(Column+condition+Value+Column2+condition2+Value2)`.
+Several conditions are possible: `Column+condition+Value+Column2+condition2+Value2`.
 
 Conditions:
 
