@@ -65,8 +65,8 @@ do ##class(Form.TestForm).recreate()</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>count:%Integer=10,verbose:%Boolean=$$$NO</FormalSpec>
 <Implementation><![CDATA[
-	do ..%DeleteExtent()
-	do ..Populate(count, verbose)
+	///do ..%DeleteExtent()
+	///do ..Populate(count, verbose)
 ]]></Implementation>
 </Method>
 
@@ -79,16 +79,6 @@ do ##class(Form.TestForm).recreate2()</Description>
 	set obj = ..%New()
 	set obj.Text = 123
 	write obj.%Save()
-]]></Implementation>
-</Method>
-
-<Method name="onGenerateMetadata">
-<ClassMethod>1</ClassMethod>
-<FormalSpec><![CDATA[&metadata:%Object]]></FormalSpec>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	Set metadata.aaa = 1
-	Return $$$OK
 ]]></Implementation>
 </Method>
 
