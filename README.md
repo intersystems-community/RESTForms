@@ -49,6 +49,14 @@ Currently new query types can be specified as parameters in `Form.REST.Objects` 
 | info     | displayName and id   |
 | infoclass| displayName, id, class|
 
+You can define your own class with queries. To define your own query named `myq`:
+  1. Define a class 
+  2. Define there a `MYQ` parameter or `queryMYQ` class method. Parameter takes precedence over the method. 
+  3. Method or param must return the part of SQL query between SELECT and FROM
+  4. Execute in a terminal: `Do ##class(For.Settings).setSetting("queryclass", YourClassName)`
+
+Method signature is: `ClassMethod queryMYQ(class As %String) As %String` 
+
 ## URL arguments:
 
 | Argument | Sample Value       | Description     |

@@ -56,15 +56,18 @@ Supported queryBase sources:<br>
 <Implementation><![CDATA[
 	set queryBase = ""
 	set queryType = $ZCVT(queryType, "U")
+	set userQueryClass = ##class(Form.Settings).getSetting("queryclass")
 	#dim sc As %Status = $$$OK
 	if ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), queryType) {
-		/// we want only parameters defined in this class
 		set queryBase = $parameter(, queryType)
 	} elseif ##class(%Dictionary.MethodDefinition).IDKEYExists($classname(), "query" _ queryType) {
 		set queryBase = $classmethod(, "query" _ queryType, class)
+	} elseif ((userQueryClass'="") && (##class(%Dictionary.ParameterDefinition).IDKEYExists(userQueryClass, queryType))) {
+		set queryBase = $parameter(userQueryClass, queryType)
+	} elseif ((userQueryClass'="") && (##class(%Dictionary.MethodDefinition).IDKEYExists(userQueryClass, "query" _ queryType))) {
+		set queryBase = $classmethod(userQueryClass, "query" _ queryType, class)
 	} elseif 0 {
 		/// TODO Some other type of "get stuff between SELECT and FROM"
-		/// some callback class maybe
 	} else {
 		set sc = $$$ERROR($$$GeneralError, "Query type " _ queryType _ " not found")		
 	}
