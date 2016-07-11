@@ -82,6 +82,16 @@ do ##class(Form.TestForm).recreate2()</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="onGenerateMetadata">
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&metadata:%Object]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set metadata.aaa = 1
+	Return $$$OK
+]]></Implementation>
+</Method>
+
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Form.TestFormD</DataLocation>

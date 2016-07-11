@@ -55,10 +55,22 @@ For results see:
 		}
 	}
 	
+	set sc = $classmethod(className, "onGenerateMetadata", .metadata)
+	
 	set $$$formGlobal(className) = formName
 	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
 	
 	return sc
+]]></Implementation>
+</Method>
+
+<Method name="onGenerateMetadata">
+<Description>
+End form callback</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[&metadata:%Object]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[	Return $$$OK
 ]]></Implementation>
 </Method>
 
