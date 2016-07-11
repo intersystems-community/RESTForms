@@ -24,6 +24,7 @@
 #define toJSONClassMethod "toJSON"
 #define updateClassMethod "updateIdFromObject"
 
+#define skipClasses ",Form.OnCompileGenerators,Form.Adaptor,"
 #define fileClass "Form.File"
 #define propClass "Form.Field"
 #define fileDir $g($$$settingsGlobal("fileDir"), ##class(%Library.File).GetDirectory())

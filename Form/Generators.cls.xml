@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Generators">
+<Description>
+Various generators called on form compilation which does not actually generate any code 
+Generators that actually generate the code should be placed into Form.Adaptop class</Description>
+<Abstract>1</Abstract>
+<TimeCreated>64110,50058.313465</TimeCreated>
+
+<Method name="generateMetadata">
+<Description><![CDATA[
+Generate form metadata
+For results see:
+<example>w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</example>]]></Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#Include Form
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	set formNameKey = %class.Parameters.FindObjectId(className _ "||" _ $$$formNameParam)
+	set formName = $get(%parameter($$$formNameParam))
+	return:(($$$skipClasses[className)||(formName="")||(formNameKey="")) sc
+
+	
+	set metadata = {}
+	set metadata.name = formName
+	set metadata.class = className
+	set metadata.displayProperty = %parameter($$$displayProp)
+	set metadata.objpermissions = %parameter("OBJPERMISSIONS")
+	
+	set metadata.fields = []
+	
+	for i = 1:1:%compiledclass.Properties.Count() {
+		#dim property As %Dictionary.CompiledProperty
+		set property = %compiledclass.Properties.GetAt(i)
+		set propertyName = property.Name
+		CONTINUE:property.Internal 
+		
+		/// Only properties with set DISPLAYNAME param are included in metainformation
+		if (property.Parameters.GetAt($$$propDisplayNameParam)'="") {
+			set propertyMetaData = ##class(Form.Property).propertyToMetadata(property)
+			do metadata.fields.$setAt(property.SequenceNumber, propertyMetaData)
+		}
+}
+	
+	/// we're moving from the end of array to the beginning 
+	/// so we can delete null elements without affecting 
+	/// the position of elements we're yet to check
+	for i = metadata.fields.$size()-1:-1:0 {
+		if metadata.fields.$getTypeOf(i)="unassigned" {
+			 do metadata.fields.$remove(i)
+		}
+	}
+	
+	set $$$formGlobal(className) = formName
+	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="validateOrderBy">
+<Description>
+Validate FORMORDERBY parameter value if present</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>generateMetadata</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	#Include Form
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	set formNameKey = %class.Parameters.FindObjectId(className _ "||" _ $$$formNameParam)
+	set formName = $get(%parameter($$$formNameParam))
+	return:(($$$skipClasses[className)||(formName="")||(formNameKey="")) sc
+	
+	set orderBy = $get(%parameter($$$orderByParam))
+	return:(orderBy = "") sc
+	
+	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ orderBy)
+	return:key="" $$$ERROR($$$GeneralError, "Order by property '" _ orderBy _"' does not exist in '" _ className _ "' class. Redefine " _ $$$orderByParam _ " parameter")
+	
+	quit sc
+]]></Implementation>
+</Method>
+
+<Method name="validatePermissions">
+<Description>
+Validate FORMORDERBY parameter value if present</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>generateMetadata</GenerateAfter>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	#Include Form
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	set formNameKey = %class.Parameters.FindObjectId(className _ "||" _ $$$formNameParam)
+	set formName = $get(%parameter($$$formNameParam))
+	return:(($$$skipClasses[className)||(formName="")||(formNameKey="")) sc
+	
+	/// checkObjPermission method is redefined, so we don't check this class
+	set key = %class.Methods.FindObjectId(className _ "||checkObjPermission")
+	return:key'="" sc
+
+	set permParam = $get(%parameter($$$objPermParam))
+	/// $$$objPermParam parameter is not set
+	return:permParam="" $$$ERROR($$$GeneralError, "Object permissions param '" _ $$$objPermParam _"' does not exist in '" _ className _ "' class. Define it.") 
+	
+	/// strip everything from $$$objPermParam except 'CRUD' characters
+	set permParamStripped = $zstrip(permParam,"*E",,"CRUD")
+	
+	if permParam'=permParamStripped {
+		set sc = $$$ERROR($$$GeneralError, "Object permissions param '" _ $$$objPermParam _"' = '" _ permParam _ "' in '" _ className _ "' class contains characters beyond 'CRUD'") 
+	}
+	
+	quit sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>

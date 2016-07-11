@@ -7,7 +7,7 @@ Base form adaptor class, all forms must inherit from this class</Description>
 <CompileAfter>Form.Info</CompileAfter>
 <IncludeCode>Form</IncludeCode>
 <PropertyClass>Form.Field</PropertyClass>
-<Super>Form.Security</Super>
+<Super>Form.Security,Form.Generators</Super>
 <TimeCreated>64090,75147.034342</TimeCreated>
 <DependsOn>Form.Info</DependsOn>
 
@@ -42,60 +42,6 @@ By default getObjectDisplayName method gets its value from it</Description>
 Use value of this parameter in SQL, as ORDER BY clause value </Description>
 <Type>%String</Type>
 </Parameter>
-
-<Method name="generateMetadata">
-<Description><![CDATA[
-Generate form metadata
-For results see:
-<example>w {}.$fromJSON(^form.forms("Form.TestForm","metadata")).$toJSONFormat()</example>]]></Description>
-<ClassMethod>1</ClassMethod>
-<CodeMode>objectgenerator</CodeMode>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	#Include Form
-
-	#dim sc As %Status = $$$OK
-	set className = %compiledclass.Name
-	set formName = %parameter($$$formNameParam)
-	return:((className="Form.Adaptor")||(formName="")) sc
-
-	
-	set metadata = {}
-	set metadata.name = formName
-	set metadata.class = className
-	set metadata.displayProperty = %parameter($$$displayProp)
-	set metadata.objpermissions = %parameter("OBJPERMISSIONS")
-	
-	set metadata.fields = []
-	
-	for i = 1:1:%compiledclass.Properties.Count() {
-		#dim property As %Dictionary.CompiledProperty
-		set property = %compiledclass.Properties.GetAt(i)
-		set propertyName = property.Name
-		CONTINUE:property.Internal 
-		
-		/// Only properties with set DISPLAYNAME param are included in metainformation
-		if (property.Parameters.GetAt($$$propDisplayNameParam)'="") {
-			set propertyMetaData = ##class(Form.Property).propertyToMetadata(property)
-			do metadata.fields.$setAt(property.SequenceNumber, propertyMetaData)
-		}
-	}
-	
-	/// we're moving from the end of array to the beginning 
-	/// so we can delete null elements without affecting 
-	/// the position of elements we're yet to check
-	for i = metadata.fields.$size()-1:-1:0 {
-		if metadata.fields.$getTypeOf(i)="unassigned" {
-			 do metadata.fields.$remove(i)
-		}
-	}
-	
-	set $$$formGlobal(className) = formName
-	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
-	
-	return sc
-]]></Implementation>
-</Method>
 
 <Method name="toJSON">
 <Description>
@@ -192,7 +138,7 @@ Get basic information about several form objects.<br>
 
 <Method name="getObjectDisplayName">
 <Description>
-Get vale of a property specified in DISPLAYPROPERTY parameter.
+Get value of a property specified in DISPLAYPROPERTY parameter.
 If it is stored, then GetStored value would be taken
 If it is calculated, then the object would be opened and the value would be calculated
 Redefine to implement your custom logic. 
@@ -226,59 +172,6 @@ Also remenber to limit result length to 250-490 symbols depending on a collation
 		do %code.WriteLine(" return .." _ propName _ "GetStored(id)")
 	}
 		
-	quit sc
-]]></Implementation>
-</Method>
-
-<Method name="validateOrderBy">
-<Description>
-During compilation validate FORMORDERBY parameter value if present</Description>
-<CodeMode>objectgenerator</CodeMode>
-<GenerateAfter>generateMetadata</GenerateAfter>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	#Include Form
-	#dim sc As %Status = $$$OK
-	set className = %compiledclass.Name
-	set formName = %parameter($$$formNameParam)
-	set orderBy = %parameter($$$orderByParam)
-	return:((className="Form.Adaptor")||(formName="")||(orderBy="")) sc
-	
-	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ orderBy)
-	return:key="" $$$ERROR($$$GeneralError, "Order by property '" _ orderBy _"' does not exist in '" _ className _ "' class. Redefine " _ $$$orderByParam _ " parameter")
-	
-	quit sc
-]]></Implementation>
-</Method>
-
-<Method name="validatePermissions">
-<Description>
-During compilation validate FORMORDERBY parameter value if present</Description>
-<CodeMode>objectgenerator</CodeMode>
-<GenerateAfter>generateMetadata</GenerateAfter>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	#Include Form
-	#dim sc As %Status = $$$OK
-	set className = %compiledclass.Name
-	set formName = %parameter($$$formNameParam)
-	return:((className="Form.Adaptor")||(formName="")) sc
-	
-	/// checkObjPermission method is redefined, so we don't check this class
-	set key = %class.Methods.FindObjectId(className _ "||checkObjPermission")
-	return:key'="" sc
-
-	set permParam = %parameter($$$objPermParam)
-	/// $$$objPermParam parameter is not set
-	return:permParam="" $$$ERROR($$$GeneralError, "Object permissions param '" _ $$$objPermParam _"' does not exist in '" _ className _ "' class. Define it.") 
-	
-	/// we strip everything from $$$objPermParam except 'CRUD' characters
-	set permParamStripped = $zstrip(permParam,"*E",,"CRUD")
-	
-	if permParam'=permParamStripped {
-		set sc = $$$ERROR($$$GeneralError, "Object permissions param '" _ $$$objPermParam _"' = '" _ permParam _ "' in '" _ className _ "' class contains characters beyond 'CRUD'") 
-	}
-	
 	quit sc
 ]]></Implementation>
 </Method>
