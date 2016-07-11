@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Settings">
+<Description>
+Get and set settings</Description>
+<Abstract>1</Abstract>
+<IncludeCode>Form</IncludeCode>
+<TimeCreated>64110,52980.392815</TimeCreated>
+
+<Method name="getSetting">
+<Description>
+Get setting value by name (name is always lowercase)
+Possible settings:
+queryclass - class for SQL queries. See Form.REST.Objects for implementation details</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$get($$$settingsGlobal($zcvt(name, "l")))
+]]></Implementation>
+</Method>
+
+<Method name="setSetting">
+<Description>
+Set setting "name" value</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>name:%String="",value:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	
+	if name = "queryclass" {
+		if '##class(%Dictionary.ClassDefinition).%ExistsId(value) {
+			set sc = $$$ERROR($$$GeneralError,"Class '" _value _ "' does not exis")
+		}
+	} else {
+		set sc = $$$ERROR($$$GeneralError, "Setting '" _ name _ "' does not exist")
+	}
+	
+	set:$$$ISOK(sc) $$$settingsGlobal($zcvt(name, "l")) = value
+	return sc
+]]></Implementation>
+</Method>
+</Class>
+</Export>
