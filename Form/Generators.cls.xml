@@ -55,7 +55,10 @@ For results see:
 		}
 	}
 	
-	set sc = $classmethod(className, "onGenerateMetadata", .metadata)
+	set callback = "onGenerateMetadata"
+	if %class.Methods.FindObjectId(className _ "||" _ callback) {
+		set sc = $classmethod(className, callback, .metadata)
+	}
 	
 	set $$$formGlobal(className) = formName
 	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
@@ -66,7 +69,7 @@ For results see:
 
 <Method name="onGenerateMetadata">
 <Description>
-End form callback</Description>
+End form callback method</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[&metadata:%Object]]></FormalSpec>
 <ReturnType>%Status</ReturnType>
