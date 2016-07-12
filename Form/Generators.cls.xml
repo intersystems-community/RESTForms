@@ -3,7 +3,7 @@
 <Class name="Form.Generators">
 <Description>
 Various generators called on form compilation which does not actually generate any code 
-Generators that actually generate the code should be placed into Form.Adaptop class</Description>
+Generators that actually generate the code should be placed into Form.Adaptor class</Description>
 <Abstract>1</Abstract>
 <TimeCreated>64110,50058.313465</TimeCreated>
 
