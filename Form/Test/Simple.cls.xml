@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
-<Class name="Form.TestForm">
+<Class name="Form.Test.Simple">
 <Super>%Persistent,Form.Adaptor,%Populate</Super>
 <TimeCreated>64090,75943.393938</TimeCreated>
 
@@ -84,13 +84,14 @@ do ##class(Form.TestForm).recreate2()</Description>
 
 <Storage name="Default">
 <Type>%Library.CacheStorage</Type>
-<DataLocation>^Form.TestFormD</DataLocation>
-<DefaultData>TestFormDefaultData</DefaultData>
-<IdLocation>^Form.TestFormD</IdLocation>
-<IndexLocation>^Form.TestFormI</IndexLocation>
-<StreamLocation>^Form.TestFormS</StreamLocation>
-<ExtentSize>10</ExtentSize>
-<Data name="TestFormDefaultData">
+<DataLocation>^Form.Test.SimpleD</DataLocation>
+<DefaultData>SimpleDefaultData</DefaultData>
+<IdLocation>^Form.Test.SimpleD</IdLocation>
+<IndexLocation>^Form.Test.SimpleI</IndexLocation>
+<StreamLocation>^Form.Test.SimpleS</StreamLocation>
+<Data name="SimpleDefaultData">
+<Structure>listnode</Structure>
+<Subscript/>
 <Value name="1">
 <Value>%%CLASSNAME</Value>
 </Value>
@@ -104,29 +105,6 @@ do ##class(Form.TestForm).recreate2()</Description>
 <Value>gender</Value>
 </Value>
 </Data>
-<Property name="%%CLASSNAME">
-<Selectivity>100.0000%</Selectivity>
-<AverageFieldSize>1</AverageFieldSize>
-</Property>
-<Property name="%%ID">
-<Selectivity>1</Selectivity>
-<AverageFieldSize>1.1</AverageFieldSize>
-</Property>
-<Property name="displayName">
-<Selectivity>10.0000%</Selectivity>
-<AverageFieldSize>4.8</AverageFieldSize>
-</Property>
-<Property name="gender">
-<Selectivity>50.0000%</Selectivity>
-<AverageFieldSize>1</AverageFieldSize>
-</Property>
-<Property name="text">
-<Selectivity>10.0000%</Selectivity>
-<AverageFieldSize>4.8</AverageFieldSize>
-</Property>
-<SQLMap name="IDKEY">
-<BlockCount>-4</BlockCount>
-</SQLMap>
 </Storage>
 </Class>
 </Export>

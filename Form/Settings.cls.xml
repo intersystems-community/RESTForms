@@ -8,10 +8,11 @@ Get and set settings</Description>
 <TimeCreated>64110,52980.392815</TimeCreated>
 
 <Method name="getSetting">
-<Description>
+<Description><![CDATA[
 Get setting value by name (name is always lowercase)
 Possible settings:
-queryclass - class for SQL queries. See Form.REST.Objects for implementation details</Description>
+queryclass - class for SQL queries. See Form.REST.Objects for implementation details
+<programlisting language="COS">w {}.$toJSON()</programlisting>]]></Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>expression</CodeMode>
 <FormalSpec>name:%String</FormalSpec>

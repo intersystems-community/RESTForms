@@ -13,18 +13,18 @@
 <Default>CRUD</Default>
 </Parameter>
 
-<Property name="displayName">
+<Parameter name="DISPLAYPROPERTY">
 <Description>
-The main property describing this object, automatically computes 
-on insert or update (for SQL) or on save (for object access)</Description>
+Name is a field used as a basic info about this form object</Description>
 <Type>%String</Type>
-<SqlComputeCode>set {*} = {name}</SqlComputeCode>
-<SqlComputed>1</SqlComputed>
-<SqlComputeOnChange>%%INSERT,%%UPDATE</SqlComputeOnChange>
-<Parameter name="DISPLAYNAME" value="Компаниия"/>
-</Property>
+<Default>name</Default>
+</Parameter>
 
 <Property name="name">
+<Description>
+The main property describing this object, automatically computes 
+on insert or update (for SQL) or on save (for object access)
+Property displayName As %String(DISPLAYNAME = "Компаниия") [ SqlComputeCode = {set {*} = {name}}, SqlComputed, SqlComputeOnChange = (%%INSERT, %%UPDATE) ];</Description>
 <Type>%String</Type>
 <Parameter name="DISPLAYNAME" value="Название"/>
 <Parameter name="POPSPEC" value="Company()"/>
