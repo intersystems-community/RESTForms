@@ -116,7 +116,11 @@ Conditions:
 
 #Samples
 
-See `Form.TestForm` for samples.
+See `Form.Test.Simple` and other forms in `Form.Test` package for samples. 
+To remove test forms permanently from your local repository 
+  1. Enter `Form\Test` directory from git bash
+  2. `git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')`
+  3. Delete `Form\Test` directory
 
 # Object creation
 
