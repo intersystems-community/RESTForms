@@ -31,7 +31,7 @@ By default getObjectDisplayName method gets its value from it</Description>
 
 <UDLText name="T">
 <Content><![CDATA[
-// TestForm properties below. Mandatory part above. 
+// Form properties below. Mandatory part above. 
 
 ]]></Content>
 </UDLText>
@@ -61,7 +61,7 @@ on insert or update (for SQL) or on save (for object access)</Description>
 
 <Method name="recreate">
 <Description>
-do ##class(Form.TestForm).recreate()</Description>
+do ##class(Form.Test.Simple).recreate()</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>count:%Integer=10,verbose:%Boolean=$$$NO</FormalSpec>
 <Implementation><![CDATA[
@@ -72,7 +72,7 @@ do ##class(Form.TestForm).recreate()</Description>
 
 <Method name="recreate2">
 <Description>
-do ##class(Form.TestForm).recreate2()</Description>
+do ##class(Form.Test.Simple).recreate2()</Description>
 <ClassMethod>1</ClassMethod>
 <Implementation><![CDATA[
 	do ..%DeleteExtent()
@@ -90,8 +90,6 @@ do ##class(Form.TestForm).recreate2()</Description>
 <IndexLocation>^Form.Test.SimpleI</IndexLocation>
 <StreamLocation>^Form.Test.SimpleS</StreamLocation>
 <Data name="SimpleDefaultData">
-<Structure>listnode</Structure>
-<Subscript/>
 <Value name="1">
 <Value>%%CLASSNAME</Value>
 </Value>

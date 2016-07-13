@@ -85,7 +85,7 @@ Supported queryBase sources:<br>
 <Method name="queryINFO">
 <Description><![CDATA[
 Return id and dislpayName
-<example>w ##class(Form.REST.Objects).queryINFO("Form.TestForm")</example>]]></Description>
+<example>w ##class(Form.REST.Objects).queryINFO("Form.Test.Simple")</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
@@ -106,7 +106,7 @@ Return id and dislpayName
 <Method name="queryINFOCLASS">
 <Description><![CDATA[
 Return id, dislpayName and class
-<example>w ##class(Form.REST.Objects).queryINFOCLASS("Form.TestForm")</example>]]></Description>
+<example>w ##class(Form.REST.Objects).queryINFOCLASS("Form.Test.Simple")</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String</FormalSpec>
 <ReturnType>%String</ReturnType>

@@ -156,7 +156,7 @@ name - имя свойства</Description>
 <Method name="getPropertyDisplayName">
 <Description>
 Получить DISPLAYNAME свойства
-w ##class(Form.Property).getPropertyDisplayName("Form.TestForm", "Text")</Description>
+w ##class(Form.Property).getPropertyDisplayName("Form.Test.Simple", "text")</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String="",name:%String</FormalSpec>
 <ReturnType>%String</ReturnType>

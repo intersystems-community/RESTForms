@@ -38,7 +38,7 @@
 <Method name="ParseWhere">
 <Description>
 Parse where condition:
-w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", "Form.TestForm", .out)
+w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", "Form.Test.Simple", .out)
 result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>input,conditionClass,*condition</FormalSpec>

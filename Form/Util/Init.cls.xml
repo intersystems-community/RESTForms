@@ -15,7 +15,7 @@
 	#dim sc,sc1,sc2 AS %Status = $$$OK
 	set sc = ##class(Form.Test.Company).Populate(count, verbose, , , $$$NO)
 	set sc1 = ##class(Form.Test.Person).Populate(count, verbose, , , $$$NO)
-	set sc2 = ##class(Form.TestForm).Populate(count, verbose, , , $$$NO)
+	set sc2 = ##class(Form.Test.Simple).Populate(count, verbose, , , $$$NO)
 	set sc = $$$ADDSC(sc, $$$ADDSC(sc1, sc2))
 	return sc
 ]]></Implementation>
@@ -30,7 +30,7 @@
 	#dim sc AS %Status = $$$OK
 	set sc = ##class(Form.Test.Person).%DeleteExtent()
 	set sc1 = ##class(Form.Test.Company).%DeleteExtent()
-	set sc2 = ##class(Form.TestForm).%DeleteExtent()
+	set sc2 = ##class(Form.Test.Simple).%DeleteExtent()
 	set sc = $$$ADDSC(sc, $$$ADDSC(sc1, sc2))
 	return sc
 ]]></Implementation>
@@ -44,7 +44,7 @@
 <Implementation><![CDATA[
 	do ##class(Form.Test.Person).%KillExtent()
 	do ##class(Form.Test.Company).%KillExtent()
-	do ##class(Form.TestForm).%KillExtent()
+	do ##class(Form.Test.Simple).%KillExtent()
 	return $$$OK
 ]]></Implementation>
 </Method>

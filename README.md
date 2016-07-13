@@ -8,7 +8,7 @@ Import classes and create web app with `Form.REST.Main` broker.
 # Metadata generation
 
 Form class compilation triggers metadata gereration for compiled form.
-To generate metadata for all forms execute this code in a terminal:
+To validate and regenerate metadata for all forms execute this code in a terminal:
 
 ```
 Do ##class(Form.Util.Init).validateMetadata()
@@ -43,9 +43,9 @@ For POST/PUT requests see method descriptions for request body samples
 
 # SQL requests
 
-`GET http://localhost:57772/forms/form/objects/Form.TestForm/info?size=2&page=1&orderby=text`
+`GET http://localhost:57772/forms/form/objects/Form.Test.Simple/info?size=2&page=1&orderby=text`
 
-`GET http://localhost:57772/forms/form/objects/Form.TestForm/all?orderby=text+desc`
+`GET http://localhost:57772/forms/form/objects/Form.Test.Simple/all?orderby=text+desc`
 
 Note, that for SQL access user must have relevant SQL privileges (SELECT on form table).
 
@@ -122,7 +122,7 @@ See `Form.TestForm` for samples.
 
 For `Form.TestForm`.
 
-`POST http://localhost:57772/forms/form/object/Form.TestForm`
+`POST http://localhost:57772/forms/form/object/Form.Test.Simple`
 Headers must contain `Content-Type` and (probably) authorization
 
 ```
@@ -133,7 +133,7 @@ Authorization: Basic Base64String
 Body:
 ```
 {
-        "_class":"Form.TestForm",
+        "_class":"Form.Test.Simple",
         "text":3
 }
 ```
@@ -142,12 +142,12 @@ Body:
 
 For `Form.TestForm`.
 
-`PUT http://localhost:57772/forms/form/object/Form.TestForm`
+`PUT http://localhost:57772/forms/form/object/Form.Test.Simple`
 
 Body:
 ```
 {
-        "_class":"Form.TestForm",
+        "_class":"Form.Test.Simple",
         "_id":3,
         "text":4444
 }

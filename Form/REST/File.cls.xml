@@ -78,7 +78,7 @@ If it's not a list property, then the first file is set as property value </Desc
 <Method name="deleteFiles">
 <Description>
 Clear property value for object with class/id
-do ##class(Form.REST.File).deleteFiles("Form.TestForm", 1, "file")</Description>
+do ##class(Form.REST.File).deleteFiles("Form.Test.Simple", 1, "file")</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String="",id:%Integer="",property:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
