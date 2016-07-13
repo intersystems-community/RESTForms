@@ -58,7 +58,9 @@ Supported queryBase sources:<br>
 	set queryType = $ZCVT(queryType, "U")
 	set userQueryClass = ##class(Form.Settings).getSetting("queryclass")
 	#dim sc As %Status = $$$OK
-	if ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), queryType) {
+	if ##class(%Dictionary.MethodDefinition).IDKEYExists(class, "query" _ queryType) {
+		set queryBase = $classmethod(class, "query" _ queryType)
+	} elseif ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), queryType) {
 		set queryBase = $parameter(, queryType)
 	} elseif ##class(%Dictionary.MethodDefinition).IDKEYExists($classname(), "query" _ queryType) {
 		set queryBase = $classmethod(, "query" _ queryType, class)
