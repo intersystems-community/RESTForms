@@ -68,6 +68,18 @@ You can define your own class with queries. To define your own query named `myq`
 
 Method signature is: `ClassMethod queryMYQ(class As %String) As %String` 
 
+You can define a class-specific query. To define your own class query named `myq`:
+  1. Define a `queryMYQ` class method in your form class
+  2. Method signature is: `ClassMethod queryMYQ() As %String` 
+  3. Method must return the part of SQL query between SELECT and FROM
+
+RESTForms looks for a query named  `myq` in the following paths (till first hit):
+  1.  Class method `queryMYQ` in your form class
+  2.  Parameter `MYQ` in `Form.REST.Objects` class
+  3.  Class method `queryMYQ` in `Form.REST.Objects` class
+  4.  Parameter `MYQ` in your query class
+  3.  Class method `queryMYQ` in your query class
+
 ## URL arguments:
 
 | Argument | Sample Value       | Description     |
