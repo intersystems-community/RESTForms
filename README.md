@@ -75,10 +75,10 @@ You can define a class-specific query. To define your own class query named `myq
 
 RESTForms looks for a query named  `myq` in the following paths (till first hit):
   1.  Class method `queryMYQ` in your form class
-  2.  Parameter `MYQ` in `Form.REST.Objects` class
-  3.  Class method `queryMYQ` in `Form.REST.Objects` class
-  4.  Parameter `MYQ` in your query class
+  2.  Parameter `MYQ` in your query class
   3.  Class method `queryMYQ` in your query class
+  4.  Parameter `MYQ` in `Form.REST.Objects` class
+  5.  Class method `queryMYQ` in `Form.REST.Objects` class
 
 ## URL arguments:
 
