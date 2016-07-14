@@ -208,15 +208,9 @@ w - Windows-style cr/lf newline<br/>]]></Description>
 			}
 			Continue:tMultiDim
 			
-			// FORMS - display some datatypes in display format
-			If tType = "%Library.TimeStamp" {
-				Set tValue = ##class(%TimeStamp).LogicalToDisplay($property(pObject,tPropName))
-			} ElseIf tType = "%Library.Date" {
-				Set tValue = ##class(%Date).LogicalToDisplay($property(pObject,tPropName))
-			} Else {
-				Set tValue = $property(pObject,tPropName) // раньше была только эта строка
-			}
-			// FORMS - END - display some datatypes in display format 
+			// FORMS - display datatypes in JSON format
+			Set tValue = ##class(Form.Util.Converter).LogicalToJSON(tType, $property(pObject,tPropName))
+			// FORMS - END - display datatypes in JSON format
 
 			#; If the value is "" or $c(0) and we are NOT including empty properties, skip if we are not a collection, object or stream
 			If (((tValue = "") || (tValue = $c(0))) && (pFormat'["e") && (tCollection = "") && $Case(tClientType, "HANDLE": 0, "CHARACTERSTREAM": 0, "BINARYSTREAM": 0, :1)) {
