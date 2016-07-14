@@ -34,7 +34,7 @@ Convert $list to dynamic array</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="SQLTypeToClass">
+<Method name="sqlTypeToClass">
 <Description>
 TODO. Populate on install?</Description>
 <ClassMethod>1</ClassMethod>
@@ -52,7 +52,7 @@ TODO. Populate on install?</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="LogicalToJSON">
+<Method name="logicalToJSON">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>datatype:%String="",value:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
@@ -69,7 +69,7 @@ TODO. Populate on install?</Description>
 ]]></Implementation>
 </Method>
 
-<Method name="JSONToLogical">
+<Method name="jsonToLogical">
 <ClassMethod>1</ClassMethod>
 <FormalSpec>datatype:%String="",value:%String</FormalSpec>
 <ReturnType>%String</ReturnType>

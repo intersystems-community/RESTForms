@@ -209,7 +209,7 @@ w - Windows-style cr/lf newline<br/>]]></Description>
 			Continue:tMultiDim
 			
 			// FORMS - display datatypes in JSON format
-			Set tValue = ##class(Form.Util.Converter).LogicalToJSON(tType, $property(pObject,tPropName))
+			Set tValue = ##class(Form.Util.Converter).logicalToJSON(tType, $property(pObject,tPropName))
 			// FORMS - END - display datatypes in JSON format
 
 			#; If the value is "" or $c(0) and we are NOT including empty properties, skip if we are not a collection, object or stream
@@ -645,14 +645,8 @@ not perform complete error checking.]]></Description>
 									}							
 								}Else {
 									// set datatypes
-									Set tPropClassName = $$$comMemberKeyGet($classname(pObject),$$$cCLASSproperty,p,$$$cPROPtype)
-									If tPropClassName = "%Library.TimeStamp" {
-										Set $property(pObject,p) = ##class(%TimeStamp).DisplayToLogical($G(tPropValues(p)))
-									} ElseIf tPropClassName = "%Library.Date" {
-										Set $property(pObject,p) = ##class(%Date).DisplayToLogical($G(tPropValues(p)))
-									} Else {
-										Set $property(pObject,p) = $G(tPropValues(p))
-									}
+									Set tPropClassName = ##class(Form.Property).getPropertyType($classname(pObject), p)
+									Set $property(pObject,p) = ##class(Form.Util.Converter).jsonToLogical(tPropClassName, $G(tPropValues(p)))
 									// FORMS - END - set persistent properties
 								}
 							}
