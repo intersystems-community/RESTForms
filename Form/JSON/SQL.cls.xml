@@ -70,6 +70,9 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 			return $$$ERROR($$$GeneralError,"Filter column '" _column _ "' does not exist")
 		}
 		
+		set columnClass = ##class(Form.Property).getPropertyType(conditionClass, column)
+		set value = ##class(Form.Util.Converter).JSONToLogical(columnClass, value)
+		
 		set sqlpredicate = ..TranslatePredicate(predicate)
 		if sqlpredicate="" {
 			return $$$ERROR($$$GeneralError,"Incorrect filter predicate")
@@ -183,6 +186,7 @@ Draw JSON output.</Description>
 			Set tCols = tRS.GetColumnCount()
 			For c = 1:1:tCols { 
 				Set tColInfo(c,"name") = tRS.GetColumnHeader(c)
+				Set tColInfo(c,"type") = ##class(Form.Util.Converter).SQLTypeToClass(tRS.GetColumnType(c))
 			}
 		}
 		Else {
@@ -215,12 +219,15 @@ Draw JSON output.</Description>
 			Set node = ##class(%Object).$new()
 			For c = 1:1:tCols {
 				Set tVal = tRS.%GetData(c)
-				If ($IsValidNum(tVal)) {
+				Set tOutVal = ##class(Form.Util.Converter).LogicalToJSON($Get(tColInfo(c,"type")), tVal)
+				Do node.$set($Get(tColInfo(c,"name")), tOutVal)
+				
+				/*If ($IsValidNum(tVal)) {
 					Do node.$set($Get(tColInfo(c,"name")),$Num(tVal),"number")
 				}
 				Else {
 					Do node.$set($Get(tColInfo(c,"name")),tVal)
-				}
+				}*/
 			}
 			Do arrayNode.$push(node)
 		}
@@ -237,6 +244,19 @@ Draw JSON output.</Description>
 		Set tSC = ex.AsStatus()
 	}
 	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="%OnCreateResultSet">
+<FormalSpec>*tSC:%Status,pInfo:%ZEN.Auxiliary.QueryInfo</FormalSpec>
+<ReturnType>%ResultSet</ReturnType>
+<Implementation><![CDATA[
+	Set tRS = ##class(%ResultSet).%New()
+	s sql = ..sql
+	Set tSC = tRS.Prepare(..sql)
+	Set tRS.RuntimeMode=0
+	Set pInfo.queryText = "sql: "_..sql
+	Return tRS
 ]]></Implementation>
 </Method>
 </Class>

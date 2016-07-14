@@ -33,5 +33,57 @@ Convert $list to dynamic array</Description>
 	return array
 ]]></Implementation>
 </Method>
+
+<Method name="SQLTypeToClass">
+<Description>
+TODO. Populate on install?</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>type:%Integer=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	if type = 2 {
+		set result = "%Library.Date"
+	} elseif type = 9 {
+		set result = "%Library.TimeStamp"
+	} else {
+		set result = ""
+	}
+	return result
+]]></Implementation>
+</Method>
+
+<Method name="LogicalToJSON">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>datatype:%String="",value:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	return:datatype="" value
+	if datatype = "%Library.Date" {
+		set result = ##class(%Date).LogicalToXSD(value)
+	} elseif datatype = "%Library.TimeStamp" {
+		set result = ##class(%TimeStamp).LogicalToXSD(value)
+	} else {
+		set result = value
+	}
+	return result
+]]></Implementation>
+</Method>
+
+<Method name="JSONToLogical">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>datatype:%String="",value:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	return:datatype="" value
+	if datatype = "%Library.Date" {
+		set result = ##class(%Date).XSDToLogical(value)
+	} elseif datatype = "%Library.TimeStamp" {
+		set result = ##class(%TimeStamp).XSDToLogical(value)
+	} else {
+		set result = value
+	}
+	return result
+]]></Implementation>
+</Method>
 </Class>
 </Export>

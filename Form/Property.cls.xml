@@ -166,5 +166,19 @@ w ##class(Form.Property).getPropertyDisplayName("Form.Test.Simple", "text")</Des
 	return displayName
 ]]></Implementation>
 </Method>
+
+<Method name="getPropertyType">
+<Description>
+Get property Type
+w ##class(Form.Property).getPropertyType("Form.Test.Simple", "text")</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String="",name:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+	set type = $$$comMemberKeyGet(className, $$$cCLASSproperty, name, $$$cPROPtype)
+	set:type="" type = "%Library.String"
+	return type
+]]></Implementation>
+</Method>
 </Class>
 </Export>
