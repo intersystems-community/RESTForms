@@ -5,7 +5,7 @@
 <TimeCreated>64101,39307.619051</TimeCreated>
 
 <Parameter name="FORMNAME">
-<Default>Тестовая форма: компания</Default>
+<Default>Company</Default>
 </Parameter>
 
 <Parameter name="OBJPERMISSIONS">
@@ -26,7 +26,7 @@ The main property describing this object, automatically computes
 on insert or update (for SQL) or on save (for object access)
 Property displayName As %String(DISPLAYNAME = "Компаниия") [ SqlComputeCode = {set {*} = {name}}, SqlComputed, SqlComputeOnChange = (%%INSERT, %%UPDATE) ];</Description>
 <Type>%String</Type>
-<Parameter name="DISPLAYNAME" value="Название"/>
+<Parameter name="DISPLAYNAME" value="Name"/>
 <Parameter name="POPSPEC" value="Company()"/>
 </Property>
 
@@ -37,7 +37,7 @@ The <class>Person</class> objects associated with this <class>Company</class>.]]
 <Cardinality>many</Cardinality>
 <Inverse>company</Inverse>
 <Relationship>1</Relationship>
-<Parameter name="DISPLAYNAME" value="Работники"/>
+<Parameter name="DISPLAYNAME" value="Employees"/>
 </Property>
 
 <Storage name="Default">

@@ -7,7 +7,7 @@
 <Parameter name="FORMNAME">
 <Description>
 Form name, not a global key so it can be anything</Description>
-<Default>Тестовая форма</Default>
+<Default>Simple form</Default>
 </Parameter>
 
 <Parameter name="OBJPERMISSIONS">
@@ -44,19 +44,12 @@ on insert or update (for SQL) or on save (for object access)</Description>
 <SqlComputeCode>set {*} = {text}</SqlComputeCode>
 <SqlComputed>1</SqlComputed>
 <SqlComputeOnChange>%%INSERT,%%UPDATE</SqlComputeOnChange>
-<Parameter name="DISPLAYNAME" value="Имя"/>
+<Parameter name="DISPLAYNAME" value="Text"/>
 </Property>
 
 <Property name="text">
 <Type>%String</Type>
-<Parameter name="DISPLAYNAME" value="Текст"/>
-</Property>
-
-<Property name="gender">
-<Type>%String</Type>
-<Parameter name="DISPLAYLIST" value=",М,Ж"/>
-<Parameter name="DISPLAYNAME" value="Пол"/>
-<Parameter name="VALUELIST" value=",1,2"/>
+<Parameter name="DISPLAYNAME" value="Text"/>
 </Property>
 
 <Method name="recreate">

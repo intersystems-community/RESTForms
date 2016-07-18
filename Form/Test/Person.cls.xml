@@ -7,7 +7,7 @@ Test form: Person</Description>
 <TimeCreated>64101,38189.100761</TimeCreated>
 
 <Parameter name="FORMNAME">
-<Default>Тестовая форма: человек</Default>
+<Default>Person</Default>
 </Parameter>
 
 <Parameter name="OBJPERMISSIONS">
@@ -34,25 +34,36 @@ Use only first 250 symbols for comparison.
 Required for all long properties used by "order by" </Description>
 <Type>%String</Type>
 <Parameter name="COLLATION" value="TRUNCATE(250)"/>
-<Parameter name="DISPLAYNAME" value="Имя"/>
+<Parameter name="DISPLAYNAME" value="Name"/>
 <Parameter name="MAXLEN" value="2000"/>
 </Property>
 
-<Property name="gender">
-<Description>
-Person's gender</Description>
-<Type>%String</Type>
-<Parameter name="DISPLAYLIST" value=",М,Ж"/>
-<Parameter name="DISPLAYNAME" value="Пол"/>
-<Parameter name="VALUELIST" value=",1,2"/>
-</Property>
+<UDLText name="T">
+<Content><![CDATA[
+// Property gender As %String(DISPLAYLIST = ",М,Ж", DISPLAYNAME = "Пол", VALUELIST = ",1,2");
+
+]]></Content>
+</UDLText>
 
 <Property name="dob">
 <Description>
+Person's gender
 Person's Date of Birth.</Description>
 <Type>%Date</Type>
-<Parameter name="DISPLAYNAME" value="Дата рождения"/>
+<Parameter name="DISPLAYNAME" value="Date of Birth"/>
 <Parameter name="POPSPEC" value="Date()"/>
+</Property>
+
+<Property name="ts">
+<Type>%TimeStamp</Type>
+<InitialExpression>$ZDATETIME($ZTIMESTAMP, 3, 1, 3)</InitialExpression>
+<Parameter name="DISPLAYNAME" value="Timestamp"/>
+</Property>
+
+<Property name="num">
+<Type>%Numeric</Type>
+<InitialExpression>"2.15"</InitialExpression>
+<Parameter name="DISPLAYNAME" value="Number"/>
 </Property>
 
 <Property name="аge">
@@ -64,7 +75,7 @@ This is a calculated field whose value is derived from <property>DOB</property>.
 <SqlComputeCode> set {*}=##class(Form.Test.Person).currentAge({dob})</SqlComputeCode>
 <SqlComputed>1</SqlComputed>
 <SqlComputeOnChange>dob</SqlComputeOnChange>
-<Parameter name="DISPLAYNAME" value="Возраст"/>
+<Parameter name="DISPLAYNAME" value="Age"/>
 </Property>
 
 <Method name="currentAge">
@@ -78,6 +89,21 @@ This class method calculates a current age given a date of birth <var>date</var>
 ]]></Implementation>
 </Method>
 
+<Property name="relative">
+<Description>
+Person's spouse. 
+This is a reference to another persistent object.</Description>
+<Type>Form.Test.Person</Type>
+<Parameter name="DISPLAYNAME" value="Relative"/>
+</Property>
+
+<Property name="Home">
+<Description>
+Person's home address. This uses an embedded object.</Description>
+<Type>Form.Test.Address</Type>
+<Parameter name="DISPLAYNAME" value="House"/>
+</Property>
+
 <Property name="company">
 <Description>
 The company this person works for.</Description>
@@ -85,31 +111,19 @@ The company this person works for.</Description>
 <Cardinality>one</Cardinality>
 <Inverse>employees</Inverse>
 <Relationship>1</Relationship>
-<Parameter name="DISPLAYNAME" value="Компания"/>
-</Property>
-
-<Property name="relative">
-<Description>
-Person's spouse. 
-This is a reference to another persistent object.</Description>
-<Type>Form.Test.Person</Type>
-<Parameter name="DISPLAYNAME" value="Родственник"/>
-</Property>
-
-<Property name="Home">
-<Description>
-Person's home address. This uses an embedded object.</Description>
-<Type>Form.Test.Address</Type>
-<Parameter name="DISPLAYNAME" value="Дом"/>
+<Parameter name="DISPLAYNAME" value="Company"/>
 </Property>
 
 <Storage name="Default">
+<Description>
+Property amount As %Double(DISPLAYNAME = "double", POPSPEC = "Float(0,100,2)");</Description>
 <Type>%Library.CacheStorage</Type>
 <DataLocation>^Form.Test.PersonD</DataLocation>
 <DefaultData>PersonDefaultData</DefaultData>
 <IdLocation>^Form.Test.PersonD</IdLocation>
 <IndexLocation>^Form.Test.PersonI</IndexLocation>
 <StreamLocation>^Form.Test.PersonS</StreamLocation>
+<ExtentSize>10</ExtentSize>
 <Data name="PersonDefaultData">
 <Value name="1">
 <Value>%%CLASSNAME</Value>
@@ -135,7 +149,47 @@ Person's home address. This uses an embedded object.</Description>
 <Value name="8">
 <Value>relative</Value>
 </Value>
+<Value name="9">
+<Value>ts</Value>
+</Value>
+<Value name="10">
+<Value>amount</Value>
+</Value>
+<Value name="11">
+<Value>num</Value>
+</Value>
 </Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>1.1</AverageFieldSize>
+</Property>
+<Property name="amount">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>19.1</AverageFieldSize>
+</Property>
+<Property name="dob">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>5</AverageFieldSize>
+</Property>
+<Property name="name">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>17.4</AverageFieldSize>
+</Property>
+<Property name="num">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>4</AverageFieldSize>
+</Property>
+<Property name="ts">
+<Selectivity>50.0000%</Selectivity>
+<AverageFieldSize>23</AverageFieldSize>
+</Property>
+<SQLMap name="IDKEY">
+<BlockCount>-4</BlockCount>
+</SQLMap>
 </Storage>
 </Class>
 </Export>

@@ -117,6 +117,7 @@ w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description
 	
 	// If input is an empty string use form FORMORDERBY parameter
 	set:input="" input = $parameter(class, $$$orderByParam)
+	set:input="" input = $parameter(class, $$$displayProp)
 	set condition = ""
 	return:input="" sc
 	
