@@ -9,7 +9,7 @@ Broker class to work with queries</Description>
 <Parameter name="ALL">
 <Description>
 Query to return all availible information about form objects</Description>
-<Default>*</Default>
+<Default>*, %CLASSNAME AS _class</Default>
 </Parameter>
 
 <XData name="UrlMap">
