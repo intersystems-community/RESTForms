@@ -82,12 +82,15 @@ RESTForms looks for a query named  `myq` in the following paths (till first hit)
 
 ## URL arguments:
 
+all arguments are optional.
+
 | Argument | Sample Value       | Description     |
 |----------|--------------------|-----------------|
 | size     | 2                  | page size       |
 | page     | 1                  | page number     |
 | filter   | Value+contains+W   | WHERE clause    |
 | orderby  | Value+desc         | ORDER BY clause |
+| collation| SQLUPPER           | COLLATION clause|
 
 ## ORDER BY clause
 
@@ -113,6 +116,10 @@ Conditions:
 | contains       | [           |
 | doesnotcontain | '[           |
 
+## COLLATION clause
+
+In a format: `collation=SQLUPPER' or `collation=EXACT`. 
+Forces specified collation on WHERE clause. If omitted, default collation is used.
 
 #Samples
 

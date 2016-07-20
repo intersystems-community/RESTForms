@@ -16,7 +16,7 @@
 	set provider.%Format = $$$formatJSONSQL
 	
 	if ((##class(%Dictionary.CompiledClass).IDKEYExists(conditionClass)) && ($isobject($g(%request)))) {
-		set sc = ..ParseWhere(%request.Get("filter"), conditionClass, .where)
+		set sc = ..ParseWhere(%request.Get("filter"), %request.Get("collation"), conditionClass, .where)
 		set sc = $$$ADDSC(sc, ..ParseOrderBy(%request.Get("orderby"), conditionClass, .orderBy))
 		set sql = sql _ where _ orderBy
 	} ElseIf (conditionClass'="") {
@@ -41,7 +41,7 @@ Parse where condition:
 w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", "Form.Test.Simple", .out)
 result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>input,conditionClass,*condition</FormalSpec>
+<FormalSpec>input,collation:%String(VALUELIST=",SQLUPPER,EXACT")="",conditionClass,*condition</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -50,6 +50,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 	set:$e(input,1)="(" input = $e(input,2,*-1)
 	return:input="" sc
 	
+	set:collation'="" collation = "%" _ collation
 	set condList = $LFS(input," ")
 	set listLength= $LL(condList)
 	
@@ -78,6 +79,11 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 			return $$$ERROR($$$GeneralError,"Incorrect filter predicate")
 		}
 		#define sq(%str) "'" _ %str _ "'"
+		
+		if collation'="" {
+			set value = collation _ "(" _ value _ ")"
+			set column = collation _ "(" _ column _ ")"
+		}
 		set condition = condition _ column _ sqlpredicate _$$$sq(value)
 	}
 	return $$$OK
