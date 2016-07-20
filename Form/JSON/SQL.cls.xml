@@ -130,7 +130,7 @@ w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description
 	
 	if ##class(%Dictionary.CompiledProperty).IDKEYExists(class, column) {
 		/// nothing to do here
-	} elseif $isValidNum($normalize(column, 0)) {
+	} elseif $isValidNum($normalize(column, 0), 0, 1) {
 		set column = $normalize(column, 0)
 	} else {
 		set sc = $$$ERROR($$$GeneralError, "Sorting column '" _ column _ "' does not exist")
