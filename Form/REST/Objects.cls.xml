@@ -16,6 +16,7 @@ Query to return all availible information about form objects</Description>
 <XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
 <Data><![CDATA[
 <Routes>
+<Route Url="/:form/custom/:query" Method="GET" Call="getFormObjectsCustom"/>
 <Route Url="/:form/:query" Method="GET" Call="getFormObjects"/>
 </Routes>
 ]]></Data>
@@ -113,6 +114,34 @@ Return id, dislpayName and class
 <Implementation><![CDATA[
 	set queryBase = ..queryINFO(class) _ ", %CLASSNAME AS _class "
 	return queryBase
+]]></Implementation>
+</Method>
+
+<Method name="getFormObjectsCustom">
+<Description>
+Get form objects by a custom query</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String="",queryType:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	set sc = ..checkObjPermission(class, "R")
+	return:$$$ISERR(sc) sc
+	
+	set queryType = $ZCVT(queryType, "U")
+		
+	if ##class(%Dictionary.MethodDefinition).IDKEYExists(class, "customquery" _ queryType) {
+		set sql = $classmethod(class, "customquery" _ queryType)
+	} else {
+		set sc = $$$ERROR($$$GeneralError, "Custom query type " _ queryType _ " not found")
+	}
+	
+	return:$$$ISERR(sc) sc	
+	
+	set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql)
+	return sc
 ]]></Implementation>
 </Method>
 </Class>

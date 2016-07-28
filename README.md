@@ -34,6 +34,7 @@ Do $System.OBJ.Compile("Form.Adaptor","cb")
 | form/object/:class                   | PUT    | Update form object from object         |
 | form/object/:class/:id               | DELETE | Delete form object                     |
 | form/objects/:class/:query           | GET    | (SQL) Get all members for the form by query|
+| form/objects/:class/custom/:query    | GET    | (SQL) Get all members for the form by custom query|
 | form/file/:class/:id/:property       | POST   | Add files to this property             |
 | form/file/:class/:id/:property       | DELETE | Delete all files from this property    |
 | form/file/:class/:id/:property/:name | DELETE | Delete one file from property          |
@@ -120,6 +121,16 @@ Conditions:
 
 In a format: `collation=SQLUPPER' or `collation=EXACT`. 
 Forces specified collation on WHERE clause. If omitted, default collation is used.
+
+## Custom Queries
+
+Custom query allows user code to determine the full content of the query. 
+Query name is passed as a second REST (not URL) parameter in `form/objects/:class/custom/:query` request, URL parameters besides `size` and `page` are unavailable. Your method must parse all other url parameters. 
+
+To define your own custom query named `myq`:
+  1. Define a `customqueryMYQ` class method in your form class
+  2. Method signature is: `ClassMethod customqueryMYQ() As %String` 
+  3. Method must return a valid SQL query
 
 #Samples
 
