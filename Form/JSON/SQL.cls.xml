@@ -15,7 +15,7 @@
 	set provider.maxRows = $$$MaxCacheInt
 	set provider.%Format = $$$formatJSONSQL
 	
-	if ((##class(%Dictionary.CompiledClass).IDKEYExists(conditionClass)) && ($isobject($g(%request)))) {
+	if ((##class(%Dictionary.CompiledClass).IDKEYExists(conditionClass)) && $$$webContext) {
 		set sc = ..ParseWhere(%request.Get("filter"), %request.Get("collation"), conditionClass, .where)
 		set sc = $$$ADDSC(sc, ..ParseOrderBy(%request.Get("orderby"), conditionClass, .orderBy))
 		set sql = sql _ where _ orderBy
@@ -25,7 +25,7 @@
 	return:$$$ISERR(sc) sc 
 	
 	set provider.sql = sql
-	if $isobject($g(%request)) {
+	if $$$webContext {
 		set provider.pageSize = %request.Get("size", 25)
 		set provider.currPage = %request.Get("page", 1)
 	}

@@ -35,5 +35,15 @@
 #; #define GetClassParameter(%cls,%parm) $$$comMemberKeyGet(%cls,$$$cCLASSparameter,%parm,$$$cPARAMdefault)
 #; #define GetPropertyParameter(%cls,%prop,%parm) $$$comMemberArrayGet(%cls,$$$cCLASSproperty,%prop,$$$cPROPparameter,%parm)
 
+
+#define get(%name) $get(%request.Data(%name,1))
+#define webContext $$$isDefObject(%request)
+#define debug (($$$webContext) && ($d(%request.Data("Debug"))))
+#define r(%property) %request.Content.##Expression(%property)
+#define public ((%request.GetCgiEnv("SERVER_PORT") = 80) || (%request.GetCgiEnv("SERVER_PORT") = 443))
+#define private '$$$public
+
+#; Test if object variable is defined and not Null
+#define isDefObject(%obj) ($Data(%obj)#2&&$IsObject(%obj))
 ]]></Routine>
 </Export>
