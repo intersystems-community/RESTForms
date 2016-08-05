@@ -38,7 +38,7 @@
 <Method name="ParseWhere">
 <Description>
 Parse where condition:
-w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", "Form.Test.Simple", .out)
+w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", , "Form.Test.Simple", .out)
 result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>input,collation:%String(VALUELIST=",SQLUPPER,EXACT")="",conditionClass,*condition</FormalSpec>
@@ -67,12 +67,17 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 		set value = $TR($lg(condList,i+2),$c(9)," ") // replaces <TAB> in filter values eith whitespaces 
 		set value = $TR(value,"'"";")
 		
-		if '##class(%Dictionary.CompiledProperty).IDKEYExists(conditionClass, column) {
-			return $$$ERROR($$$GeneralError,"Filter column '" _column _ "' does not exist")
+		for j = 1:1:$length(column,"->") {
+			
+			set currentClass = $case(j,1:conditionClass,: ##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
+			set currentProperty = $piece(column,"->",j) //$piece(column,"->",j-1)
+			
+			if '##class(%Dictionary.CompiledProperty).IDKEYExists(currentClass, currentProperty) {
+				return $$$ERROR($$$GeneralError,"Filter column '" _currentProperty _ "' does not exist in " _ currentClass)
+			}
 		}
-		
-		set columnClass = ##class(Form.Property).getPropertyType(conditionClass, column)
-		set value = ##class(Form.Util.Converter).jsonToLogical(columnClass, value)
+
+		set value = ##class(Form.Util.Converter).jsonToLogical(currentClass, value)
 		
 		set sqlpredicate = ..TranslatePredicate(predicate)
 		if sqlpredicate="" {
