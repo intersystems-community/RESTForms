@@ -142,7 +142,7 @@ To remove test forms permanently from your local repository
 
 # Object creation
 
-For `Form.TestForm`.
+For `Form.Test.Simple`.
 
 `POST http://localhost:57772/forms/form/object/Form.Test.Simple`
 Headers must contain `Content-Type` and (probably) authorization
