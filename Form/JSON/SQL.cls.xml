@@ -76,7 +76,8 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 				return $$$ERROR($$$GeneralError,"Filter column '" _currentProperty _ "' does not exist in " _ currentClass)
 			}
 		}
-
+		
+		set currentClass = ##class(Form.Property).getPropertyType(currentClass, currentProperty)
 		set value = ##class(Form.Util.Converter).jsonToLogical(currentClass, value)
 		
 		set sqlpredicate = ..TranslatePredicate(predicate)
