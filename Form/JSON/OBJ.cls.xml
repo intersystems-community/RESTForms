@@ -3,8 +3,7 @@
 <Class name="Form.JSON.OBJ">
 <Description>
 Преобразует объект класса Cache в JSON. 
-Единственное отличие от  %ZEN.Auxiliary.jsonProvider выводит приватные и % свойства
-Закомментировано 3 строки - ищется по "Including private properties"</Description>
+Изменения ищутся по слову FORMS</Description>
 <Super>%ZEN.Auxiliary.jsonProvider</Super>
 <TimeCreated>64099,77101.820492</TimeCreated>
 
