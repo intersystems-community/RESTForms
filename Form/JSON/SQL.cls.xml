@@ -112,7 +112,7 @@ Translate predicate from js into sql</Description>
 	q:predicate="lt" "<"
 	q:predicate="startswith" "%STARTSWITH"
 	q:predicate="contains" "["
-	q:predicate="doesnotcontain" "'["
+	q:predicate="doesnotcontain" "NOT["
 	q ""
 ]]></Implementation>
 </Method>
