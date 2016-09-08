@@ -25,11 +25,11 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 <Description>
 Check that form with this classname exist</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String</FormalSpec>
+<FormalSpec>className:%String</FormalSpec>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
-	return:class="" $$$NO
-	return $select($data($$$formGlobal(class))'=0:$$$YES, 1:$$$NO)
+	return:className="" $$$NO
+	return $select($data($$$formGlobal(className))'=0:$$$YES, 1:$$$NO)
 ]]></Implementation>
 </Method>
 
@@ -37,13 +37,13 @@ Check that form with this classname exist</Description>
 <Description>
 Check that form with this classname exist</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String</FormalSpec>
+<FormalSpec>className:%String</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set formExists = ..formExists(class)
+	set formExists = ..formExists(className)
 	if 'formExists {
-		set sc = $$$ERROR($$$GeneralError, "Form '" _ class _ "' does not exist")
+		set sc = $$$ERROR($$$GeneralError, "Form '" _ className _ "' does not exist")
 	}
 	return sc
 ]]></Implementation>
@@ -51,9 +51,17 @@ Check that form with this classname exist</Description>
 
 <Method name="getFormMetadata">
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String=""</FormalSpec>
+<FormalSpec>className:%String=""</FormalSpec>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	return $$$formGlobal(class, $$$metadata)
+<Implementation><![CDATA[	return $$$formGlobal(className, $$$metadata)
+]]></Implementation>
+</Method>
+
+<Method name="getPropertyMetadata">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String=""</FormalSpec>
+<ReturnType>%Object</ReturnType>
+<Implementation><![CDATA[	return 1
 ]]></Implementation>
 </Method>
 </Class>

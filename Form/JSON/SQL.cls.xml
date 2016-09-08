@@ -55,7 +55,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 	set listLength= $LL(condList)
 	
 	if listLength#3'=0 {
-		return $$$ERROR($$$GeneralError, "Incorrect number of filter  arguments")
+		return $$$ERROR($$$GeneralError, "Incorrect number of filter arguments")
 	}
 	
 	set condition = " WHERE "
