@@ -32,6 +32,32 @@ Generate metadata for one field of a form</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="propertyToMetadataGLVN">
+<Description>
+Get metadata for one field of a form. Equal to propertyToMetadata method, 
+but uses direct global references instead of object access</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>className:%String="",name=""</FormalSpec>
+<ReturnType>%Object</ReturnType>
+<Implementation><![CDATA[
+	set metadata = {}
+	set metadata.name = name
+	set metadata.type = ..getPropertyType(className, name)
+	set metadata.collection = $$$comMemberKeyGet(className, $$$cCLASSproperty, name, $$$cPROPcollection)
+	set metadata.displayName = ..getPropertyDisplayName(className, name)
+	
+	set valueList = ..getPropertyParam(className, name, "VALUELIST")
+	set:valueList'="" metadata.valueList = ##class(Form.Util.Converter).stringToArray(valueList)
+	
+	set displayList = ..getPropertyParam(className, name, "DISPLAYLIST")
+	set:displayList'="" metadata.displayList = ##class(Form.Util.Converter).stringToArray(displayList)
+
+	set metadata.required = +$$$comMemberKeyGet(className, $$$cCLASSproperty, name, $$$cPROPrequired)	
+	set metadata.category = ..determineClassCategory(metadata.type)
+	return metadata
+]]></Implementation>
+</Method>
+
 <Method name="determineClassCategory">
 <Description>
 Determine class type</Description>
@@ -161,7 +187,7 @@ w ##class(Form.Property).getPropertyDisplayName("Form.Test.Simple", "text")</Des
 <FormalSpec>className:%String="",name:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	set displayName = $$$comMemberArrayGet(className, $$$cCLASSproperty, name, $$$cPROPparameter, $$$propDisplayNameParam)
+	set displayName = ..getPropertyParam(className, name, $$$propDisplayNameParam)
 	set:displayName="" displayName = name
 	return displayName
 ]]></Implementation>
@@ -178,6 +204,18 @@ w ##class(Form.Property).getPropertyType("Form.Test.Simple", "text")</Descriptio
 	set type = $$$comMemberKeyGet(className, $$$cCLASSproperty, name, $$$cPROPtype)
 	set:type="" type = "%Library.String"
 	return type
+]]></Implementation>
+</Method>
+
+<Method name="getPropertyParam">
+<Description>
+Получить параметр param свойства
+w ##class(Form.Property).getPropertyParam("Form.Test.Simple", "text", "VALUELIST")</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String="",name:%String="",param=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$$$comMemberArrayGet(className, $$$cCLASSproperty, name, $$$cPROPparameter, param)
 ]]></Implementation>
 </Method>
 </Class>

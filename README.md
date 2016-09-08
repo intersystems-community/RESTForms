@@ -131,6 +131,17 @@ To define your own custom query named `myq`:
   1. Define a `customqueryMYQ` class method in your form class
   2. Method signature is: `ClassMethod customqueryMYQ() As %String` 
   3. Method must return a valid SQL query
+  
+# Settings
+
+You can setup several settings.
+Set them via `Write ##class(For.Settings).setSetting(Setting, Value)`.
+
+| Setting     | Values             | Description     |
+|-------------|--------------------|-----------------|
+| queryclass  | any Caché class    | Class with your own queries. See Query types for details.|
+| metadataget | runtime, compile   | How to get metadata. At the time of class compilation or at the time of the request. Defaults to compile.|
+
 
 #Samples
 

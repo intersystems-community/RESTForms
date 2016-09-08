@@ -50,18 +50,81 @@ Check that form with this classname exist</Description>
 </Method>
 
 <Method name="getFormMetadata">
+<Description>
+Get form metadata as JSON</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String=""</FormalSpec>
 <ReturnType>%String</ReturnType>
-<Implementation><![CDATA[	return $$$formGlobal(className, $$$metadata)
+<Implementation><![CDATA[
+	if ##class(Form.Settings).getSetting("metadataget") = "runtime" { 
+		set json = ..getFormMetadataRuntime(className).$toJSON()
+	} else {
+		/// compiletime
+		set json = $$$formGlobal(className, $$$metadata)
+	}
+	
+	return json
 ]]></Implementation>
 </Method>
 
-<Method name="getPropertyMetadata">
+<Method name="getFormMetadataRuntime">
+<Description><![CDATA[
+Get form metadata at runtime
+Equal to generateMetadata method from Form.Generators class, 
+but uses direct global references instead of object access
+For results see:
+<example>w {}.$fromJSON(##class(Form.Info).getFormMetadataRuntime("Form.Test.Simple")).$toJSONFormat()</example>]]></Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String=""</FormalSpec>
+<FormalSpec>className:%String=""</FormalSpec>
 <ReturnType>%Object</ReturnType>
-<Implementation><![CDATA[	return 1
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set formName = ..getFormParam(className, $$$formNameParam)
+	
+	set metadata = {}
+	set metadata.name = formName
+	set metadata.class = className
+	set metadata.displayProperty = ..getFormParam(className, $$$displayProp)
+	set metadata.objpermissions = ..getFormParam(className, "OBJPERMISSIONS")
+	
+	set metadata.fields = []
+	
+	set property=$$$comMemberNext(className,$$$cCLASSproperty,"")
+	while property'="" {
+		set internal = $$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPinternal)
+		set displayName = ##class(Form.Property).getPropertyParam(className, property, $$$propDisplayNameParam)
+		if ((internal '= $$$YES) && (displayName'="")) {
+			set propertyMetaData = ##class(Form.Property).propertyToMetadataGLVN(className, property)
+			do metadata.fields.$setAt($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
+		}
+		set property=$$$comMemberNext(className,$$$cCLASSproperty,property)
+	}
+	
+	/// we're moving from the end of array to the beginning 
+	/// so we can delete null elements without affecting 
+	/// the position of elements we're yet to check
+	for i = metadata.fields.$size()-1:-1:0 {
+		if metadata.fields.$getTypeOf(i)="unassigned" {
+			 do metadata.fields.$remove(i)
+		}
+	}
+
+	
+	set callback = "onGenerateMetadata"
+	if ##class(%Dictionary.CompiledMethod).IDKEYExists(className, callback) {
+		set sc = $classmethod(className, callback, .metadata)
+	}
+	
+	return metadata.$toJSON()
+]]></Implementation>
+</Method>
+
+<Method name="getFormParam">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String="",name:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$$$comMemberKeyGet(className,$$$cCLASSparameter,name,$$$cPARAMdefault)
 ]]></Implementation>
 </Method>
 </Class>

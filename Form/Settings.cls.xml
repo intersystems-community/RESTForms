@@ -12,6 +12,7 @@ Get and set settings</Description>
 Get setting value by name (name is always lowercase)
 Possible settings:
 queryclass - class for SQL queries. See Form.REST.Objects for implementation details
+metadataget - what method to use to get metadata (possible values: runtime and compile)
 <programlisting language="COS">w {}.$toJSON()</programlisting>]]></Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>expression</CodeMode>
@@ -32,9 +33,15 @@ Set setting "name" value</Description>
 	
 	if name = "queryclass" {
 		if '##class(%Dictionary.ClassDefinition).%ExistsId(value) {
-			set sc = $$$ERROR($$$GeneralError,"Class '" _value _ "' does not exis")
+			set sc = $$$ERROR($$$GeneralError, "Class '" _value _ "' does not exis")
 		}
-	} else {
+	} elseif name = "metadataget" {
+		set value = $zcvt(value, "l")
+		if ((value '= "runtime") && (value '= "compile")) {
+			set sc = $$$ERROR($$$GeneralError, "Setting 'metadataget' has only 'runtime' and 'compile' as possible values. Received: '" _ value _ "'")
+		}
+	} 
+	else {
 		set sc = $$$ERROR($$$GeneralError, "Setting '" _ name _ "' does not exist")
 	}
 	
