@@ -21,6 +21,22 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 ]]></Implementation>
 </Method>
 
+<Method name="getFormsMetadata">
+<Description>
+Get all forms metadata
+w ##class(Form.Info).getFormsMetadata().$toJSONFormat()</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Object</ReturnType>
+<Implementation><![CDATA[
+	// TODO get form list in runtime for runtime mode
+	set forms = {}
+	$$$forAll(form, $$$formGlobal)
+		do forms.%DispatchSetProperty(form, ..getFormMetadataRuntime(form))
+	$$$endFor
+	quit forms
+]]></Implementation>
+</Method>
+
 <Method name="formExists">
 <Description>
 Check that form with this classname exist</Description>
@@ -115,7 +131,7 @@ For results see:
 		set sc = $classmethod(className, callback, .metadata)
 	}
 	
-	return metadata.$toJSON()
+	return metadata
 ]]></Implementation>
 </Method>
 

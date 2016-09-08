@@ -16,6 +16,7 @@
 <Map Prefix="/objects" Forward="Form.REST.Objects"/>
 
 <Route Url="/info" Method="GET" Call="getFormsList"/>
+<Route Url="/info/all" Method="GET" Call="getFormsMetadata"/>
 <Route Url="/info/:form" Method="GET" Call="getFormInfo"/>
 </Routes>
 ]]></Data>
@@ -23,7 +24,7 @@
 
 <Method name="getFormsList">
 <Description>
-Получение списка доступных форм в виде JSON массива </Description>
+Get available forms list as a JSON array</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
@@ -33,9 +34,21 @@
 ]]></Implementation>
 </Method>
 
+<Method name="getFormsMetadata">
+<Description>
+Get available forms metadata as JSON object</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set forms = ##class(Form.Info).getFormsMetadata()
+	write forms.$toJSON()
+	return $$$OK
+]]></Implementation>
+</Method>
+
 <Method name="getFormInfo">
 <Description>
-Получение мета-информации о форме form</Description>
+Get form metainformation by name</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>form:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>

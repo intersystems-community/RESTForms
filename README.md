@@ -24,6 +24,7 @@ Do $System.OBJ.Compile("Form.Adaptor","cb")
 | test                                 | GET    | Test request                           |
 | logout                               | GET    | End current session                    |
 | form/info                            | GET    | List of all availible forms            |
+| form/info/all                        | GET    | Get metainformation for all forms      |
 | form/info/:class                     | GET    | Form metainformation                   |
 | form/field/:class                    | POST   | Add field to form                      |
 | form/field/:class                    | PUT    | Modify form field                      |
