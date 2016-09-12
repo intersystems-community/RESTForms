@@ -12,11 +12,22 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Array</ReturnType>
 <Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
 	set forms = []
-	$$$forAll(form, $$$formGlobal)
-		set formObj = {"name":$$$formGlobal(form), "class": form}
+	
+	set rs = ##class(%ResultSet).%New("%Dictionary.ClassDefinition.SubclassOf")
+	set sc = rs.%Execute($$$adaptorClass)
+	quit:$$$ISERR(sc) 
+
+	while (rs.%Next(.sc)) {
+		quit:$$$ISERR(sc)		
+		set className = rs.Data("Name")
+		set formName = ..getFormParam(className, $$$formNameParam)
+		CONTINUE:formName=""
+		set formObj = {"name":formName, "class": className}
 		do forms.$push(formObj)
-	$$$endFor
+	}
+	
 	quit forms
 ]]></Implementation>
 </Method>

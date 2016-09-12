@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
-<Routine name="Form" type="INC"><![CDATA[
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.1 (Build 656U)" ts="2016-09-12 16:47:45">
+<Routine name="Form" type="INC" timestamp="64173,60400.786486"><![CDATA[
 #define formGlobal ^form.forms
 #define settingsGlobal ^form.settings
 #define formNameParam "FORMNAME"
@@ -24,7 +24,8 @@
 #define toJSONClassMethod "toJSON"
 #define updateClassMethod "updateIdFromObject"
 
-#define skipClasses ",Form.OnCompileGenerators,Form.Adaptor,"
+#define skipClasses ",Form.Generators,"_$$$adaptorClass_","
+#define adaptorClass "Form.Adaptor"
 #define fileClass "Form.File"
 #define propClass "Form.Field"
 #define fileDir $g($$$settingsGlobal("fileDir"), ##class(%Library.File).GetDirectory())
