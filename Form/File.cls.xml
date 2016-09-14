@@ -6,9 +6,29 @@
 
 <Property name="name">
 <Description>
-Full filepath (path+name)</Description>
+File name as supplied by user</Description>
 <Type>%String</Type>
 <Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+<Parameter name="MINLEN" value="1"/>
+</Property>
+
+<Property name="dir">
+<Description>
+Directory, where file is stored</Description>
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="1000"/>
+<Parameter name="MINLEN" value="1"/>
+</Property>
+
+<Property name="realName">
+<Description>
+Full path to where file is stored</Description>
+<Type>%String</Type>
+<SqlComputeCode>set {*} = {dir} _ {attachmentHASH}</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+<SqlComputeOnChange>attachmentHASH,dir</SqlComputeOnChange>
 <Parameter name="MAXLEN" value="1000"/>
 <Parameter name="MINLEN" value="1"/>
 </Property>
@@ -44,17 +64,18 @@ For example, if you're going to call %New, passing 2 arguments, %OnNew's signatu
 <p>Method %OnNew(dob as %Date = "", name as %Name = "") as %Status
 If instead of returning a %Status code this returns an oref and this oref is a subclass of the current
 class then this oref will be the one returned to the caller of %New method.]]></Description>
-<FormalSpec>name:%String="",description:%String="",stream:%Stream.Object=##class(%FileBinaryStream).%New()</FormalSpec>
+<FormalSpec>name:%String="",dir:%String="",description:%String="",stream:%Stream.Object=##class(%FileBinaryStream).%New()</FormalSpec>
 <Private>1</Private>
 <ReturnType>%Status</ReturnType>
 <ServerOnly>1</ServerOnly>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set ..name = ##class(%File).GetFilename(name)
+	set ..name = name
 	set ..description = description
-	set ..stream.Filename = name
-	set ..attachmentHASH = $system.Encryption.Base64Encode($zcvt($system.Encryption.SHAHashStream(512, ..stream, .sc),"O","UTF8"), 1)  
+	set ..attachmentHASH = $system.Encryption.Base64Encode($zcvt($system.Encryption.SHAHashStream(512, stream, .sc),"O","UTF8"), 1)
 	return:$$$ISERR(sc) sc
+	
+	set ..stream.Filename = dir _ ..attachmentHASH
 	set sc = ..stream.CopyFromAndSave(stream)
 	quit sc
 ]]></Implementation>
@@ -103,6 +124,12 @@ Serve file in web context</Description>
 </Value>
 <Value name="6">
 <Value>stream</Value>
+</Value>
+<Value name="7">
+<Value>realName</Value>
+</Value>
+<Value name="8">
+<Value>dir</Value>
 </Value>
 </Data>
 </Storage>

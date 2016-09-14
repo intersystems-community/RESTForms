@@ -57,8 +57,7 @@ If it's not a list property, then the first file is set as property value </Desc
 	        quit:filename=""
 	        
 	        set stream = %request.GetMimeData(filename) // Проверить на больших файлах/делит ли ангулар
-	        set fullFilename = ..getFullFilename(class, id, property, stream.FileName)
-	        set attachment = ##class(Form.File).%New(fullFilename, filename, stream)
+	        set attachment = ##class(Form.File).%New(stream.FileName, ..getFileDir(class, id, property), filename, stream)
 	        if propertyCollectionType="list" {
 		        // propertyOREF тут %Collection.ListOfObj
 	        	do $method(propertyOREF, "Insert", attachment)
@@ -129,26 +128,25 @@ Delete value with name=filename from property for object with class/id</Descript
 	#dim stream As %CSP.BinaryStream
 	if propertyCollectionType = "" {
 		set propertyOREF = $property(obj, property)
-		set realFilename = propertyOREF.name
-		if (realFilename = filename) {
-			set fullFilename = ..getFullFilename(class, id, property, filename, $$$NO)
+		set storedFilename = propertyOREF.name
+		if (storedFilename = filename) {
+			set fullFilename = propertyOREF.realName
 			do ##class(%File).Delete(fullFilename)
 			set $property(obj, property) = ""
 		}  else {
-			set sc = $$$ERROR($$$GeneralError, filename _ " is incorrect, right one is " _ realFilename)
+			set sc = $$$ERROR($$$GeneralError, filename _ " is incorrect")
 		}
 	} else {
 		#dim propertyOREF As %Collection.ListOfObj
 		set propertyOREF = $property(obj, property)
 		for i=1:1:propertyOREF.Count() {
 			set file = propertyOREF.GetAt(i)
-			set realFilename = file.name
-			if (realFilename=filename) {
-				set fullFilename = ..getFullFilename(class, id, property, filename, $$$NO)
+			set storedFilename = file.name
+			if (storedFilename=filename) {
+				set fullFilename = propertyOREF.realName
 				do ##class(%File).Delete(fullFilename)
 				do propertyOREF.RemoveAt(i)
-				/// Удаляем только первый файл
-				/// TODO: уникальные имена файлов
+				/// Delete only first file
 				quit
 			}
 		}
@@ -165,7 +163,7 @@ Delete value with name=filename from property for object with class/id</Descript
 
 <Method name="serveFile">
 <Description>
-Server file with name=filename from property for object with class/id</Description>
+Serve file with name=filename from property for object with class/id</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String="",id:%Integer="",property:%String="",filename=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -212,28 +210,6 @@ Server file with name=filename from property for object with class/id</Descripti
 	}
 	
 	return sc
-]]></Implementation>
-</Method>
-
-<Method name="getFullFilename">
-<Description><![CDATA[
-Get full path and file name
-If the file already exists, and new = 1, then adds  _<int> to name]]></Description>
-<ClassMethod>1</ClassMethod>
-<FormalSpec>class:%String,id:%String,property:%String,filename:%String,new:%Boolean=$$$YES</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	set directory = ..getFileDir(class, id, property)
-	set fullFilename = directory _ filename
-	if ((##class(%File).Exists(fullFilename)) && (new)) {
-		do ..filenameToNameExt(filename, .name, .ext)
-		
-		while ##class(%File).Exists(fullFilename) {
-			// Generate new file name: name.ext -> name_1.ext -> name_2.ext
-			set fullFilename = directory _ name _ "_" _ $increment(i) _ $select(ext'="":"." _ ext, 1:"")
-		}
-	}
-	quit fullFilename
 ]]></Implementation>
 </Method>
 
