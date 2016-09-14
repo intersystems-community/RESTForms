@@ -140,8 +140,8 @@ Set them via `Write ##class(For.Settings).setSetting(Setting, Value)`.
 
 | Setting     | Values             | Description     |
 |-------------|--------------------|-----------------|
-| queryclass  | any Caché class    | Class with your own queries. See Query types for details.|
-| metadataget | runtime, compile   | How to get metadata. At the time of class compilation or at the time of the request. Defaults to compile.|
+| queryclass  | Caché class name   | Class with your own queries. See Query types for details.|
+| fileDir     | Directory path     | Directory for files. Defaults to MGR\DB directory|
 
 
 #Samples
