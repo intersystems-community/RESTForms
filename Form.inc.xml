@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.1 (Build 656U)" ts="2016-09-12 16:47:45">
-<Routine name="Form" type="INC" timestamp="64173,60400.786486"><![CDATA[
-#define formGlobal ^form.forms
+<Export generator="Cache" version="25">
+<Routine name="Form" type="INC"><![CDATA[
 #define settingsGlobal ^form.settings
 #define formNameParam "FORMNAME"
 #define displayProp "DISPLAYPROPERTY"
 #define propDisplayNameParam "DISPLAYNAME"
 #define orderByParam "FORMORDERBY"
 #define objPermParam "OBJPERMISSIONS"
-#define metadata "metadata"
-
-
-#define forAll(%in,%gn) s gn%in=$na(%gn) s %in="" f { s %in=$o(@gn%in@(%in)) q:%in=""
-#define forAllk(%in,%kn,%gn) s gn%in=$na(%gn) s %in="" f %kn=1:1 { s %in=$o(@gn%in@(%in)) q:%in=""
-#define endFor  }
-
 
 #define formatJSON 		"aeloqtwc"
 #define formatJSONSQL	"tw"

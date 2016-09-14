@@ -40,8 +40,8 @@ Get available forms metadata as JSON object</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	set forms = ##class(Form.Info).getFormsMetadata()
-	write forms.$toJSON()
+	set metadata = ##class(Form.Info).getFormsMetadata()
+	write metadata.$toJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>
@@ -53,7 +53,8 @@ Get form metainformation by name</Description>
 <FormalSpec>form:%String=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
-	write ##class(Form.Info).getFormMetadata(form)
+	set metadata = ##class(Form.Info).getFormMetadata(form)
+	write metadata.$toJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>

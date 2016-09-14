@@ -15,14 +15,14 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 	#dim sc As %Status = $$$OK
 	set forms = []
 	
-	set rs = ##class(%ResultSet).%New("%Dictionary.ClassDefinition.SubclassOf")
+	set rs = ##class(%ResultSet).%New("%Dictionary.ClassDefinition:SubclassOf")
 	set sc = rs.%Execute($$$adaptorClass)
 	quit:$$$ISERR(sc) 
 
 	while (rs.%Next(.sc)) {
 		quit:$$$ISERR(sc)		
 		set className = rs.Data("Name")
-		set formName = ..getFormParam(className, $$$formNameParam)
+		set formName = $parameter(className, $$$formNameParam)
 		CONTINUE:formName=""
 		set formObj = {"name":formName, "class": className}
 		do forms.$push(formObj)
@@ -39,12 +39,13 @@ w ##class(Form.Info).getFormsMetadata().$toJSONFormat()</Description>
 <ClassMethod>1</ClassMethod>
 <ReturnType>%Object</ReturnType>
 <Implementation><![CDATA[
-	// TODO get form list in runtime for runtime mode
-	set forms = {}
-	$$$forAll(form, $$$formGlobal)
-		do forms.%DispatchSetProperty(form, ..getFormMetadataRuntime(form))
-	$$$endFor
-	quit forms
+	set formsList = ..getFormsList()
+	set metadata = {}
+	for i = 0:1:formsList.$size()-1 {
+		set form = formsList.$getAt(i)
+		do metadata.%DispatchSetProperty(form.class, ..getFormMetadata(form.class))
+	}
+	quit metadata
 ]]></Implementation>
 </Method>
 
@@ -56,7 +57,11 @@ Check that form with this classname exist</Description>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
 	return:className="" $$$NO
-	return $select($data($$$formGlobal(className))'=0:$$$YES, 1:$$$NO)
+	return:($$$skipClasses[className) $$$NO
+	set formName = $$$defMemberKeyGet(className,$$$cCLASSparameter,$$$formNameParam,$$$cPARAMdefault)
+	return:(formName="") $$$NO
+	return:($$$skipClasses[className) $$$NO
+	return $$$YES
 ]]></Implementation>
 </Method>
 
@@ -77,24 +82,6 @@ Check that form with this classname exist</Description>
 </Method>
 
 <Method name="getFormMetadata">
-<Description>
-Get form metadata as JSON</Description>
-<ClassMethod>1</ClassMethod>
-<FormalSpec>className:%String=""</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[
-	if ##class(Form.Settings).getSetting("metadataget") = "runtime" { 
-		set json = ..getFormMetadataRuntime(className).$toJSON()
-	} else {
-		/// compiletime
-		set json = $$$formGlobal(className, $$$metadata)
-	}
-	
-	return json
-]]></Implementation>
-</Method>
-
-<Method name="getFormMetadataRuntime">
 <Description><![CDATA[
 Get form metadata at runtime
 Equal to generateMetadata method from Form.Generators class, 
@@ -106,13 +93,13 @@ For results see:
 <ReturnType>%Object</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
-	set formName = ..getFormParam(className, $$$formNameParam)
+	set formName = $parameter(className, $$$formNameParam)
 	
 	set metadata = {}
 	set metadata.name = formName
 	set metadata.class = className
-	set metadata.displayProperty = ..getFormParam(className, $$$displayProp)
-	set metadata.objpermissions = ..getFormParam(className, "OBJPERMISSIONS")
+	set metadata.displayProperty = $parameter(className, $$$displayProp)
+	set metadata.objpermissions = $parameter(className, "OBJPERMISSIONS")
 	
 	set metadata.fields = []
 	
@@ -143,15 +130,6 @@ For results see:
 	}
 	
 	return metadata
-]]></Implementation>
-</Method>
-
-<Method name="getFormParam">
-<ClassMethod>1</ClassMethod>
-<CodeMode>expression</CodeMode>
-<FormalSpec>className:%String="",name:%String=""</FormalSpec>
-<ReturnType>%String</ReturnType>
-<Implementation><![CDATA[$$$comMemberKeyGet(className,$$$cCLASSparameter,name,$$$cPARAMdefault)
 ]]></Implementation>
 </Method>
 </Class>

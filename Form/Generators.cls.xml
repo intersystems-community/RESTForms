@@ -7,66 +7,6 @@ Generators that actually generate the code should be placed into Form.Adaptor cl
 <Abstract>1</Abstract>
 <TimeCreated>64110,50058.313465</TimeCreated>
 
-<Method name="generateMetadata">
-<Description><![CDATA[
-Generate form metadata
-For results see:
-<example>w {}.$fromJSON(^form.forms("Form.Test.Simple","metadata")).$toJSONFormat()</example>]]></Description>
-<Internal>1</Internal>
-<ClassMethod>1</ClassMethod>
-<CodeMode>objectgenerator</CodeMode>
-<ReturnType>%Status</ReturnType>
-<Implementation><![CDATA[
-	#Include Form
-	#dim sc As %Status = $$$OK
-	set className = %compiledclass.Name
-	set formNameKey = %class.Parameters.FindObjectId(className _ "||" _ $$$formNameParam)
-	set formName = $get(%parameter($$$formNameParam))
-	return:(($$$skipClasses[className)||(formName="")||(formNameKey="")) sc
-
-	
-	set metadata = {}
-	set metadata.name = formName
-	set metadata.class = className
-	set metadata.displayProperty = %parameter($$$displayProp)
-	set metadata.objpermissions = %parameter("OBJPERMISSIONS")
-	
-	set metadata.fields = []
-	
-	for i = 1:1:%compiledclass.Properties.Count() {
-		#dim property As %Dictionary.CompiledProperty
-		set property = %compiledclass.Properties.GetAt(i)
-		set propertyName = property.Name
-		CONTINUE:property.Internal 
-		
-		/// Only properties with set DISPLAYNAME param are included in metainformation
-		if (property.Parameters.GetAt($$$propDisplayNameParam)'="") {
-			set propertyMetaData = ##class(Form.Property).propertyToMetadata(property)
-			do metadata.fields.$setAt(property.SequenceNumber, propertyMetaData)
-		}
-	}
-	
-	/// we're moving from the end of array to the beginning 
-	/// so we can delete null elements without affecting 
-	/// the position of elements we're yet to check
-	for i = metadata.fields.$size()-1:-1:0 {
-		if metadata.fields.$getTypeOf(i)="unassigned" {
-			 do metadata.fields.$remove(i)
-		}
-	}
-	
-	set callback = "onGenerateMetadata"
-	if %class.Methods.FindObjectId(className _ "||" _ callback) {
-		set sc = $classmethod(className, callback, .metadata)
-	}
-	
-	set $$$formGlobal(className) = formName
-	set $$$formGlobal(className, $$$metadata) = metadata.$toJSON()
-	
-	return sc
-]]></Implementation>
-</Method>
-
 <Method name="onGenerateMetadata">
 <Description>
 End form callback method</Description>
