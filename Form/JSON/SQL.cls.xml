@@ -84,13 +84,21 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 		if sqlpredicate="" {
 			return $$$ERROR($$$GeneralError,"Incorrect filter predicate")
 		}
-		#define sq(%str) "'" _ %str _ "'"
 		
+		if sqlpredicate = "IN" {
+			set value = "('"  _ $replace(value, "~", "', '") _ "')"
+		} else {
+			#define sq(%str) "'" _ %str _ "'"
+			set value = $$$sq(value)
+		}
+
 		if collation'="" {
 			set value = collation _ "(" _ value _ ")"
 			set column = collation _ "(" _ column _ ")"
 		}
-		set condition = condition _ column _ sqlpredicate _$$$sq(value)
+		
+		
+		set condition = condition _ column _ " " _ sqlpredicate _ " " _ value
 	}
 	return $$$OK
 ]]></Implementation>
@@ -113,6 +121,7 @@ Translate predicate from js into sql</Description>
 	q:predicate="startswith" "%STARTSWITH"
 	q:predicate="contains" "["
 	q:predicate="doesnotcontain" "NOT["
+	q:predicate="in" "IN"
 	q ""
 ]]></Implementation>
 </Method>
@@ -211,12 +220,17 @@ Draw JSON output.</Description>
 		Set ..sql = tOrigSQL
 
  		Set aet = ##class(%AbstractObject).$fromJSON("{"""_..arrayName_""":[]}")
+ 		
+ 		// FORMS - debug
+ 		Set:$$$debug aet.sql = tOrigSQL
+ 		// END - FORMS - debug
+ 		
  		Set arrayNode = aet.$get(..arrayName)
  	
- 		// FORMS - пагинация
+ 		// FORMS - pagination
 		Set tStartRow = ..pageSize * (..currPage - 1)
 		Set tEndRow = tStartRow + ..pageSize
-		// END - FORMS - пагинация
+		// END - FORMS - pagination
 
 		// fetch and emit JSON
 		// n.b. this should be pushed into the result set itself
@@ -225,9 +239,9 @@ Draw JSON output.</Description>
 			Quit:$$$ISERR(tSC)
 			Set tRow = tRow + 1
 			
-			// FORMS - пагинация
+			// FORMS - pagination
 			CONTINUE:(tRow<=tStartRow)
-			// END - FORMS - пагинация
+			// END - FORMS - pagination
 			
 			Set node = ##class(%Object).$new()
 			For c = 1:1:tCols {
@@ -245,10 +259,10 @@ Draw JSON output.</Description>
 			Do arrayNode.$push(node)
 		}
 		
-		// FORMS - количество результатов
+		// FORMS - results count
 		While tRS.%Next() {}
 		Set aet.total=tRS.%ROWCOUNT
-		// END - FORMS - количество результатов
+		// END - FORMS - results count
 				
 		Write aet.$toJSON()
 	}

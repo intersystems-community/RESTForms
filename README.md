@@ -49,6 +49,10 @@ For POST/PUT requests see method descriptions for request body samples
 
 `GET http://localhost:57772/forms/form/objects/Form.Test.Simple/all?orderby=text+desc`
 
+`GET http://localhost:57772/forms/form/objects/Form.Test.Simple/all?filter=text%20eq%20A9044`
+
+`GET http://localhost:57772/forms/form/objects/Form.Test.Simple/all?filter=text%20in%20A9044~B5920`
+
 Note, that for SQL access user must have relevant SQL privileges (SELECT on form table).
 
 ## Query types
@@ -116,7 +120,8 @@ Conditions:
 | lt             | <           |
 | startswith     | %STARTSWITH |
 | contains       | [           |
-| doesnotcontain | '[           |
+| doesnotcontain | '[          |
+| in             | IN          |
 
 ## COLLATION clause
 
