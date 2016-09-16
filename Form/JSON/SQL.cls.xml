@@ -124,6 +124,9 @@ Translate predicate from js into sql</Description>
 	q:predicate="contains" "["
 	q:predicate="doesnotcontain" "NOT["
 	q:predicate="in" "IN"
+	q:predicate="is" "IS"
+	q:predicate="isnot" "IS NOT"
+	
 	q ""
 ]]></Implementation>
 </Method>
