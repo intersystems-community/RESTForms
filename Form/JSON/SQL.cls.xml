@@ -92,7 +92,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 			set value = $$$sq(value)
 		}
 		
-		set value = $replace(value, "$$$NULL", "NULL")
+		set value = $replace(value, "'$$$NULL'", "NULL")
 
 		if collation'="" {
 			set value = collation _ "(" _ value _ ")"
