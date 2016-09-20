@@ -36,10 +36,10 @@
 </Method>
 
 <Method name="ParseWhere">
-<Description>
+<Description><![CDATA[
 Parse where condition:
-w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", , "Form.Test.Simple", .out)
-result: out=" WHERE Text='Admin' AND Text='1'"</Description>
+<example>w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", , "Form.Test.Simple", .out)</example>
+result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>input,collation:%String(VALUELIST=",SQLUPPER,EXACT")="",conditionClass,*condition</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -67,18 +67,10 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 		set value = $TR($lg(condList,i+2),$c(9)," ") // replaces <TAB> in filter values eith whitespaces 
 		set value = $TR(value,"'"";")
 		
-		for j = 1:1:$length(column,"->") {
-			
-			set currentClass = $case(j,1:conditionClass,: ##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
-			set currentProperty = $piece(column,"->",j) //$piece(column,"->",j-1)
-			
-			if '##class(%Dictionary.CompiledProperty).IDKEYExists(currentClass, currentProperty) {
-				return $$$ERROR($$$GeneralError,"Filter column '" _currentProperty _ "' does not exist in " _ currentClass)
-			}
-		}
+		set columnValid = ..isColumnValid(column, conditionClass, .propertyClass)
+		return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
 		
-		set currentClass = ##class(Form.Property).getPropertyType(currentClass, currentProperty)
-		set value = ##class(Form.Util.Converter).jsonToLogical(currentClass, value)
+		set value = ##class(Form.Util.Converter).jsonToLogical(propertyClass, value)
 		
 		set sqlpredicate = ..TranslatePredicate(predicate)
 		if sqlpredicate="" {
@@ -103,6 +95,30 @@ result: out=" WHERE Text='Admin' AND Text='1'"</Description>
 		set condition = condition _ column _ " " _ sqlpredicate _ " " _ value
 	}
 	return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="isColumnValid">
+<Description><![CDATA[
+Is this column reference valid.
+<example>w ##class(Form.JSON.SQL).isColumnValid("company->addrerss_City", "Form.Test.Person", .c)</example>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>column,conditionClass,*finalPropertyClass</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<Implementation><![CDATA[
+	kill finalPropertyClass
+	set column = $replace(column, "_", "->") // Serial references
+	for j = 1:1:$length(column,"->") {
+		
+		set currentClass = $case(j, 1:conditionClass, :##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
+		set currentProperty = $piece(column,"->",j) //$piece(column,"->",j-1)
+		
+		if '##class(%Dictionary.CompiledProperty).IDKEYExists(currentClass, currentProperty) {
+			return $$$NO
+		}
+	}
+	set finalPropertyClass = ##class(Form.Property).getPropertyType(currentClass, currentProperty)
+	return $$$YES
 ]]></Implementation>
 </Method>
 
