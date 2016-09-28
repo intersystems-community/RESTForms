@@ -69,6 +69,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 		
 		set columnValid = ..isColumnValid(column, conditionClass, .propertyClass)
 		return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
+		set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
 		
 		set value = ##class(Form.Util.Converter).jsonToLogical(propertyClass, value)
 		
