@@ -74,12 +74,12 @@ Determine class type</Description>
 <Method name="addClassProperty">
 <Description>
 Add class property
-className - класс
-name - имя свойства
-type - класс свойства
-collection - коллекция
-displayName - отобразжаемое имя
-required - обязательное свойство</Description>
+className - class
+name - property name
+type - property type
+collection - is a collection (list, array)
+displayName - displayname parameter value
+required - is it required (0/1)</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String="",name:%String,type:%String="%String",collection:%String(VALUELIST=",list,array")="",displayName:%String="",required:%Boolean=$$$NO</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -115,13 +115,13 @@ required - обязательное свойство</Description>
 
 <Method name="modifyClassProperty">
 <Description>
-Изменить свойство класса
-className - класс
-name - имя свойства
-type - класс свойства
-collection - коллекция
-displayName - отобразжаемое имя
-required - обязательное свойство</Description>
+Modify class property
+className - class
+name - property name
+type - property type
+collection - is a collection (list, array)
+displayName - displayname parameter value
+required - is it required (0/1)</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String="",name:%String,type:%String="%String",collection:%String(VALUELIST=",list,array")="",displayName:%String="",required:%Boolean=$$$NO</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -181,7 +181,7 @@ name - имя свойства</Description>
 
 <Method name="getPropertyDisplayName">
 <Description>
-Получить DISPLAYNAME свойства
+Get property DISPLAYNAME
 w ##class(Form.Property).getPropertyDisplayName("Form.Test.Simple", "text")</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String="",name:%String</FormalSpec>
@@ -209,13 +209,25 @@ w ##class(Form.Property).getPropertyType("Form.Test.Simple", "text")</Descriptio
 
 <Method name="getPropertyParam">
 <Description>
-Получить параметр param свойства
+Get property param
 w ##class(Form.Property).getPropertyParam("Form.Test.Simple", "text", "VALUELIST")</Description>
 <ClassMethod>1</ClassMethod>
 <CodeMode>expression</CodeMode>
 <FormalSpec>className:%String="",name:%String="",param=""</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[$$$comMemberArrayGet(className, $$$cCLASSproperty, name, $$$cPROPparameter, param)
+]]></Implementation>
+</Method>
+
+<Method name="getPropertySQLName">
+<Description>
+Get property SQL name
+w ##class(Form.Property).getPropertySQLName("Form.Test.Simple", "text")</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<FormalSpec>className:%String="",name:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[$$$comMemberKeyGet(className, $$$cCLASSproperty, name, $$$cPROPsqlfieldname)
 ]]></Implementation>
 </Method>
 </Class>

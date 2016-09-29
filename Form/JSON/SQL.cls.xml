@@ -67,7 +67,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 		set value = $TR($lg(condList,i+2),$c(9)," ") // replaces <TAB> in filter values eith whitespaces 
 		set value = $TR(value,"'"";")
 		
-		set columnValid = ..isColumnValid(column, conditionClass, .propertyClass)
+		set columnValid = ..isColumnValid(.column, conditionClass, .propertyClass)
 		return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
 		set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
 		
@@ -104,21 +104,38 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 Is this column reference valid.
 <example>w ##class(Form.JSON.SQL).isColumnValid("company->addrerss_City", "Form.Test.Person", .c)</example>]]></Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>column,conditionClass,*finalPropertyClass</FormalSpec>
+<FormalSpec><![CDATA[&column,conditionClass,*finalPropertyClass]]></FormalSpec>
 <ReturnType>%Boolean</ReturnType>
 <Implementation><![CDATA[
 	kill finalPropertyClass
 	set column = $replace(column, "_", "->") // Serial references
-	for j = 1:1:$length(column,"->") {
+	set columnOut = ""
+	
+	set length = $length(column,"->")
+	for j = 1:1:length {
 		
 		set currentClass = $case(j, 1:conditionClass, :##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
-		set currentProperty = $piece(column,"->",j) //$piece(column,"->",j-1)
+		set currentProperty = $piece(column,"->",j)
 		
 		if '##class(%Dictionary.CompiledProperty).IDKEYExists(currentClass, currentProperty) {
 			return $$$NO
 		}
+		
+		set currentPropertySQLName = ##class(Form.Property).getPropertySQLName(currentClass, currentProperty)
+		set columnOut = columnOut _ currentPropertySQLName
+		if j'=length {
+			set propertyType = ##class(Form.Property).getPropertyType(currentClass, currentProperty)
+			if $$$classIsSerial(propertyType) {
+				set separator = "_"
+			} else {
+				set separator = "->"
+			}
+			set columnOut = columnOut _ separator
+		}
 	}
 	set finalPropertyClass = ##class(Form.Property).getPropertyType(currentClass, currentProperty)
+	set column = columnOut
+	
 	return $$$YES
 ]]></Implementation>
 </Method>
