@@ -67,7 +67,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 		set value = $TR($lg(condList,i+2),$c(9)," ") // replaces <TAB> in filter values eith whitespaces 
 		set value = $TR(value,"'"";")
 		
-		set columnValid = ..isColumnValid(.column, conditionClass, .propertyClass)
+		set columnValid = ..ParseColumn(.column, conditionClass, .propertyClass)
 		return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
 		set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
 		
@@ -99,10 +99,10 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 ]]></Implementation>
 </Method>
 
-<Method name="isColumnValid">
+<Method name="ParseColumn">
 <Description><![CDATA[
 Is this column reference valid.
-<example>w ##class(Form.JSON.SQL).isColumnValid("company->addrerss_City", "Form.Test.Person", .c)</example>]]></Description>
+<example>w ##class(Form.JSON.SQL).ParseColumn("company->addrerss_City", "Form.Test.Person", .c)</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec><![CDATA[&column,conditionClass,*finalPropertyClass]]></FormalSpec>
 <ReturnType>%Boolean</ReturnType>
