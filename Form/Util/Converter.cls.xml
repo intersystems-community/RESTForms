@@ -43,6 +43,8 @@ TODO. Populate on install?</Description>
 <Implementation><![CDATA[
 	if type = 2 {
 		set result = "%Library.Date"
+	} elseif type = 8 {
+		set result = "%Library.Time"
 	} elseif type = 9 {
 		set result = "%Library.TimeStamp"
 	} else {
@@ -57,15 +59,17 @@ TODO. Populate on install?</Description>
 <FormalSpec>datatype:%String="",value:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	return:datatype="" value
-	if datatype = "%Library.Date" {
-		set result = ##class(%Date).LogicalToXSD(value)
-	} elseif datatype = "%Library.TimeStamp" {
-		set result = ##class(%TimeStamp).LogicalToXSD(value)
-	} else {
-		set result = value
-	}
-	return result
+    return:datatype="" value
+    if datatype = "%Library.Date" {
+        set result = ##class(%Date).LogicalToXSD(value)
+    } elseif datatype = "%Library.TimeStamp" {
+        set result = ##class(%TimeStamp).LogicalToXSD(value)
+    } elseif datatype = "%Library.Time" {
+        set result = ##class(%Time).LogicalToXSD(value)
+    } else {
+        set result = value
+    }
+    return result
 ]]></Implementation>
 </Method>
 
@@ -74,15 +78,17 @@ TODO. Populate on install?</Description>
 <FormalSpec>datatype:%String="",value:%String</FormalSpec>
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
-	return:datatype="" value
-	if datatype = "%Library.Date" {
-		set result = ##class(%Date).XSDToLogical(value)
-	} elseif datatype = "%Library.TimeStamp" {
-		set result = ##class(%TimeStamp).XSDToLogical(value)
-	} else {
-		set result = value
-	}
-	return result
+    return:datatype="" value
+    if datatype = "%Library.Date" {
+        set result = ##class(%Date).XSDToLogical(value)
+    } elseif datatype = "%Library.TimeStamp" {
+        set result = ##class(%TimeStamp).XSDToLogical(value)
+    } elseif datatype = "%Library.Time" {
+        set result = ##class(%Time).XSDToLogical(value)
+    } else {
+        set result = value
+    }
+    return result
 ]]></Implementation>
 </Method>
 </Class>
