@@ -7,7 +7,7 @@ Methods for form field === class property</Description>
 <IncludeCode>Form</IncludeCode>
 <TimeCreated>64090,75759.538379</TimeCreated>
 
-<Method name="propertyToMetadataGLVN">
+<Method name="propertyToMetadata">
 <Description>
 Get metadata for one field of a form. Equal to propertyToMetadata method, 
 but uses direct global references instead of object access</Description>

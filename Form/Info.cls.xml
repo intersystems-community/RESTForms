@@ -108,7 +108,7 @@ For results see:
 		set internal = $$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPinternal)
 		set displayName = ##class(Form.Property).getPropertyParam(className, property, $$$propDisplayNameParam)
 		if ((internal '= $$$YES) && (displayName'="")) {
-			set propertyMetaData = ##class(Form.Property).propertyToMetadataGLVN(className, property)
+			set propertyMetaData = ##class(Form.Property).propertyToMetadata(className, property)
 			do metadata.fields.$setAt($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
 		}
 		set property=$$$comMemberNext(className,$$$cCLASSproperty,property)
