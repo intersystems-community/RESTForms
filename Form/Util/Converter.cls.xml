@@ -63,7 +63,10 @@ TODO. Populate on install?</Description>
     if datatype = "%Library.Date" {
         set result = ##class(%Date).LogicalToXSD(value)
     } elseif datatype = "%Library.TimeStamp" {
-        set result = ##class(%TimeStamp).LogicalToXSD(value)
+	    set result = ##class(%TimeStamp).LogicalToXSD(value)
+	    if ##class(Form.Settings).getSetting("timezone") = "ignore" {
+		    set result = $extract(result, 1, *-1) // Remove trailing Z  
+	    }
     } elseif datatype = "%Library.Time" {
         set result = ##class(%Time).LogicalToXSD(value)
     } else {

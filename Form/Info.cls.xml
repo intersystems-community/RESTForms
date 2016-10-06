@@ -103,7 +103,7 @@ For results see:
 	
 	set metadata.fields = []
 	
-	set property=$$$comMemberNext(className,$$$cCLASSproperty,"")
+	set property=$$$comMemberNext(className, $$$cCLASSproperty, "")
 	while property'="" {
 		set internal = $$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPinternal)
 		set displayName = ##class(Form.Property).getPropertyParam(className, property, $$$propDisplayNameParam)
@@ -111,7 +111,7 @@ For results see:
 			set propertyMetaData = ##class(Form.Property).propertyToMetadata(className, property)
 			do metadata.fields.$setAt($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
 		}
-		set property=$$$comMemberNext(className,$$$cCLASSproperty,property)
+		set property=$$$comMemberNext(className, $$$cCLASSproperty, property)
 	}
 	
 	/// we're moving from the end of array to the beginning 

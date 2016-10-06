@@ -147,6 +147,7 @@ Set them via `Write ##class(For.Settings).setSetting(Setting, Value)`.
 |-------------|--------------------|-----------------|
 | queryclass  | Caché class name   | Class with your own queries. See Query types for details.|
 | fileDir     | Directory path     | Directory for files. Defaults to MGR\DB directory|
+| timezone    | ignore, utc        | Affects how timestamps are converted for a client. UTC has Z on end, ignore does not|
 
 
 #Samples
