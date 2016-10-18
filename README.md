@@ -108,6 +108,8 @@ In a format: `Column+condition+Value`.
 
 Several conditions are possible: `Column+condition+Value+Column2+condition2+Value2`.
 
+If Value contains white spaces replace them with tabs before sending to the server.
+
 Conditions:
 
 | URL            | SQL         |
