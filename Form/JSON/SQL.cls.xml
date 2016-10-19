@@ -89,7 +89,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 				set:((collation'="") && (curVal'="NULL")) curVal = collation _ "(" _ curVal _ ")"
 
 				set valTemp = valTemp _ curVal
-				set:j'=$length(value, "~") valTemp = valTemp _ "', '"
+				set:j'=$length(value, "~") valTemp = valTemp _ ", "
 			}
 			set value = valTemp _ "')"
 		} else {
