@@ -78,21 +78,30 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 			return $$$ERROR($$$GeneralError,"Incorrect filter predicate")
 		}
 		
+		#define sq(%str) "'" _ %str _ "'"
 		if sqlpredicate = "IN" {
-			set value = "('"  _ $replace(value, "~", "', '") _ "')"
+			
+			set valTemp = "("
+			for j=1:1:$length(value, "~") {
+				set curVal = $piece(value, "~", j)
+				set curVal = $$$sq(curVal)
+				set:curVal="'$$$NULL'" curVal = "NULL"
+				set:((collation'="") && (curVal'="NULL")) curVal = collation _ "(" _ curVal _ ")"
+
+				set valTemp = valTemp _ curVal
+				set:j'=$length(value, "~") valTemp = valTemp _ "', '"
+			}
+			set value = valTemp _ "')"
 		} else {
-			#define sq(%str) "'" _ %str _ "'"
 			set value = $$$sq(value)
+			set:value="'$$$NULL'" value = "NULL"
 		}
-		
-		set:value="'$$$NULL'" value = "NULL"
 
 		if collation'="" {
-			set:value'="NULL" value = collation _ "(" _ value _ ")"
+			set:((value'="NULL") && (sqlpredicate '="IN")) value = collation _ "(" _ value _ ")"
 			set column = collation _ "(" _ column _ ")"
 		}
-		
-		
+	
 		set condition = condition _ column _ " " _ sqlpredicate _ " " _ value
 	}
 	return $$$OK
