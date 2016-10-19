@@ -91,7 +91,7 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 				set valTemp = valTemp _ curVal
 				set:j'=$length(value, "~") valTemp = valTemp _ ", "
 			}
-			set value = valTemp _ "')"
+			set value = valTemp _ ")"
 		} else {
 			set value = $$$sq(value)
 			set:value="'$$$NULL'" value = "NULL"
