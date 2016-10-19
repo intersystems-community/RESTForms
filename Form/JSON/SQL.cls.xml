@@ -85,10 +85,10 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 			set value = $$$sq(value)
 		}
 		
-		set value = $replace(value, "'$$$NULL'", "NULL")
+		set:value="'$$$NULL'" value = "NULL"
 
 		if collation'="" {
-			set value = collation _ "(" _ value _ ")"
+			set:value'="NULL" value = collation _ "(" _ value _ ")"
 			set column = collation _ "(" _ column _ ")"
 		}
 		
