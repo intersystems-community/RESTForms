@@ -11,6 +11,7 @@
 <Data><![CDATA[
 <Routes>
 <Route Url="/:form/:id" Method="GET" Call="getFormObject"/>
+<Route Url="/:form/:id/:property" Method="GET" Call="getFormObjectProperty"/>
 <Route Url="/:form" Method="POST" Call="createFormObject"/>
 <Route Url="/:form/:id" Method="PUT" Call="updateFormDynamicObject"/>
 <Route Url="/:form" Method="PUT" Call="updateFormClassObject"/>
@@ -21,7 +22,7 @@
 
 <Method name="getFormObject">
 <Description>
-Получение JSON представления объекта id для формы form</Description>
+Get json representation of an object by its class and id </Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>class:%String="",id:%Integer=""</FormalSpec>
 <ReturnType>%Status</ReturnType>
@@ -33,6 +34,35 @@
 	return:$$$ISERR(sc) sc
 	
 	set sc = $classMethod(class, $$$toJSONClassMethod, id)
+	
+	return sc
+]]></Implementation>
+</Method>
+
+<Method name="getFormObjectProperty">
+<Description>
+Get value of property for object of class with id identifier. Does not open objects if possible</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>class:%String="",id:%Integer="",property:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sc As %Status = $$$OK
+	set sc = ##class(Form.Info).formExistsStatus(class)
+	return:$$$ISERR(sc) sc
+	set sc = ..checkObjPermission(class, "R")
+	return:$$$ISERR(sc) sc
+	
+	return:'##class(%Dictionary.CompiledProperty).IDKEYExists(class, property, .propertyId) $$$ERROR($$$GeneralError, "Property '" _ property _ "' does not exists in '" _ class _ "' class")
+	
+	if ##class(%Dictionary.CompiledPropertyMethod).IDKEYExists(propertyId, "GetStored") {
+		set value = $classMethod(class, property _ "GetStored", id)
+	} else {
+		 set obj = $classMethod(class, "%OpenId", id, ,.sc)
+		 return:$$$ISERR(sc) sc
+		 set value = $property(obj, property)
+	}
+
+	write "{" _ property _ ":" _ value _ "}"
 	
 	return sc
 ]]></Implementation>

@@ -28,8 +28,9 @@ Do $System.OBJ.Compile("Form.Adaptor","cb")
 | form/info/:class                     | GET    | Form metainformation                   |
 | form/field/:class                    | POST   | Add field to form                      |
 | form/field/:class                    | PUT    | Modify form field                      |
-| form/field/:class/:property          | DELETE | Delete  form field                     |
+| form/field/:class/:property          | DELETE | Delete form field                      |
 | form/object/:class/:id               | GET    | Retrieve form object                   |
+| form/object/:class/:id/:property     | GET    | Retrieve one field of the form object  |
 | form/object/:class                   | POST   | Create form object                     |
 | form/object/:class/:id               | PUT    | Update form object from dynamic object |
 | form/object/:class                   | PUT    | Update form object from object         |
