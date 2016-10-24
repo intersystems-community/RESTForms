@@ -122,21 +122,29 @@ Is this column reference valid.
 	
 	set length = $length(column,"->")
 	for j = 1:1:length {
-		
+		// Determine current class context and property name
 		set currentClass = $case(j, 1:conditionClass, :##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
 		set currentProperty = $piece(column,"->",j)
 		
+		// Last property may be an ID (which is not a %Dictionary.CompiledProperty cilumn, 
+		// so quit from the for cycle
 		if ((j=length) && ($zcvt(currentProperty, "U") = "ID")) {
 			set columnOut = columnOut _ "ID"
 			quit
 		}
 		
+		// Property does not exist. Abort.
 		if '##class(%Dictionary.CompiledProperty).IDKEYExists(currentClass, currentProperty) {
 			return $$$NO
 		}
 		
+		// Get property SQL name (usually wqual to property name)
 		set currentPropertySQLName = ##class(Form.Property).getPropertySQLName(currentClass, currentProperty)
+		
+		// Append property SQL name to resulting sql expression
 		set columnOut = columnOut _ currentPropertySQLName
+		
+		// Append _ or -> separator if this is not a last column
 		if j'=length {
 			set propertyType = ##class(Form.Property).getPropertyType(currentClass, currentProperty)
 			if $$$classIsSerial(propertyType) {
