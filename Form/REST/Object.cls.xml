@@ -62,7 +62,7 @@ Get value of property for object of class with id identifier. Does not open obje
 		 set value = $property(obj, property)
 	}
 
-	write "{" _ property _ ":" _ value _ "}"
+	write "{""" _ property _ """:" _ $$$ZENJSUSTR(value) _ "}"
 	
 	return sc
 ]]></Implementation>
