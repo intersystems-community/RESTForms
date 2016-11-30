@@ -5,17 +5,6 @@ Forms adapter for InterSystems Cache.
 
 Import classes and create web app with `Form.REST.Main` broker.
 
-# Metadata generation
-
-Form class compilation triggers metadata gereration for compiled form.
-To validate and regenerate metadata for all forms execute this code in a terminal:
-
-```
-Do ##class(Form.Util.Init).validateMetadata()
-Do $System.OBJ.Compile("Form.Adaptor","cb")
-```
-
-
 # Requests
 
 
