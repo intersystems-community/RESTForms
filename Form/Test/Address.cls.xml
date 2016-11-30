@@ -25,5 +25,24 @@ The city name.</Description>
 <Parameter name="MAXLEN" value="80"/>
 <Parameter name="POPSPEC" value="City()"/>
 </Property>
+
+<Storage name="Default">
+<Type>%Library.CacheSerialState</Type>
+<State>AddressState</State>
+<StreamLocation>^Form.Test.AddressS</StreamLocation>
+<Data name="AddressState">
+<Structure>listnode</Structure>
+<Subscript/>
+<Value name="1">
+<Value>House</Value>
+</Value>
+<Value name="2">
+<Value>Street</Value>
+</Value>
+<Value name="3">
+<Value>City</Value>
+</Value>
+</Data>
+</Storage>
 </Class>
 </Export>

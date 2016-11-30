@@ -38,13 +38,6 @@ Required for all long properties used by "order by" </Description>
 <Parameter name="MAXLEN" value="2000"/>
 </Property>
 
-<UDLText name="T">
-<Content><![CDATA[
-// Property gender As %String(DISPLAYLIST = ",М,Ж", DISPLAYNAME = "Пол", VALUELIST = ",1,2");
-
-]]></Content>
-</UDLText>
-
 <Property name="dob">
 <Description>
 Person's gender
