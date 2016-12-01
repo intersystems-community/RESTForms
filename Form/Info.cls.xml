@@ -24,7 +24,7 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 		set className = rs.Data("Name")
 		CONTINUE:'..formExists(className)
 		set formName = $parameter(className, $$$formNameParam)
-		set formObj = {"name":formName, "class": className}
+		set formObj = {"name": (formName), "class": (className)}
 		do forms.$push(formObj)
 	}
 	
