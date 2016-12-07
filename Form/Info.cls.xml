@@ -42,7 +42,7 @@ w ##class(Form.Info).getFormsMetadata().$toJSONFormat()</Description>
 	set formsList = ..getFormsList()
 	set metadata = {}
 	for i = 0:1:formsList.$size()-1 {
-		set form = formsList.$getAt(i)
+		set form = formsList.$get(i)
 		do metadata.%DispatchSetProperty(form.class, ..getFormMetadata(form.class))
 	}
 	quit metadata
