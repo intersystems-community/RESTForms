@@ -5,6 +5,10 @@ Forms adapter for InterSystems Cache.
 
 Import classes and create web app with `Form.REST.Main` broker.
 
+# Usage description and examples
+
+See in this [post  on Developer Community](https://community.intersystems.com/post/restforms-rest-api-your-classes).
+
 # Requests
 
 
