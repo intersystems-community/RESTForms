@@ -87,7 +87,7 @@ Get form metadata at runtime
 Equal to generateMetadata method from Form.Generators class, 
 but uses direct global references instead of object access
 For results see:
-<example>w {}.$fromJSON(##class(Form.Info).getFormMetadataRuntime("Form.Test.Simple")).$toJSONFormat()</example>]]></Description>
+<example>w ##class(Form.Info).getFormMetadata("Form.Test.Simple").$toJSONFormat()</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String=""</FormalSpec>
 <ReturnType>%Object</ReturnType>
@@ -109,7 +109,7 @@ For results see:
 		set displayName = ##class(Form.Property).getPropertyParam(className, property, $$$propDisplayNameParam)
 		if ((internal '= $$$YES) && (displayName'="")) {
 			set propertyMetaData = ##class(Form.Property).propertyToMetadata(className, property)
-			do metadata.fields.$setAt($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
+			do metadata.fields.$set($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
 		}
 		set property=$$$comMemberNext(className, $$$cCLASSproperty, property)
 	}
