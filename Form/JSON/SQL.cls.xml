@@ -280,7 +280,7 @@ Draw JSON output.</Description>
 		}
 		Set ..sql = tOrigSQL
 
- 		Set aet = ##class(%AbstractObject).$fromJSON("{"""_..arrayName_""":[]}")
+ 		Set aet = ##class(%Object).$fromJSON("{"""_..arrayName_""":[]}")
  		
  		// FORMS - debug
  		Set:$$$debug aet.sql = tOrigSQL
@@ -304,7 +304,7 @@ Draw JSON output.</Description>
 			CONTINUE:(tRow<=tStartRow)
 			// END - FORMS - pagination
 			
-			Set node = ##class(%Object).$new()
+			Set node = {}
 			For c = 1:1:tCols {
 				Set tVal = tRS.%GetData(c)
 				Set tOutVal = ##class(Form.Util.Converter).logicalToJSON($Get(tColInfo(c,"type")), tVal)
