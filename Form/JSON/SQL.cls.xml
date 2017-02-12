@@ -138,7 +138,7 @@ Is this column reference valid.
 			return $$$NO
 		}
 		
-		// Get property SQL name (usually wqual to property name)
+		// Get property SQL name (usually equal to property name)
 		set currentPropertySQLName = ##class(Form.Property).getPropertySQLName(currentClass, currentProperty)
 		
 		// Append property SQL name to resulting sql expression
@@ -211,7 +211,8 @@ w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description
 	}
 	
 	if ##class(%Dictionary.CompiledProperty).IDKEYExists(class, column) {
-		/// nothing to do here
+		set column = ##class(Form.Property).getPropertySQLName(class, column)
+		set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
 	} elseif $isValidNum(column, 0, 1) {
 		/// nothing to do here
 	} else {
