@@ -126,7 +126,7 @@ Is this column reference valid.
 		set currentClass = $case(j, 1:conditionClass, :##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
 		set currentProperty = $piece(column,"->",j)
 		
-		// Last property may be an ID (which is not a %Dictionary.CompiledProperty cilumn, 
+		// Last property may be an ID (which is not a %Dictionary.CompiledProperty column, 
 		// so quit from the for cycle
 		if ((j=length) && ($zcvt(currentProperty, "U") = "ID")) {
 			set columnOut = columnOut _ "ID"
@@ -140,6 +140,7 @@ Is this column reference valid.
 		
 		// Get property SQL name (usually equal to property name)
 		set currentPropertySQLName = ##class(Form.Property).getPropertySQLName(currentClass, currentProperty)
+		set:$system.SQL.IsReservedWord(currentPropertySQLName) currentPropertySQLName = """" _ currentPropertySQLName _ """"
 		
 		// Append property SQL name to resulting sql expression
 		set columnOut = columnOut _ currentPropertySQLName
