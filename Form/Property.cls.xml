@@ -163,6 +163,7 @@ w ##class(Form.Property).getPropertyDisplayName("Form.Test.Simple", "text")</Des
 <ReturnType>%String</ReturnType>
 <Implementation><![CDATA[
 	set displayName = ..getPropertyParam(className, name, $$$propDisplayNameParam)
+	set displayName = ##class(Form.Util.Translate).get(displayName)
 	set:displayName="" displayName = name
 	return displayName
 ]]></Implementation>

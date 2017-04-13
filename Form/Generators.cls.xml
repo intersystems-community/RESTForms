@@ -77,5 +77,32 @@ Validate FORMORDERBY parameter value if present</Description>
 	quit sc
 ]]></Implementation>
 </Method>
+
+<Method name="translate">
+<Description>
+Fill ^CacheMsg global for further translation</Description>
+<Internal>1</Internal>
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<GenerateAfter>generateMetadata</GenerateAfter>
+<Implementation><![CDATA[
+	#Include Form
+	#dim sc As %Status = $$$OK
+	set className = %compiledclass.Name
+	set formNameKey = %class.Parameters.FindObjectId(className _ "||" _ $$$formNameParam)
+	set formName = $get(%parameter($$$formNameParam))
+	return:(($$$skipClasses[className)||(formName="")||(formNameKey="")) sc
+	
+	#dim prop As %Dictionary.PropertyDefinition
+	for i = 1:1:%class.Properties.Count() {
+        set prop = %class.Properties.GetAt(i)
+        set displayName = prop.Parameters.GetAt($$$propDisplayNameParam)
+        if prop.Internal || prop.Calculated || prop.ReadOnly || prop.Private || prop.Identity || prop.MultiDimensional || displayName = ""  continue
+		
+		do ##class(Form.Util.Translate).insert(displayName)
+    }
+    quit $$$OK
+]]></Implementation>
+</Method>
 </Class>
 </Export>

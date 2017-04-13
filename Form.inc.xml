@@ -38,5 +38,8 @@
 
 #; Test if object variable is defined and not Null
 #define isDefObject(%obj) ($Data(%obj)#2&&$IsObject(%obj))
+
+#define domain "RESTFORMS"
+#define domainq """"_$$$domain_""""
 ]]></Routine>
 </Export>
