@@ -93,6 +93,8 @@ Fill ^CacheMsg global for further translation</Description>
 	set formName = $get(%parameter($$$formNameParam))
 	return:(($$$skipClasses[className)||(formName="")||(formNameKey="")) sc
 	
+	do ##class(Form.Util.Translate).insert(formName)
+	
 	#dim prop As %Dictionary.PropertyDefinition
 	for i = 1:1:%class.Properties.Count() {
         set prop = %class.Properties.GetAt(i)

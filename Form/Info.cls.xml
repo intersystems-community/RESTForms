@@ -96,7 +96,7 @@ For results see:
 	set formName = $parameter(className, $$$formNameParam)
 	
 	set metadata = {}
-	set metadata.name = formName
+	set metadata.name = ##class(Form.Util.Translate).get(formName)
 	set metadata.class = className
 	set metadata.displayProperty = $parameter(className, $$$displayProp)
 	set metadata.objpermissions = $parameter(className, "OBJPERMISSIONS")
