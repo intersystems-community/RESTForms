@@ -7,6 +7,10 @@
 <Super>%CSP.REST</Super>
 <TimeCreated>64090,76470.397537</TimeCreated>
 
+<Parameter name="CONTENTTYPE">
+<Default>application/json</Default>
+</Parameter>
+
 <Parameter name="UseSession">
 <Type>Integer</Type>
 <Default>1</Default>

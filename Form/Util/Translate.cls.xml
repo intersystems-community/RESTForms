@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25">
+<Class name="Form.Util.Translate">
+<Description>
+Support for metadata translation </Description>
+<IncludeCode>Form</IncludeCode>
+<TimeCreated>64386,54065.171182</TimeCreated>
+
+<Method name="get">
+<Description>
+Get translated value of a text
+w ##class(Form.Util.Translate).get()</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>text:%String</FormalSpec>
+<Implementation><![CDATA[
+	set domain = $$$domain
+	set language=""
+	
+	if $isObject($g(%request)) {
+		set language=$$MatchLanguage^%occMessages(%request.GetCgiEnv("HTTP_ACCEPT_LANGUAGE"))
+	}	
+	
+	set:language="" language = $s($mvv(58)="":"en",1:$mvv(58))
+	
+	set id = $zcrc(text, 7)
+	set text = $$$GetAppMessage(language, domain, id, text)
+	set text = $zcvt(text, "O", "UTF8")
+	quit text
+]]></Implementation>
+</Method>
+
+<Method name="insert">
+<Description>
+Add text to ^CacheMsg
+do ##class(Form.Util.Translate).Insert()</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>text</FormalSpec>
+<Implementation><![CDATA[
+	set text = $$$quote(text)
+	set domain = $$$domainq
+	set a = $$macroText^%occMessages($lb(text, domain))
+]]></Implementation>
+</Method>
+</Class>
+</Export>
