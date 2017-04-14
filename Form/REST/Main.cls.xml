@@ -12,6 +12,7 @@
 
 <Route Url="/logout" Method="GET" Call="logout"/>
 <Route Url="/test" Method="GET" Call="test"/>
+<Route Url="/info" Method="GET" Call="info"/>
 </Routes>
 ]]></Data>
 </XData>
@@ -37,6 +38,17 @@
 <Implementation><![CDATA[
     write "{""Status"": ""OK""}"
     return $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="info">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set info = {}
+	set info.languages = ##class(Form.Util.Translate).getLanguages()
+	write info.$toJSON()	
+	quit $$$OK
 ]]></Implementation>
 </Method>
 </Class>

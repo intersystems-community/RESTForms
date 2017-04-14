@@ -41,5 +41,19 @@ do ##class(Form.Util.Translate).Insert()</Description>
 	set a = $$macroText^%occMessages($lb(text, domain))
 ]]></Implementation>
 </Method>
+
+<Method name="getLanguages">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Array</ReturnType>
+<Implementation><![CDATA[
+	set languages = []
+	#dim list As %ListOfDataTypes
+	set list = ##class(%MessageDictionary).GetLanguages($$$domain)
+	for i=1:1:list.Count() {
+		do languages.$push(list.GetAt(i))
+	}
+	quit languages
+]]></Implementation>
+</Method>
 </Class>
 </Export>
