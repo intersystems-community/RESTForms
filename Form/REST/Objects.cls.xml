@@ -37,7 +37,7 @@ Get all form objects</Description>
 	set sc = ..getBaseQuery(queryType, class, .queryBase)
 	return:$$$ISERR(sc) sc	
 	
-	set table = $$$ClassSQLTable(class)
+	set table = ##class(%CSP.UI.Portal.SQL.Home).Quoter2($$$ClassSQLTable(class))
 	set sql = queryBase _ table
 	
 	set sc = ##class(Form.JSON.SQL).WriteJSONFromSQL(sql, class)
