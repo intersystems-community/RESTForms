@@ -15,6 +15,7 @@ See in this [post  on Developer Community](https://community.intersystems.com/po
 | URL                                  | Type   | Description                            |
 |--------------------------------------|--------|----------------------------------------|
 | test                                 | GET    | Test request                           |
+| info                                 | GET    | Basic information (currently language list)|
 | logout                               | GET    | End current session                    |
 | form/info                            | GET    | List of all availible forms            |
 | form/info/all                        | GET    | Get metainformation for all forms      |
@@ -36,6 +37,11 @@ See in this [post  on Developer Community](https://community.intersystems.com/po
 | form/file/:class/:id/:property/:name | GET    | Download one file from property        |
 
 For POST/PUT requests see method descriptions for request body samples
+
+Postman
+-----------
+
+You can use [Postman](https://www.getpostman.com/) to query RESTForms API. [Collection](RESTForms.postman_collection.json). [Environment](CACHE.postman_environment.json).
 
 # SQL requests
 
