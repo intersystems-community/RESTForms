@@ -11,6 +11,10 @@
 <Default>application/json</Default>
 </Parameter>
 
+<Parameter name="CHARSET">
+<Default>UTF-8</Default>
+</Parameter>
+
 <Parameter name="UseSession">
 <Type>Integer</Type>
 <Default>1</Default>
