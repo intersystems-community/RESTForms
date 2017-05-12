@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:47:44">
 <Class name="Form.Generators">
 <Description>
 Various generators called on form compilation which does not actually generate any code 
 Generators that actually generate the code should be placed into Form.Adaptor class</Description>
 <Abstract>1</Abstract>
+<TimeChanged>64415,70021.635618</TimeChanged>
 <TimeCreated>64110,50058.313465</TimeCreated>
 
 <Method name="onGenerateMetadata">
 <Description>
 End form callback method</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec><![CDATA[&metadata:%Object]]></FormalSpec>
+<FormalSpec><![CDATA[&metadata:%DynamicObject]]></FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[	Return $$$OK
 ]]></Implementation>

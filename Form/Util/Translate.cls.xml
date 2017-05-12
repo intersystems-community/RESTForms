@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:51:23">
 <Class name="Form.Util.Translate">
 <Description>
 Support for metadata translation </Description>
 <IncludeCode>Form</IncludeCode>
+<TimeChanged>64415,70401.668478</TimeChanged>
 <TimeCreated>64386,54065.171182</TimeCreated>
 
 <Method name="get">
@@ -44,13 +45,13 @@ do ##class(Form.Util.Translate).Insert()</Description>
 
 <Method name="getLanguages">
 <ClassMethod>1</ClassMethod>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	set languages = []
 	#dim list As %ListOfDataTypes
 	set list = ##class(%MessageDictionary).GetLanguages($$$domain)
 	for i=1:1:list.Count() {
-		do languages.$push(list.GetAt(i))
+		do languages.%Push(list.GetAt(i))
 	}
 	quit languages
 ]]></Implementation>

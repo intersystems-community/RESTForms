@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:49:44">
 <Class name="Form.REST.Form">
 <Description>
 Класс работы с формами и их содержимым</Description>
 <Super>Form.REST.Abstract</Super>
+<TimeChanged>64415,70738.823095</TimeChanged>
 <TimeCreated>64090,79002.958751</TimeCreated>
 
 <XData name="UrlMap">
@@ -29,7 +30,7 @@ Get available forms list as a JSON array</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set forms = ##class(Form.Info).getFormsList()
-	write forms.$toJSON()
+	write forms.%ToJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>
@@ -41,7 +42,7 @@ Get available forms metadata as JSON object</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set metadata = ##class(Form.Info).getFormsMetadata()
-	write metadata.$toJSON()
+	write metadata.%ToJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>
@@ -54,7 +55,7 @@ Get form metainformation by name</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set metadata = ##class(Form.Info).getFormMetadata(form)
-	write metadata.$toJSON()
+	write metadata.%ToJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>

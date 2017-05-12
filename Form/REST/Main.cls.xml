@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:49:53">
 <Class name="Form.REST.Main">
 <Super>Form.REST.Abstract</Super>
+<TimeChanged>64415,70755.832506</TimeChanged>
 <TimeCreated>64090,76630.913942</TimeCreated>
 
 <XData name="UrlMap">
@@ -47,7 +48,7 @@
 <Implementation><![CDATA[
 	set info = {}
 	set info.languages = ##class(Form.Util.Translate).getLanguages()
-	write info.$toJSON()	
+	write info.%ToJSON()	
 	quit $$$OK
 ]]></Implementation>
 </Method>

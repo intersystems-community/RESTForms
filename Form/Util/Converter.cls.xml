@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:51:06">
 <Class name="Form.Util.Converter">
 <Description>
 Various datatype conversion utilities</Description>
 <Abstract>1</Abstract>
+<TimeChanged>64415,70660.763024</TimeChanged>
 <TimeCreated>64100,82956.192829</TimeCreated>
 
 <Method name="stringToArray">
@@ -11,7 +12,7 @@ Various datatype conversion utilities</Description>
 Convert delimited string to dynamic array</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>string:%String,delimiter:%String=","</FormalSpec>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	set list = $listFromString(string, delimiter)
 	return ..listToArray(list)
@@ -23,12 +24,12 @@ Convert delimited string to dynamic array</Description>
 Convert $list to dynamic array</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>list:%List</FormalSpec>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	set array = []
 	set pointer = 0
 	while $listNext(list, pointer, piece) {
-		do array.$push(piece)
+		do array.%Push(piece)
 	}
 	return array
 ]]></Implementation>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:49:03">
 <Class name="Form.JSON.SQL">
 <IncludeCode>Form</IncludeCode>
 <Super>%ZEN.Auxiliary.altJSONSQLProvider</Super>
+<TimeChanged>64415,70816.9136</TimeChanged>
 <TimeCreated>64091,68899.667254</TimeCreated>
 
 <Method name="WriteJSONFromSQL">
@@ -282,13 +283,13 @@ Draw JSON output.</Description>
 		}
 		Set ..sql = tOrigSQL
 
- 		Set aet = ##class(%Object).$fromJSON("{"""_..arrayName_""":[]}")
+ 		Set aet = ##class(%Object).%FromJSON("{"""_..arrayName_""":[]}")
  		
  		// FORMS - debug
  		Set:$$$debug aet.sql = tOrigSQL
  		// END - FORMS - debug
  		
- 		Set arrayNode = aet.$get(..arrayName)
+ 		Set arrayNode = aet.%Get(..arrayName)
  	
  		// FORMS - pagination
 		Set tStartRow = ..pageSize * (..currPage - 1)
@@ -310,7 +311,7 @@ Draw JSON output.</Description>
 			For c = 1:1:tCols {
 				Set tVal = tRS.%GetData(c)
 				Set tOutVal = ##class(Form.Util.Converter).logicalToJSON($Get(tColInfo(c,"type")), tVal)
-				Do node.$set($Get(tColInfo(c,"name")), tOutVal)
+				Do node.%Set($Get(tColInfo(c,"name")), tOutVal)
 				
 				/*If ($IsValidNum(tVal)) {
 					Do node.$set($Get(tColInfo(c,"name")),$Num(tVal),"number")
@@ -319,7 +320,7 @@ Draw JSON output.</Description>
 					Do node.$set($Get(tColInfo(c,"name")),tVal)
 				}*/
 			}
-			Do arrayNode.$push(node)
+			Do arrayNode.%Push(node)
 		}
 		
 		// FORMS - results count
@@ -327,7 +328,7 @@ Draw JSON output.</Description>
 		Set aet.total=tRS.%ROWCOUNT
 		// END - FORMS - results count
 				
-		Write aet.$toJSON()
+		Write aet.%ToJSON()
 	}
 	Catch(ex) {
 		Write "null"
