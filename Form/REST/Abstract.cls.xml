@@ -130,13 +130,13 @@ responsibility of the user to return a response.</Description>
 	set content = %request.Content.Read($$$MaxStringLength)
 	set content = $ZCVT(content,"I","UTF8") 
 	set:$$$debug %objlasterror = ""
-	set sс = ##class(Form.JSON.OBJ).%ConvertJSONToObject(content,,.obj,1)
+	set sc = ##class(Form.JSON.OBJ).%ConvertJSONToObject(content,,.obj,1)
 	
 	if $$$debug {
 		zw obj
 		write $System.Status.GetErrorText(%objlasterror)
 	}
-	return:$$$ISERR(sс) sс
+	return:$$$ISERR(sc) sc
 	return:'$isObject(obj) $$$ERROR($$$ArgumentIsNotAnObject,"Body")
 	
 	set %request.Content = obj // obj это валидный UTF8 %ZEN.proxyObject
