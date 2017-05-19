@@ -3,7 +3,8 @@ Forms adapter for InterSystems Cache.
 
 # Installation
 
-Import classes and create web app with `Form.REST.Main` broker.
+1. Import latest [release](https://github.com/intersystems-ru/RESTForms/releases) appropriate for your Caché version.
+2. Create REST web app with `Form.REST.Main` as Dispatch Class.
 
 # Usage description and examples
 
