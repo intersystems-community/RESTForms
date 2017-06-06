@@ -29,8 +29,10 @@
 		set provider.pageSize = %request.Get("size", 25)
 		set provider.currPage = %request.Get("page", 1)
 	}
+
+	set nocount = %request.Get("nocount", $$$NO)
 	
-	set sc = provider.%DrawJSON()
+	set sc = provider.%DrawJSON(nocount)
 	return sc
 ]]></Implementation>
 </Method>
@@ -126,7 +128,7 @@ Is this column reference valid.
 		set currentClass = $case(j, 1:conditionClass, :##class(Form.Property).getPropertyType(currentClass, currentProperty)) // first piece - conditionClass, otherwise - previous class
 		set currentProperty = $piece(column,"->",j)
 		
-		// Last property may be an ID (which is not a %Dictionary.CompiledProperty column, 
+		// Last property may be an ID (which is not a %Dictionary.CompiledProperty cilumn, 
 		// so quit from the for cycle
 		if ((j=length) && ($zcvt(currentProperty, "U") = "ID")) {
 			set columnOut = columnOut _ "ID"
@@ -228,8 +230,10 @@ w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description
 
 <Method name="%DrawJSON">
 <Description>
-Draw JSON output.</Description>
+Draw JSON output.
+nocount - do not output count of rows</Description>
 <Internal>1</Internal>
+<FormalSpec>nocount:%Boolean=$$$NO</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	Set ..contentType = "array"
@@ -323,8 +327,10 @@ Draw JSON output.</Description>
 		}
 		
 		// FORMS - results count
-		While tRS.%Next() {}
-		Set aet.total=tRS.%ROWCOUNT
+		If nocount = $$$NO {
+			While tRS.%Next() {}
+			Set aet.total=tRS.%ROWCOUNT
+		}
 		// END - FORMS - results count
 				
 		Write aet.$toJSON()
