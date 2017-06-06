@@ -12,6 +12,12 @@ Query to return all availible information about form objects</Description>
 <Default>*, %CLASSNAME AS _class</Default>
 </Parameter>
 
+<Parameter name="COUNT">
+<Description>
+Query to return objects count</Description>
+<Default>count(1) "count"</Default>
+</Parameter>
+
 <XData name="UrlMap">
 <XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
 <Data><![CDATA[
