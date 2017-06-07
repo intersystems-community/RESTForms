@@ -1,5 +1,7 @@
 # Forms
-Forms adapter for InterSystems Cache.
+
+Forms adapter for InterSystems Cache. Supports Caché versions 2017+.
+For 2016.* versions, please see [this tree](https://github.com/intersystems-ru/RESTForms/tree/8e3ef48fbb4f6ce1dc3c471ec43cfc6e65bb2c40).
 
 # Installation
 

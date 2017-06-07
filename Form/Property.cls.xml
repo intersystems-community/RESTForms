@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:48:04">
 <Class name="Form.Property">
 <Description>
 Methods for form field === class property</Description>
 <Abstract>1</Abstract>
 <IncludeCode>Form</IncludeCode>
+<TimeChanged>64415,70687.774584</TimeChanged>
 <TimeCreated>64090,75759.538379</TimeCreated>
 
 <Method name="propertyToMetadata">
@@ -13,7 +14,7 @@ Get metadata for one field of a form. Equal to propertyToMetadata method,
 but uses direct global references instead of object access</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String="",name=""</FormalSpec>
-<ReturnType>%Object</ReturnType>
+<ReturnType>%DynamicObject</ReturnType>
 <Implementation><![CDATA[
 	set metadata = {}
 	set metadata.name = name

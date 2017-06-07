@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Export generator="Cache" version="25">
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2017.2 (Build 543U)" ts="2017-05-12 19:46:06">
 <Class name="Form.Adaptor">
 <Description>
 Base form adaptor class, all forms must inherit from this class</Description>
@@ -8,6 +8,7 @@ Base form adaptor class, all forms must inherit from this class</Description>
 <IncludeCode>Form</IncludeCode>
 <PropertyClass>Form.Field</PropertyClass>
 <Super>Form.Security,Form.Generators</Super>
+<TimeChanged>64415,70229.977141</TimeChanged>
 <TimeCreated>64090,75147.034342</TimeCreated>
 <DependsOn>Form.Info</DependsOn>
 
@@ -109,7 +110,7 @@ Get basic information about one object</Description>
 <Abstract>1</Abstract>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>id:%Integer</FormalSpec>
-<ReturnType>%Object</ReturnType>
+<ReturnType>%DynamicObject</ReturnType>
 <Implementation><![CDATA[
 	set item = {}
 	set item."_id" = id
@@ -124,13 +125,13 @@ Get basic information about several form objects.<br>
 <var>list</var> - contains objects ids (not oids)]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>list:%ListOfDataTypes</FormalSpec>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	set objectsList = []
 	for i=1:1:list.Count() {
 		set id = list.GetAt(i)
 		set item = ..getObjectInfo(id)
-		do objectsList.$push(item)
+		do objectsList.%Push(item)
 	}
 	return objectsList
 ]]></Implementation>
