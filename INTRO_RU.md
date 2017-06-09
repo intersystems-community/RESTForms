@@ -1,6 +1,6 @@
-# RESTForms - REST API для ваших классов
-В этой статье я хотел бы представить проект RESTForms - универсальный бэкэнд REST API для современных веб-приложений.
-Идея проекта проста - после того, как я написал несколько REST APIs стало понятно, что, как правило, REST API состоит из двух частей:
+# RESTForms - REST API для ваших классов InterSystems Caché
+В этой статье я хотел бы представить проект RESTForms - универсальный REST API бэкэнд для современных веб-приложений.
+Идея проекта проста - после написания нескольких REST API стало понятно, что, как правило, REST API состоит из двух частей:
 - Работа с хранимыми данными
 - Пользовательская бизнес-логика
 
@@ -8,16 +8,10 @@
 
 ## Варианты использования:
 - У Вас уже есть модель данных в Caché, и Вы хотите представить некоторую (или всю) хранящуюся информацию в форме REST API.
-- Вы разрабатываете новое Caché приложение и сразу предоставлять REST API.
+- Вы разрабатываете новое Caché приложение и хотите сразу предоставлять REST API.
 ## Клиент
 Этот проект разработан как бэкэнд для JS веб-приложений, поэтому JS сразу может начинать работу с RESTForms, не требуется преобразования форматов данных и т.п. 
-## CRUD
-Над сущностью можно выполнять 4 операции:
-- Создание
-- Чтение
-- Изменение
-- Удаление
-## Функциональность
+## Возможности
 Что уже можно делать с RESTForms:
 - CRUD по классу данных - возможно получить метаданные класса, создавать, обновлять и удалять свойства класса.
 - CRUD по объекту - возможно получать, создавать, обновлять и удалять объекты.
@@ -27,35 +21,36 @@
 ## Пути
 Далее представлена таблица доступных методов API, которая демонстрирует то, что Вы можете сделать через RESTForms.
 
-|                      URL                         |                   Description                     |
-|--------------------------------------------------|---------------------------------------------------|
-| info                                             | List of all available classes                     |
-| info/all                                         | Get metadata for all classes                      |
-| info/:class                                      | Class metadata                                    |
-| field/:class                                     | Add property to class                             |
-| field/:class                                     | Modify class property                             |
-| field/:class/:property                           | Delete class property                             |
-| object/:class/:id                                | Retrieve object                                   |
-| object/:class/:id/:property                      | Retrieve one property of the object               |
-| object/:class                                    | Create object                                     |
-| object/:class/:id                                | Update object from dynamic object                 |
-| object/:class                                    | Update object from object                         |
-| object/:class/:id                                | Delete object                                     |
-| objects/:class/:query                            | (SQL) Get objects for the class by query          |
-| objects/:class/custom/:query                     | (SQL) Get objects for the class by custom query   |
+| URL                               | Описание                                 |
+|-----------------------------------|------------------------------------------|
+| test                              | Тестовый метод                           |
+| form/info                         | Список классов                           |
+| form/info/all                     | Метаинформация всех классов              |
+| form/info/:class                  | Метаинформация одного класса             |
+| form/field/:class                 | Добавить свойство в класс                |
+| form/field/:class                 | Изменить свойство                        |
+| form/field/:class/:property       | Удалить свойство                         |
+| form/object/:class/:id            | Получить объект                          |
+| form/object/:class/:id/:property  | Получить свойство объекта                |
+| form/object/:class                | Создать объект                           |
+| form/object/:class/:id            | Обновить объект из динамического объекта |
+| form/object/:class                | Обновить объект из объекта класса        |
+| form/object/:class/:id            | Удалить объект                           |
+| form/objects/:class/:query        | Выполнить SQL запрос                     |
+| form/objects/:class/custom/:query | Выполнить пользовательский SQL запрос    |
 
 ## Как начать использовать RESTForms?
 
 1. Импортируйте проект из GitHub (рекомендуется: добавить его как подмодуль (submodule) в ваш собственный репозиторий или просто загрузить релиз).
 2. Для каждого класса, который Вы хотите представить через RESTForms:
- - Унаследуйте от класса адаптера
+ - Унаследуйте от класса адаптера (Form.Adaptor)
  - Определите полномочия (например, вы можете представить некоторые классы только для чтения)
- - Определите свойство, используемое в качестве отображаемого значения для объекта
- - Определите отображаемые имена свойств, которые Вы хотите отобразить
+ - Определите свойство, используемое в качестве "имени" объекта
+ - Определите отображаемые имена свойств
 ## Установка
 1.	Загрузите и импортируйте из последнего релиза на [странице релизов](https://github.com/intersystems-ru/RESTForms/releases/tag/v1.0) 20161.xml (для Caché 2016.1) или 201162.xml (для Caché 2016.2 +) в любую область
-2.	Создайте новое веб-приложение `/forms` с классом отправки `Form.REST.Main`
-3.	Откройте http://localhost:57772/forms/test?Debug в браузере, чтобы проверить установку (должен выводиться {"Status": "OK"} и, возможно, будет запрошен пароль).
+2.	Создайте новое веб-приложение `/forms` с классом брокером `Form.REST.Main`
+3.	Откройте http://localhost:57772/forms/test?Debug в браузере, чтобы проверить установку (должен выводиться `{"Status": "OK"}`, возможно, будет запрошен пароль).
 4. Если Вы хотите сгенерировать тестовые данные, вызовите:
 ```xml
 do ##class(Form.Util.Init).populateTestForms()
@@ -73,7 +68,7 @@ http://localhost:57772/forms/form/info
    { "name":"Simple form", "class":"Form.Test.Simple"  }
 ]
 ```
-На данный момент с RESTForms поставляются 3 тестовых класса. Давайте посмотрим метаданные для Person (класс Form.Test.Person). Чтобы получить эти данные, нужно вызвать:
+На данный момент с RESTForms поставляются 3 тестовых класса. Давайте посмотрим метаданные для формы Person (класс Form.Test.Person). Чтобы получить эти данные, нужно вызвать:
 ```xml
 http://localhost:57772/forms/form/info/Form.Test.Person
 ```
@@ -112,63 +107,55 @@ http://localhost:57772/forms/form/info/Form.Test.Person
 - type – тип свойства
 - category – категория типа свойства. Это обычные категории класса Caché, кроме всех классов, наследующихся от адаптера RESTForms - они имеют категорию "form"
 
-В определении класса это выглядит следующим образом:
+Определение класса выглядит следующим образом:
 ```xml
 /// Test form: Person
-Class Form.Test.Person Extends (%Persistent, Form.Adaptor, %Populate)
+Class Form.Test.Person Extends (%Persistent, Form.Adaptor)
 {
 
-/// Form name, not a global key so it can be anything
-/// Set to empty string (like here) to not have a class as a form 
+/// Отображаемое имя формы
 Parameter FORMNAME = "Person";
 
-/// Default permissions
-/// Objects of this form can be Created, Read, Updated and Deleted
-/// Redefine this parameter to change permissions for everyone
-/// Redefine checkPermission method (see Form.Security) for this class
-/// to add custom security based on user/roles/etc.
+/// Разрешения
+/// Объекты этого класса могут быть Созданы (C), Получены (R), Изменены (U), и удалены (D)
 Parameter OBJPERMISSIONS As %String = "CRUD";
 
-/// Property used for basic information about the object
-/// By default getObjectDisplayName method gets its value from it
+/// Свойство "имени" объекта
 Parameter DISPLAYPROPERTY As %String = "name";
 
-/// Use value of this parameter in SQL, as ORDER BY clause value 
+/// Свойство сортировки по-умолчанию
 Parameter FORMORDERBY As %String = "dob";
 
-/// Person's name.
-Property name As %String(COLLATION = "TRUNCATE(250)", DISPLAYNAME = "Name", MAXLEN = 2000);
+/// Имя
+Property name As %String(DISPLAYNAME = "Name");
 
-/// Person's Date of Birth.
-Property dob As %Date(DISPLAYNAME = "Date of Birth", POPSPEC = "Date()");
+/// Дата рождения
+Property dob As %Date(DISPLAYNAME = "Date of Birth");
 
-Property ts As %TimeStamp(DISPLAYNAME = "Timestamp") [ InitialExpression = {$ZDATETIME($ZTIMESTAMP, 3, 1, 3)} ];
-
+/// Число
 Property num As %Numeric(DISPLAYNAME = "Number") [ InitialExpression = "2.15" ];
 
-/// Person's age.<br>
-/// This is a calculated field whose value is derived from <property>DOB</property>.
+/// Возраст, вычисляется автоматически
 Property аge As %Integer(DISPLAYNAME = "Age") [ Calculated, SqlComputeCode = { set {*}=##class(Form.Test.Person).currentAge({dob})}, SqlComputed, SqlComputeOnChange = dob ];
 
-/// This class method calculates a current age given a date of birth <var>date</var>.
+/// Вычисление возраста
 ClassMethod currentAge(date As %Date = "") As %Integer [ CodeMode = expression ]
 {
 $Select(date="":"",1:($ZD($H,8)-$ZD(date,8)\10000))
 }
 
-/// Person's spouse.
-/// This is a reference to another persistent object.
+/// Родственник
 Property relative As Form.Test.Person(DISPLAYNAME = "Relative");
 
-/// Person's home address. This uses an embedded object.
+/// Адрес
 Property Home As Form.Test.Address(DISPLAYNAME = "House");
 
-/// The company this person works for.
+/// Компания, в которой человек работает
 Relationship company As Form.Test.Company(DISPLAYNAME = "Company") [ Cardinality = one, Inverse = employees ];
 }
 ```
 ## RESTForms – добавляем класс
-Чтобы сделать хранимый класс доступным RESTForms, надо:
+Чтобы сделать хранимый класс доступным для RESTForms, надо:
 1. Добавить наследование от Form.Adaptor
 2. Добавить параметр `FORMNAME` со значением – имя класса
 3. Добавить параметр `OBJPERMISSIONS`  – что можно делать с объектами класса (CRUD)
@@ -180,7 +167,7 @@ Relationship company As Form.Test.Company(DISPLAYNAME = "Company") [ Cardinality
 ```xml
 http://localhost:57772/forms/form/object/Form.Test.Person/1
 ```
-И, вот ответ (сгенерированные данные, могут отличаться):
+И получим ответ:
 ```xml
 {
    "_class":"Form.Test.Person",
@@ -248,7 +235,7 @@ POST http://localhost:57772/forms/form/object/Form.Test.Person
 ## Заключение
 RESTForms выполняет почти всю работу, требуемую от REST API в отношении хранимых классов.
 ## Что же дальше?
-В этой статье я только начал говорить о функциональных возможностях RESTForms. В следующей я бы хотел рассказать о некоторых дополнительных функциях, а именно о запросах, которые позволяют клиенту безопасно получать фрагменты данных без риска SQL-инъекций.
+В этой статье я только начал говорить о функциональных возможностях RESTForms. В следующей я бы хотел рассказать о некоторых дополнительных функциях, а именно о запросах, которые позволяют клиенту безопасно получать наборы данных без риска SQL-инъекций.
 ## Ссылки
 - [RESTForms GitHub repository](https://github.com/intersystems-ru/RESTForms/)
 - [RESTForms UI GitHub repository](https://github.com/intersystems-ru/RESTFormsUI/)
