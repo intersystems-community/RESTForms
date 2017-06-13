@@ -1,5 +1,5 @@
-# Forms
-Forms adapter for InterSystems Cache.
+# RESTForms
+RESTForms is a generalized REST API backend for web applications built on InterSystems (Caché or Ensemble) backend.
 
 # Installation
 
