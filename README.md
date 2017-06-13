@@ -5,6 +5,7 @@ Forms adapter for InterSystems Cache.
 
 1. Import latest [release](https://github.com/intersystems-ru/RESTForms/releases) appropriate for your Caché version.
 2. Create REST web app with `Form.REST.Main` as Dispatch Class.
+3. Generate test data: `do ##class(Form.Util.Init).populateTestForms()`
 
 # Usage description and examples
 
@@ -56,22 +57,36 @@ You can use [Postman](https://www.getpostman.com/) to query RESTForms API. [Coll
 
 Note, that for SQL access user must have relevant SQL privileges (SELECT on form table).
 
-## Query types
+## Queries
 
-It's a second REST (not URL) parameter in `form/objects/:class/:query` request, it determines the contents of query between SELECT and FROM.
-Currently new query types can be specified as parameters in `Form.REST.Objects` class. 
+There are two query types:
+   - Basic queries work for all RESTForms classes once defined and they differ only by the field list
+   - Custom queries work only for the classes in which they are specified and available, but the user has full access to query text 
 
-| Query    |  Description         |
-|----------|----------------------|
-| all      | all information      |
-| info     | displayName and id   |
+## Basic queries
+
+Execute `form/objects/:class/:query` request, to call a simple query. Second `:query` parameter determines query type - the contents of query between SELECT and FROM. Here are default query types:
+
+
+| Query    |  Description          |
+|----------|-----------------------|
+| all      | all information       |
+| info     | displayName and id    |
 | infoclass| displayName, id, class|
+| count    | number of rows        |
 
-You can define your own class with queries. To define your own query named `myq`:
-  1. Define a class 
+RESTForms looks for a query named  `myq` in the following places (till first hit):
+  1.  Class method `queryMYQ` in your form class
+  2.  Parameter `MYQ` in your queries class
+  3.  Class method `queryMYQ` in your queries class
+  4.  Parameter `MYQ` in `Form.REST.Objects` class
+  5.  Class method `queryMYQ` in `Form.REST.Objects` class
+
+You can define your own queries class. To define your own query named `myq` there:
+  1. Define a class `YourClassName`
   2. Define there a `MYQ` parameter or `queryMYQ` class method. Parameter takes precedence over the method. 
   3. Method or param must return the part of SQL query between SELECT and FROM
-  4. Execute in a terminal: `Do ##class(For.Settings).setSetting("queryclass", YourClassName)`
+  4. (Once) Execute in a terminal: `Do ##class(For.Settings).setSetting("queryclass", YourClassName)`
 
 Method signature is: `ClassMethod queryMYQ(class As %String) As %String` 
 
@@ -79,13 +94,15 @@ You can define a class-specific query. To define your own class query named `myq
   1. Define a `queryMYQ` class method in your form class
   2. Method signature is: `ClassMethod queryMYQ() As %String` 
   3. Method must return the part of SQL query between SELECT and FROM
+  
+## Custom Queries
 
-RESTForms looks for a query named  `myq` in the following paths (till first hit):
-  1.  Class method `queryMYQ` in your form class
-  2.  Parameter `MYQ` in your query class
-  3.  Class method `queryMYQ` in your query class
-  4.  Parameter `MYQ` in `Form.REST.Objects` class
-  5.  Class method `queryMYQ` in `Form.REST.Objects` class
+Execute `form/objects/:class/custom/:query` request, to call a custom query.  Custom query allows user code to determine the full content of the query. URL parameters besides `size` and `page` are unavailable. Your method must parse all other url parameters. 
+
+To define your own custom query named `myq`:
+  1. Define a `customqueryMYQ` class method in your form class
+  2. Method signature is: `ClassMethod customqueryMYQ() As %String` 
+  3. Method must return a valid SQL query
 
 ## URL arguments:
 
@@ -97,7 +114,9 @@ all arguments are optional.
 | page     | 1                  | page number     |
 | filter   | Value+contains+W   | WHERE clause    |
 | orderby  | Value+desc         | ORDER BY clause |
-| collation| SQLUPPER           | COLLATION clause|
+| collation| UPPER              | COLLATION clause|
+| nocount  | 1                  | Remove count of rows (speeds up query)|
+
 
 ## ORDER BY clause
 
@@ -128,19 +147,9 @@ Conditions:
 
 ## COLLATION clause
 
-In a format: `collation=SQLUPPER' or `collation=EXACT`. 
+In a format: `collation=UPPER' or `collation=EXACT`. 
 Forces specified collation on WHERE clause. If omitted, default collation is used.
 
-## Custom Queries
-
-Custom query allows user code to determine the full content of the query. 
-Query name is passed as a second REST (not URL) parameter in `form/objects/:class/custom/:query` request, URL parameters besides `size` and `page` are unavailable. Your method must parse all other url parameters. 
-
-To define your own custom query named `myq`:
-  1. Define a `customqueryMYQ` class method in your form class
-  2. Method signature is: `ClassMethod customqueryMYQ() As %String` 
-  3. Method must return a valid SQL query
-  
 # Settings
 
 You can setup several settings.
