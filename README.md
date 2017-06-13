@@ -9,7 +9,8 @@ Forms adapter for InterSystems Cache.
 
 # Usage description and examples
 
-See in this [post  on Developer Community](https://community.intersystems.com/post/restforms-rest-api-your-classes).
+Read this [post on Developer Community](https://community.intersystems.com/post/restforms-rest-api-your-classes).
+[Russian article](https://habrahabr.ru/company/intersystems/blog/330822/).
 
 # Requests
 
@@ -162,9 +163,10 @@ Set them via `Write ##class(For.Settings).setSetting(Setting, Value)`.
 | timezone    | ignore, utc        | Affects how timestamps are converted for a client. UTC has Z on end, ignore does not|
 
 
-#Samples
+# Samples
 
 See `Form.Test.Simple` and other forms in `Form.Test` package for samples. 
+To generate test data execute: `do ##class(Form.Util.Init).populateTestForms()`
 To remove test forms permanently from your local repository 
   1. Enter `Form\Test` directory from git bash
   2. `git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')`
