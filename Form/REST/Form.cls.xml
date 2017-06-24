@@ -6,6 +6,10 @@
 <Super>Form.REST.Abstract</Super>
 <TimeCreated>64090,79002.958751</TimeCreated>
 
+<Parameter name="CHARSET">
+<Default>UTF-8</Default>
+</Parameter>
+
 <XData name="UrlMap">
 <XMLNamespace>http://www.intersystems.com/urlmap</XMLNamespace>
 <Data><![CDATA[

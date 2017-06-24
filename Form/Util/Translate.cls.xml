@@ -24,7 +24,7 @@ w ##class(Form.Util.Translate).get()</Description>
 	
 	set id = $zcrc(text, 7)
 	set text = $$$GetAppMessage(language, domain, id, text)
-	set text = $zcvt(text, "O", "UTF8")
+	//set text = $zcvt(text, "O", "UTF8")
 	quit text
 ]]></Implementation>
 </Method>
