@@ -185,6 +185,7 @@ Translate predicate from js into sql</Description>
 	q:predicate="in" "IN"
 	q:predicate="is" "IS"
 	q:predicate="isnot" "IS NOT"
+	q:predicate="like" "LIKE"
 	
 	q ""
 ]]></Implementation>
