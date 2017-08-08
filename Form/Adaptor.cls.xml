@@ -109,7 +109,7 @@ Get basic information about one object</Description>
 <Abstract>1</Abstract>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>id:%Integer</FormalSpec>
-<ReturnType>%Object</ReturnType>
+<ReturnType>%DynamicObject</ReturnType>
 <Implementation><![CDATA[
 	set item = {}
 	set item."_id" = id
@@ -124,13 +124,13 @@ Get basic information about several form objects.<br>
 <var>list</var> - contains objects ids (not oids)]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>list:%ListOfDataTypes</FormalSpec>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	set objectsList = []
 	for i=1:1:list.Count() {
 		set id = list.GetAt(i)
 		set item = ..getObjectInfo(id)
-		do objectsList.$push(item)
+		do objectsList.%Push(item)
 	}
 	return objectsList
 ]]></Implementation>

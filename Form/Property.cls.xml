@@ -13,7 +13,7 @@ Get metadata for one field of a form. Equal to propertyToMetadata method,
 but uses direct global references instead of object access</Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String="",name=""</FormalSpec>
-<ReturnType>%Object</ReturnType>
+<ReturnType>%DynamicObject</ReturnType>
 <Implementation><![CDATA[
 	set metadata = {}
 	set metadata.name = name

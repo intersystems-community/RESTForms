@@ -10,7 +10,7 @@
 Get all forms list
 w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 <ClassMethod>1</ClassMethod>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
 	set forms = []
@@ -25,7 +25,7 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 		CONTINUE:'..formExists(className)
 		set formName = $parameter(className, $$$formNameParam)
 		set formObj = {"name": (formName), "class": (className)}
-		do forms.$push(formObj)
+		do forms.%Push(formObj)
 	}
 	
 	quit forms
@@ -37,12 +37,12 @@ w ##class(Form.Info).getFormsList().$toJSONFormat()</Description>
 Get all forms metadata
 w ##class(Form.Info).getFormsMetadata().$toJSONFormat()</Description>
 <ClassMethod>1</ClassMethod>
-<ReturnType>%Object</ReturnType>
+<ReturnType>%DynamicObject</ReturnType>
 <Implementation><![CDATA[
 	set formsList = ..getFormsList()
 	set metadata = {}
-	for i = 0:1:formsList.$size()-1 {
-		set form = formsList.$get(i)
+	for i = 0:1:formsList.%Size()-1 {
+		set form = formsList.%Get(i)
 		do metadata.%DispatchSetProperty(form.class, ..getFormMetadata(form.class))
 	}
 	quit metadata
@@ -90,7 +90,7 @@ For results see:
 <example>w ##class(Form.Info).getFormMetadata("Form.Test.Simple").$toJSONFormat()</example>]]></Description>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>className:%String=""</FormalSpec>
-<ReturnType>%Object</ReturnType>
+<ReturnType>%DynamicObject</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
 	set formName = $parameter(className, $$$formNameParam)
@@ -109,7 +109,7 @@ For results see:
 		set displayName = ##class(Form.Property).getPropertyParam(className, property, $$$propDisplayNameParam)
 		if ((internal '= $$$YES) && (displayName'="")) {
 			set propertyMetaData = ##class(Form.Property).propertyToMetadata(className, property)
-			do metadata.fields.$set($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
+			do metadata.fields.%Set($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
 		}
 		set property=$$$comMemberNext(className, $$$cCLASSproperty, property)
 	}
@@ -117,9 +117,9 @@ For results see:
 	/// we're moving from the end of array to the beginning 
 	/// so we can delete null elements without affecting 
 	/// the position of elements we're yet to check
-	for i = metadata.fields.$size()-1:-1:0 {
-		if metadata.fields.$getTypeOf(i)="unassigned" {
-			 do metadata.fields.$remove(i)
+	for i = metadata.fields.%Size()-1:-1:0 {
+		if metadata.fields.%GetTypeOf(i)="unassigned" {
+			 do metadata.fields.%Remove(i)
 		}
 	}
 

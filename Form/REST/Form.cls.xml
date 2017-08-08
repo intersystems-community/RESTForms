@@ -33,7 +33,7 @@ Get available forms list as a JSON array</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set forms = ##class(Form.Info).getFormsList()
-	write forms.$toJSON()
+	write forms.%ToJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>
@@ -45,7 +45,7 @@ Get available forms metadata as JSON object</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set metadata = ##class(Form.Info).getFormsMetadata()
-	write metadata.$toJSON()
+	write metadata.%ToJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>
@@ -58,7 +58,7 @@ Get form metainformation by name</Description>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	set metadata = ##class(Form.Info).getFormMetadata(form)
-	write metadata.$toJSON()
+	write metadata.%ToJSON()
 	return $$$OK
 ]]></Implementation>
 </Method>

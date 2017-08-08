@@ -44,13 +44,13 @@ do ##class(Form.Util.Translate).Insert()</Description>
 
 <Method name="getLanguages">
 <ClassMethod>1</ClassMethod>
-<ReturnType>%Array</ReturnType>
+<ReturnType>%DynamicArray</ReturnType>
 <Implementation><![CDATA[
 	set languages = []
 	#dim list As %ListOfDataTypes
 	set list = ##class(%MessageDictionary).GetLanguages($$$domain)
 	for i=1:1:list.Count() {
-		do languages.$push(list.GetAt(i))
+		do languages.%Push(list.GetAt(i))
 	}
 	quit languages
 ]]></Implementation>

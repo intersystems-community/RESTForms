@@ -287,13 +287,13 @@ nocount - do not output count of rows</Description>
 		}
 		Set ..sql = tOrigSQL
 
- 		Set aet = ##class(%Object).$fromJSON("{"""_..arrayName_""":[]}")
+ 		Set aet = ##class(%Object).%FromJSON("{"""_..arrayName_""":[]}")
  		
  		// FORMS - debug
  		Set:$$$debug aet.sql = tOrigSQL
  		// END - FORMS - debug
  		
- 		Set arrayNode = aet.$get(..arrayName)
+ 		Set arrayNode = aet.%Get(..arrayName)
  	
  		// FORMS - pagination
 		Set tStartRow = ..pageSize * (..currPage - 1)
@@ -315,7 +315,7 @@ nocount - do not output count of rows</Description>
 			For c = 1:1:tCols {
 				Set tVal = tRS.%GetData(c)
 				Set tOutVal = ##class(Form.Util.Converter).logicalToJSON($Get(tColInfo(c,"type")), tVal)
-				Do node.$set($Get(tColInfo(c,"name")), tOutVal)
+				Do node.%Set($Get(tColInfo(c,"name")), tOutVal)
 				
 				/*If ($IsValidNum(tVal)) {
 					Do node.$set($Get(tColInfo(c,"name")),$Num(tVal),"number")
@@ -324,7 +324,7 @@ nocount - do not output count of rows</Description>
 					Do node.$set($Get(tColInfo(c,"name")),tVal)
 				}*/
 			}
-			Do arrayNode.$push(node)
+			Do arrayNode.%Push(node)
 		}
 		
 		// FORMS - results count
@@ -334,7 +334,7 @@ nocount - do not output count of rows</Description>
 		}
 		// END - FORMS - results count
 				
-		Write aet.$toJSON()
+		Write aet.%ToJSON()
 	}
 	Catch(ex) {
 		Write "null"
