@@ -254,7 +254,6 @@ nocount - do not output count of rows</Description>
 		If (..OnGetSQL '= "") {
 			Set tSC = ..%OnGetSQL(.tParms,.tSQL)
 			If $$$ISERR(tSC) {
-				Write "null"
 				Quit
 			}
 			Set ..sql = tSQL
@@ -336,7 +335,6 @@ nocount - do not output count of rows</Description>
 		Write aet.$toJSON()
 	}
 	Catch(ex) {
-		Write "null"
 		Set tSC = ex.AsStatus()
 	}
 	Quit tSC
