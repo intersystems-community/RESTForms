@@ -266,7 +266,6 @@ nocount - do not output count of rows</Description>
 		#Dim tRS As %Library.ResultSet
 		Set tRS = ..%CreateResultSet(.tSC,tInfo)
 		If $$$ISERR(tSC)||'$IsObject(tRS) {
-			Write "null"
 			Quit
 		}
 

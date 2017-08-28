@@ -22,7 +22,7 @@
 
 <Method name="outputStatus">
 <Description>
-This method takes a status, renders it as jason (if requested) and outputs the result</Description>
+This method takes a status, renders it as json (if requested) and outputs the result</Description>
 <Internal>1</Internal>
 <ClassMethod>1</ClassMethod>
 <FormalSpec>pSC:%Status</FormalSpec>
