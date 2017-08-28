@@ -58,7 +58,6 @@ This method takes a status, renders it as json (if requested) and outputs the re
         }
         
     } Catch (e) {
-        
         #; Oops
         Set tSC = e.AsStatus()
     }
@@ -75,8 +74,7 @@ This method takes a status, renders it as json (if requested) and outputs the re
 	set obj.objlasterror = $system.Status.GetErrorText($get(%objlasterror))
 	set obj.request = %request
 	set obj.responce = %response
-	set obj.session = %session 
-	set obj.user = $username 
+	set obj.user = $username
 	
 	return obj
 ]]></Implementation>
