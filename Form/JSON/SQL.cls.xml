@@ -285,7 +285,7 @@ nocount - do not output count of rows</Description>
 		}
 		Set ..sql = tOrigSQL
 
- 		Set aet = ##class(%Object).$fromJSON("{"""_..arrayName_""":[]}")
+ 		Set aet = {}.$fromJSON("{"""_..arrayName_""":[]}")
  		
  		// FORMS - debug
  		Set:$$$debug aet.sql = tOrigSQL
