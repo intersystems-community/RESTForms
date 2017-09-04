@@ -9,7 +9,7 @@ RESTForms is a generalized REST API backend for web applications built on InterS
 
 # Usage description and examples
 
-Read this [post on Developer Community](https://community.intersystems.com/post/restforms-rest-api-your-classes).
+Read this [post on Developer Community](https://community.intersystems.com/post/restforms-rest-api-your-classes). [Developer community article about queries](https://community.intersystems.com/post/restforms-rest-api-your-classes-part-2-queries).
 [Russian article](https://habrahabr.ru/company/intersystems/blog/330822/).
 
 # Requests
@@ -145,10 +145,11 @@ Conditions:
 | contains       | [           |
 | doesnotcontain | '[          |
 | in             | IN          |
+| like           | LIKE        |
 
 ## COLLATION clause
 
-In a format: `collation=UPPER' or `collation=EXACT`. 
+In a format: `collation=UPPER` or `collation=EXACT`. 
 Forces specified collation on WHERE clause. If omitted, default collation is used.
 
 # Settings
