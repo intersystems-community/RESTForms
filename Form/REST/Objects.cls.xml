@@ -65,15 +65,15 @@ Supported queryBase sources:<br>
 	set queryType = $ZCVT(queryType, "U")
 	set userQueryClass = ##class(Form.Settings).getSetting("queryclass")
 	#dim sc As %Status = $$$OK
-	if ##class(%Dictionary.MethodDefinition).IDKEYExists(class, "query" _ queryType) {
+	if ##class(%Dictionary.CompiledMethod).IDKEYExists(class, "query" _ queryType) {
 		set queryBase = $classmethod(class, "query" _ queryType)
-	} elseif ((userQueryClass'="") && (##class(%Dictionary.ParameterDefinition).IDKEYExists(userQueryClass, queryType))) {
+	} elseif ((userQueryClass'="") && (##class(%Dictionary.CompiledParameter).IDKEYExists(userQueryClass, queryType))) {
 		set queryBase = $parameter(userQueryClass, queryType)
-	} elseif ((userQueryClass'="") && (##class(%Dictionary.MethodDefinition).IDKEYExists(userQueryClass, "query" _ queryType))) {
+	} elseif ((userQueryClass'="") && (##class(%Dictionary.CompiledMethod).IDKEYExists(userQueryClass, "query" _ queryType))) {
 		set queryBase = $classmethod(userQueryClass, "query" _ queryType, class)
-	} elseif ##class(%Dictionary.ParameterDefinition).IDKEYExists($classname(), queryType) {
+	} elseif ##class(%Dictionary.CompiledParameter).IDKEYExists($classname(), queryType) {
 		set queryBase = $parameter(, queryType)
-	} elseif ##class(%Dictionary.MethodDefinition).IDKEYExists($classname(), "query" _ queryType) {
+	} elseif ##class(%Dictionary.CompiledMethod).IDKEYExists($classname(), "query" _ queryType) {
 		set queryBase = $classmethod(, "query" _ queryType, class)
 	} elseif 0 {
 		/// TODO Some other type of "get stuff between SELECT and FROM"
@@ -99,7 +99,7 @@ Return id and dislpayName
 <Implementation><![CDATA[
 	set method = "getObjectDisplayName"
 	
-	if ##class(%Dictionary.MethodDefinition).IDKEYExists(class, method) {
+	if ##class(%Dictionary.CompiledMethod).IDKEYExists(class, method) {
 		set sqlProc = $$$ClassSQLTable(class) _ "_" _ method _ "(id)"
 	} else {
 		set sqlProc = $parameter(class, $$$displayProp)
@@ -138,7 +138,7 @@ Get form objects by a custom query</Description>
 	
 	set queryType = $ZCVT(queryType, "U")
 		
-	if ##class(%Dictionary.MethodDefinition).IDKEYExists(class, "customquery" _ queryType) {
+	if ##class(%Dictionary.CompiledMethod).IDKEYExists(class, "customquery" _ queryType) {
 		set sql = $classmethod(class, "customquery" _ queryType)
 	} else {
 		set sc = $$$ERROR($$$GeneralError, "Custom query type " _ queryType _ " not found")
