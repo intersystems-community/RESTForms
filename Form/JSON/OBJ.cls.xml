@@ -7,6 +7,21 @@
 <Super>%ZEN.Auxiliary.jsonProvider</Super>
 <TimeCreated>64099,77101.820492</TimeCreated>
 
+<Method name="SetVisited">
+<ClassMethod>1</ClassMethod>
+<CodeMode>objectgenerator</CodeMode>
+<FormalSpec><![CDATA[&pVisited,pObject:%RegisteredObject,pLevel:%Integer]]></FormalSpec>
+<Implementation><![CDATA[
+	#include %occCPTJSgen
+	set code = ##class(Form.Settings).getSetting("visited")
+	if code'="" {
+		do %code.WriteLine($$$TAB _ code)
+	} else {
+		do %code.WriteLine($$$TAB _ "set pVisited(pObject) = """"")
+	}
+]]></Implementation>
+</Method>
+
 <Method name="%ObjectToJSON">
 <Description><![CDATA[
 Write out the contents of object instance <var>pObject</var> to
@@ -44,7 +59,7 @@ w - Windows-style cr/lf newline<br/>]]></Description>
 			Quit
 		}
 		
-		set pVisited(pObject) = ""
+		do ..SetVisited(.pVisited, pObject, pLevel)
 		
 		Set tClass = $classname(pObject)
 		

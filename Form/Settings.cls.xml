@@ -43,6 +43,8 @@ Set setting "name" value</Description>
 		if ((value'="utc") && (value'="ignore")) {
 			set sc = $$$ERROR($$$GeneralError, "Value '" _value _ "' is not a valid timezone setting. Valid values are: ignore, utc")
 		}
+	} elseif name = "visited" {
+		/// TODO add check	
 	} else {
 		set sc = $$$ERROR($$$GeneralError, "Setting '" _ name _ "' does not exist")
 	}
