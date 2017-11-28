@@ -345,10 +345,10 @@ nocount - do not output count of rows</Description>
 <FormalSpec>*tSC:%Status,pInfo:%ZEN.Auxiliary.QueryInfo</FormalSpec>
 <ReturnType>%ResultSet</ReturnType>
 <Implementation><![CDATA[
+	Set:$IsObject($Get(%request)) tMode = %request.Get("mode", 0)
 	Set tRS = ##class(%ResultSet).%New()
-	s sql = ..sql
 	Set tSC = tRS.Prepare(..sql)
-	Set tRS.RuntimeMode=0
+	Set tRS.RuntimeMode = $Get(tMode, 0)
 	Set pInfo.queryText = "sql: "_..sql
 	Return tRS
 ]]></Implementation>
