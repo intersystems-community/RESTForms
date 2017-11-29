@@ -188,9 +188,10 @@ w - Windows-style cr/lf newline<br/>]]></Description>
 		Do ..getOrderedProps(tClass,.tProps)
 		Set tSeq="" For { Set tSeq=$O(tProps(tSeq),1,tPropName)  Quit:""=tSeq
 		
-			// Including private properties
-			//Set tPrivate = +$$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPprivate)
-			//Continue:tPrivate||(tPropName["%")
+			// Skipping private and internal properties
+			Set tPrivate = +$$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPprivate)
+			Set tInternal = +$$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPinternal)
+			Continue:tPrivate||tInternal||(tPropName["%")
 
 			Set tType = $$$comMemberKeyGet(tClass,$$$cCLASSproperty,tPropName,$$$cPROPtype)
 			Set tClsType = $$$getClassType(tType)
