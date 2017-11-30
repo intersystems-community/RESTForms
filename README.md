@@ -3,7 +3,7 @@ RESTForms is a generalized REST API backend for web applications built on InterS
 
 # Installation
 
-1. Import latest [release](https://github.com/intersystems-ru/RESTForms/releases) appropriate for your Caché version.
+1. Import latest [release](https://github.com/intersystems-ru/RESTForms/releases) appropriate for your Caché version (161 for 2016.1, 162 for 2016.2+).
 2. Create REST web app with `Form.REST.Main` as Dispatch Class.
 3. Generate test data: `do ##class(Form.Util.Init).populateTestForms()`
 
@@ -107,7 +107,7 @@ To define your own custom query named `myq`:
 
 ## URL arguments:
 
-all arguments are optional.
+All arguments are optional.
 
 | Argument | Sample Value       | Description     |
 |----------|--------------------|-----------------|
@@ -117,6 +117,7 @@ all arguments are optional.
 | orderby  | Value+desc         | ORDER BY clause |
 | collation| UPPER              | COLLATION clause|
 | nocount  | 1                  | Remove count of rows (speeds up query)|
+| mode     | 0                  | SQL mode value. Can be 0 - Logical, 1 - ODBC, 2 - Display. Defaults to 0.|
 
 
 ## ORDER BY clause
