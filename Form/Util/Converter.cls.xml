@@ -69,6 +69,12 @@ TODO. Populate on install?</Description>
 	    }
     } elseif datatype = "%Library.Time" {
         set result = ##class(%Time).LogicalToXSD(value)
+    } elseif datatype = "%Library.Binary" {
+    	set result = $zcvt(value, "O", "JSON")
+    } elseif datatype = "%Library.Status" {
+    	set result = $System.Status.GetErrorText(value)
+    } elseif datatype="Security.Datatype.Password"{
+    	set result = ##class(Security.Datatype.Password).LogicalToDisplay(value)
     } else {
         set result = value
     }
@@ -88,6 +94,8 @@ TODO. Populate on install?</Description>
         set result = ##class(%TimeStamp).XSDToLogical(value)
     } elseif datatype = "%Library.Time" {
         set result = ##class(%Time).XSDToLogical(value)
+    } elseif datatype = "%Library.Binary" {
+		set result = $zcvt(value, "I", "JSON")
     } else {
         set result = value
     }
