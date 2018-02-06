@@ -32,12 +32,11 @@ On JSON -> Obj parsing, check what forms can be modified by user  ]]></Descripti
 <FormalSpec>pObject:Form.Adaptor,pLevel:%Integer</FormalSpec>
 <Implementation><![CDATA[
 	set %code.CodeMode = "expression"
-	#include %occCPTJSgen
 	set code = ##class(Form.Settings).getSetting("canModify")
 	if code'="" {
-		do %code.WriteLine($$$TAB _ code)
+		do %code.WriteLine(code)
 	} else {
-		do %code.WriteLine($$$TAB _ "pLevel=1")
+		do %code.WriteLine("pLevel=1")
 	}
 ]]></Implementation>
 </Method>
