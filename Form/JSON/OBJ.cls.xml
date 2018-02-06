@@ -6,6 +6,7 @@
 Изменения ищутся по слову FORMS</Description>
 <Super>%ZEN.Auxiliary.jsonProvider</Super>
 <TimeCreated>64099,77101.820492</TimeCreated>
+<DependsOn>Form.Settings</DependsOn>
 
 <Method name="SetVisited">
 <Description><![CDATA[
