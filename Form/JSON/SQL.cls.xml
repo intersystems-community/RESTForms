@@ -347,6 +347,15 @@ nocount - do not output count of rows</Description>
 <Implementation><![CDATA[
 	Set:$IsObject($Get(%request)) tMode = %request.Get("mode", 0)
 	Set tRS = ##class(%ResultSet).%New()
+	
+	If $$$webContext {
+		Set nocount = %request.Get("nocount", $$$NO)
+	}
+	
+	If ((..currPage=1) && ($g(nocount, $$$NO)) && ($ZCVT($tr(..sql," "), "U") '[ "SELECTTOP")) {
+		Set ..sql = $replace(..sql , "SELECT", "SELECT TOP " _ ..pageSize _ " ",,1,1)
+	}
+	
 	Set tSC = tRS.Prepare(..sql)
 	Set tRS.RuntimeMode = $Get(tMode, 0)
 	Set pInfo.queryText = "sql: "_..sql
