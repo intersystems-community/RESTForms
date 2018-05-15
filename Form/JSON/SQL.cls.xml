@@ -95,7 +95,14 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 			}
 			set value = valTemp _ ")"
 		} else {
-			set value = $$$sq(value)
+			// bake ((value)) values as a (('value')) to help the optimizer
+			if (($e(value,1,2)="((") && ($e(value,*-1,*)="))")) {
+				set value = $e(value, 3,*-3)
+				set value = $$$sq(value)
+				set value = "((" _ value _ "))"
+			} else {
+				set value = $$$sq(value)
+			}
 			set:value="'$$$NULL'" value = "NULL"
 		}
 
