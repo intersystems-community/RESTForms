@@ -331,8 +331,11 @@ nocount - do not output count of rows</Description>
 			Set aet.total=tRS.%ROWCOUNT
 		}
 		// END - FORMS - results count
-				
-		Write aet.%ToJSON()
+		
+		// <MAXSTRING> fix
+		// See https://community.intersystems.com/node/450911/
+		Write ""
+		Do aet.%ToJSON()
 	}
 	Catch(ex) {
 		Set tSC = ex.AsStatus()
