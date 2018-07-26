@@ -95,7 +95,14 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 			}
 			set value = valTemp _ ")"
 		} else {
-			set value = $$$sq(value)
+			// bake ((value)) values as a (('value')) to help the optimizer
+			if (($e(value,1,2)="((") && ($e(value,*-1,*)="))")) {
+				set value = $e(value, 3,*-3)
+				set value = $$$sq(value)
+				set value = "((" _ value _ "))"
+			} else {
+				set value = $$$sq(value)
+			}
 			set:value="'$$$NULL'" value = "NULL"
 		}
 
@@ -350,6 +357,15 @@ nocount - do not output count of rows</Description>
 <Implementation><![CDATA[
 	Set:$IsObject($Get(%request)) tMode = %request.Get("mode", 0)
 	Set tRS = ##class(%ResultSet).%New()
+	
+	If $$$webContext {
+		Set nocount = %request.Get("nocount", $$$NO)
+	}
+	
+	If ((..currPage=1) && ($g(nocount, $$$NO)) && ($ZCVT($tr(..sql," "), "U") '[ "SELECTTOP")) {
+		Set ..sql = $replace(..sql , "SELECT", "SELECT TOP " _ ..pageSize _ " ",,1,1)
+	}
+	
 	Set tSC = tRS.Prepare(..sql)
 	Set tRS.RuntimeMode = $Get(tMode, 0)
 	Set pInfo.queryText = "sql: "_..sql
