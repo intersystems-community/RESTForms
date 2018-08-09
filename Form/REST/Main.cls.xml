@@ -47,6 +47,7 @@
 <Implementation><![CDATA[
 	set info = {}
 	set info.languages = ##class(Form.Util.Translate).getLanguages()
+	write ""
 	write info.%ToJSON()	
 	quit $$$OK
 ]]></Implementation>
