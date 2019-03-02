@@ -109,9 +109,15 @@ For results see:
 		set displayName = ##class(Form.Property).getPropertyParam(className, property, $$$propDisplayNameParam)
 		if ((internal '= $$$YES) && (displayName'="")) {
 			set propertyMetaData = ##class(Form.Property).propertyToMetadata(className, property)
-			do metadata.fields.%Set($$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber), propertyMetaData)
+			set position = $$$comMemberKeyGet(className, $$$cCLASSproperty, property, $$$cPROPsequencenumber)
+			
+			while metadata.fields.%IsDefined(position) {
+				set position = position + 100
+			}
+			
+			do metadata.fields.%Set(position, propertyMetaData)
 		}
-		set property=$$$comMemberNext(className, $$$cCLASSproperty, property)
+		set property=$$$comMemberNext(className, $$$cCLASSproperty, property)		
 	}
 	
 	/// we're moving from the end of array to the beginning 
