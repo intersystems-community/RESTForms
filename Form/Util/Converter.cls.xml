@@ -67,6 +67,11 @@ TODO. Populate on install?</Description>
 	    if ##class(Form.Settings).getSetting("timezone") = "ignore" {
 		    set result = $extract(result, 1, *-1) // Remove trailing Z  
 	    }
+    } elseif datatype = "%Library.PosixTime" {
+	    set result = ##class(%PosixTime).LogicalToXSD(value)
+	    if ##class(Form.Settings).getSetting("timezone") = "ignore" {
+		    set result = $extract(result, 1, *-1) // Remove trailing Z  
+	    }
     } elseif datatype = "%Library.Time" {
         set result = ##class(%Time).LogicalToXSD(value)
     } elseif datatype = "%Library.Binary" {
@@ -92,7 +97,9 @@ TODO. Populate on install?</Description>
         set result = ##class(%Date).XSDToLogical(value)
     } elseif datatype = "%Library.TimeStamp" {
         set result = ##class(%TimeStamp).XSDToLogical(value)
-    } elseif datatype = "%Library.Time" {
+    } elseif datatype = "%Library.PosixTime" {
+        set result = ##class(%PosixTime).XSDToLogical(value)
+    }  elseif datatype = "%Library.Time" {
         set result = ##class(%Time).XSDToLogical(value)
     } elseif datatype = "%Library.Binary" {
 		set result = $zcvt(value, "I", "JSON")
