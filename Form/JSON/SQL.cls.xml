@@ -6,8 +6,11 @@
 <TimeCreated>64091,68899.667254</TimeCreated>
 
 <Method name="WriteJSONFromSQL">
+<Description>
+conditionClass = main class
+conditionClass(alias) = some other class</Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>sql:%String,conditionClass=""</FormalSpec>
+<FormalSpec><![CDATA[sql:%String,&conditionClass=""]]></FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -16,12 +19,13 @@
 	set provider.%Format = $$$formatJSONSQL
 	
 	if ((##class(%Dictionary.CompiledClass).IDKEYExists(conditionClass)) && $$$webContext) {
-		set sc = ..ParseWhere(%request.Get("filter"), %request.Get("collation"), conditionClass, .where)
-		set sc = $$$ADDSC(sc, ..ParseOrderBy(%request.Get("orderby"), conditionClass, .orderBy))
+		set sc = ..ParseWhere(%request.Get("filter"), %request.Get("collation"), .conditionClass, .where)
+		set sc = $$$ADDSC(sc, ..ParseOrderBy(%request.Get("orderby"), .conditionClass, .orderBy))
 		set sql = sql _ where _ orderBy
 	} ElseIf (conditionClass'="") {
 		set sc = $$$ERROR($$$GeneralError, "Condition class " _ conditionClass _ " does not exist")
 	}
+	
 	return:$$$ISERR(sc) sc 
 	
 	set provider.sql = sql
@@ -43,7 +47,7 @@ Parse where condition:
 <example>w ##class(Form.JSON.SQL).ParseWhere("Text eq Admin Text neq 1", , "Form.Test.Simple", .out)</example>
 result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 <ClassMethod>1</ClassMethod>
-<FormalSpec>input,collation:%String(VALUELIST=",SQLUPPER,EXACT")="",conditionClass,*condition</FormalSpec>
+<FormalSpec><![CDATA[input,collation:%String(VALUELIST=",SQLUPPER,EXACT")="",&conditionClass,*condition]]></FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
 	#dim sc As %Status = $$$OK
@@ -69,9 +73,23 @@ result: out=" WHERE Text='Admin' AND Text='1'"]]></Description>
 		set value = $TR($lg(condList,i+2),$c(9)," ") // replaces <TAB> in filter values eith whitespaces 
 		set value = $TR(value,"'"";")
 		
-		set columnValid = ..ParseColumn(.column, conditionClass, .propertyClass)
-		return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
-		set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
+		if $l(column, ".") = 1 {
+			set columnValid = ..ParseColumn(.column, conditionClass, .propertyClass)
+			return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
+			set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
+		} elseif $l(column, ".") = 2  {
+			set alias = $p(column, ".", 1)
+			return:'$d(conditionClass(alias)) $$$ERROR($$$GeneralError,"Unknown alias " _ alias)
+			
+			set column = $p(column, ".", 2)
+			set columnValid = ..ParseColumn(.column, conditionClass(alias), .propertyClass)
+			return:'columnValid $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass(alias))
+			
+			set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
+			set column = alias _ "." _ column	
+		} else {
+			return $$$ERROR($$$GeneralError,"Filter column '" _column _ "' is not valid for " _ conditionClass)
+		}
 		
 		set value = ##class(Form.Util.Converter).jsonToLogical(propertyClass, value)
 		
@@ -213,7 +231,7 @@ w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description
 	set:input="" input = $parameter(class, $$$displayProp)
 	set condition = ""
 	return:input="" sc
-	
+
 	set descPos = $f(input, " desc")
 	if descPos'=0 {
 		set column = $e(input, 1, descPos-6) // 6 = $l("+desc")+1
@@ -221,15 +239,34 @@ w ##class(Form.JSON.SQL).ParseOrderBy("Value desc", "Form.TestRef")</Description
 		set column=input
 	}
 	
-	if ##class(%Dictionary.CompiledProperty).IDKEYExists(class, column) {
-		set column = ##class(Form.Property).getPropertySQLName(class, column)
+	if $l(column, ".") = 1 {
+		// continue as is
+		set alias = ""
+		set orderbyClass = class
+	} elseif $l(column, ".") = 2  {
+		set alias = $p(column, ".", 1)
+		return:'$d(class(alias)) $$$ERROR($$$GeneralError,"Unknown alias " _ alias)
+		
+		set column = $p(column, ".", 2)
+		set orderbyClass = class(alias)
+		
+	} else {
+		return $$$ERROR($$$GeneralError,"ORDER BY column '" _column _ "' is not valid for " _ class)
+	}
+	
+	if ##class(%Dictionary.CompiledProperty).IDKEYExists(orderbyClass, column) {
+		set column = ##class(Form.Property).getPropertySQLName(orderbyClass, column)
 		set:$system.SQL.IsReservedWord(column) column = """" _ column _ """"
 	} elseif $isValidNum(column, 0, 1) {
+		/// nothing to do here
+	} elseif $zcvt(column,"U")="ID" {
 		/// nothing to do here
 	} else {
 		set sc = $$$ERROR($$$GeneralError, "Sorting column '" _ column _ "' does not exist")
 		set column = "" // invalidate SQL jic
 	}
+	
+	set:alias'="" column = alias _ "." _ column
 	
 	set condition = " ORDER BY " _ column _ $s(descPos'=0:" DESC",1:"")
 	return sc
@@ -338,11 +375,8 @@ nocount - do not output count of rows</Description>
 			Set aet.total=tRS.%ROWCOUNT
 		}
 		// END - FORMS - results count
-		
-		// <MAXSTRING> fix
-		// See https://community.intersystems.com/node/450911/
-		Write ""
-		Do aet.%ToJSON()
+				
+		Write aet.%ToJSON()
 	}
 	Catch(ex) {
 		Set tSC = ex.AsStatus()
@@ -357,15 +391,6 @@ nocount - do not output count of rows</Description>
 <Implementation><![CDATA[
 	Set:$IsObject($Get(%request)) tMode = %request.Get("mode", 0)
 	Set tRS = ##class(%ResultSet).%New()
-	
-	If $$$webContext {
-		Set nocount = %request.Get("nocount", $$$NO)
-	}
-	
-	If ((..currPage=1) && ($g(nocount, $$$NO)) && ($ZCVT($tr(..sql," "), "U") '[ "SELECTTOP")) {
-		Set ..sql = $replace(..sql , "SELECT", "SELECT TOP " _ ..pageSize _ " ",,1,1)
-	}
-	
 	Set tSC = tRS.Prepare(..sql)
 	Set tRS.RuntimeMode = $Get(tMode, 0)
 	Set pInfo.queryText = "sql: "_..sql
