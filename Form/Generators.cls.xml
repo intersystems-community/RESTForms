@@ -35,6 +35,7 @@ Validate FORMORDERBY parameter value if present</Description>
 	
 	set orderBy = $get(%parameter($$$orderByParam))
 	return:(orderBy = "") sc
+	return:($zcvt(orderBy, "U") = "ID") sc
 	
 	set key = %compiledclass.Properties.FindObjectId(className _ "||" _ orderBy)
 	return:key="" $$$ERROR($$$GeneralError, "Order by property '" _ orderBy _"' does not exist in '" _ className _ "' class. Redefine " _ $$$orderByParam _ " parameter")
