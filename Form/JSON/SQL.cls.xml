@@ -281,6 +281,9 @@ nocount - do not output count of rows</Description>
 <FormalSpec>nocount:%Boolean=$$$NO</FormalSpec>
 <ReturnType>%Status</ReturnType>
 <Implementation><![CDATA[
+	Set:$IsObject($Get(%request)) tMode = %request.Get("mode", 0)
+	#Dim tNeedConvert As %Boolean = (tMode = 0)
+	
 	Set ..contentType = "array"
 	// override base method to get information from SQL statement
 	Set tSC = $$$OK
@@ -356,8 +359,8 @@ nocount - do not output count of rows</Description>
 			Set node = {}
 			For c = 1:1:tCols {
 				Set tVal = tRS.%GetData(c)
-				Set tOutVal = ##class(Form.Util.Converter).logicalToJSON($Get(tColInfo(c,"type")), tVal)
-				Do node.%Set($Get(tColInfo(c,"name")), tOutVal)
+				Set:tNeedConvert tVal = ##class(Form.Util.Converter).logicalToJSON($Get(tColInfo(c,"type")), tVal)
+				Do node.%Set($Get(tColInfo(c,"name")), tVal)
 				
 				/*If ($IsValidNum(tVal)) {
 					Do node.$set($Get(tColInfo(c,"name")),$Num(tVal),"number")
