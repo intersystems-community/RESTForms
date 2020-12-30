@@ -379,7 +379,7 @@ nocount - do not output count of rows</Description>
 		}
 		// END - FORMS - results count
 				
-		Write aet.%ToJSON()
+		Do aet.%ToJSON()
 	}
 	Catch(ex) {
 		Set tSC = ex.AsStatus()
